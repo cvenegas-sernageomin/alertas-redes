@@ -1,0 +1,39 @@
+name: Publicar KML
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # cada 60 min
+  workflow_dispatch:
+
+jobs:
+  actualizar:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restaurar red_alertas.kml previo desde live (si existe)
+        shell: pwsh
+        run: |
+          git fetch origin live 2>$null
+          if (git branch -r | Select-String 'origin/live') {
+            git checkout origin/live -- red_alertas.kml 2>$null
+          }
+
+      - name: Generar KML
+        shell: pwsh
+        run: powershell -File Actualizar.ps1
+
+      - name: Publicar en rama live
+        shell: pwsh
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          $branch = "live"
+          git checkout --orphan $branch-tmp
+          git reset
+          git add red_alertas.kml
+          git commit -m "data: actualizar red_alertas.kml $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
+          git push origin HEAD:$branch --force
