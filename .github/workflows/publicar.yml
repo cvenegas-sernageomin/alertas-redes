@@ -5,6 +5,9 @@ on:
     - cron: '0 * * * *'   # cada 60 min
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   actualizar:
     runs-on: windows-latest
@@ -34,6 +37,6 @@ jobs:
           $branch = "live"
           git checkout --orphan $branch-tmp
           git reset
-          git add red_alertas.kml
+          git add -f red_alertas.kml
           git commit -m "data: actualizar red_alertas.kml $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
           git push origin HEAD:$branch --force
