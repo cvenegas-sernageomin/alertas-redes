@@ -47,7 +47,7 @@ function Build-PlacemarkRedes($e) {
     $desc  = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora]]>"
     return @"
     <Placemark>
-      <name>$($e.Nombre) -- $($e.TasaMmH) mm/h</name>
+      <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
       <styleUrl>#$color</styleUrl>
       <description>$desc</description>
       <Point><coordinates>$($e.Lon),$($e.Lat),0</coordinates></Point>
@@ -60,10 +60,10 @@ function Build-PlacemarkEmas($e) {
     $hora  = Format-Epoch $e.Epoch
     $isoStr  = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
     $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C"   } else { 'sin dato' }
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0 grados C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora]]>"
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora]]>"
     return @"
     <Placemark>
-      <name>$($e.Nombre) -- $($e.TasaMmH) mm/h</name>
+      <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
       <styleUrl>#$color</styleUrl>
       <description>$desc</description>
       <Point><coordinates>$($e.Lon),$($e.Lat),0</coordinates></Point>
@@ -80,15 +80,15 @@ function Build-Kml([array]$redes, [array]$emas) {
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
-  <name>Alertas Redes Chile -- $ts</name>
+  <name>Alertas Redes Chile - $ts</name>
 $estilos
   <Folder>
-    <name>Redes CR2 -- Precipitacion ($($redes.Count) est.)</name>
+    <name>Redes CR2 - Precipitacion ($($redes.Count) est.)</name>
     <open>1</open>
 $pmRedes
   </Folder>
   <Folder>
-    <name>EMAs DMC -- Alerta completa ($($emas.Count) est.)</name>
+    <name>EMAs DMC - Alerta completa ($($emas.Count) est.)</name>
     <open>1</open>
 $pmEmas
   </Folder>
