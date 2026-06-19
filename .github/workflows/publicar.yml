@@ -34,9 +34,9 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          $branch = "live"
-          git checkout --orphan $branch-tmp
-          git reset
-          git add -f red_alertas.kml
+          git checkout --orphan live-tmp
+          git rm -rf --cached . 2>$null
+          Remove-Item .gitignore -ErrorAction SilentlyContinue
+          git add red_alertas.kml
           git commit -m "data: actualizar red_alertas.kml $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
-          git push origin HEAD:$branch --force
+          git push origin HEAD:live --force
