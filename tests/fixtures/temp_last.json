@@ -1,0 +1,17 @@
+[
+  {
+    "station": {
+      "id": 459,
+      "name": "El Paico",
+      "nationalCode": "330113",
+      "organization": {"id": 2, "name": "dmc"},
+      "latitude": -33.7064,
+      "longitude": -71.0081,
+      "altitude": 275.0
+    },
+    "measureType": {"id": 2, "name": "Temperatura"},
+    "aggregatedValue": 8.0,
+    "confidence": null,
+    "targetTimestamp": 1781807400
+  }
+]

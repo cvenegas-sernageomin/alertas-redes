@@ -47,3 +47,31 @@ Describe "Parse-RedesJson" {
         $r.Count | Should Be 3
     }
 }
+
+Describe "Parse-EmasDmcJson" {
+    $precip  = Get-Content "$here\fixtures\precip_last.json" -Raw | ConvertFrom-Json
+    $tempArr = Get-Content "$here\fixtures\temp_last.json"  -Raw | ConvertFrom-Json
+
+    It "merge por nationalCode: precip y temp en mismo objeto" {
+        $r = Parse-EmasDmcJson $precip $tempArr
+        $e = $r | Where-Object { $_.Codigo -eq '330113' }
+        $e.TasaMmH | Should Be 6.5
+        $e.TempC   | Should Be 8.0
+    }
+    It "calcula isoterma 0C correctamente" {
+        # altitud=275, temp=8.0 -> iso = 275 + (8.0/6.5)*1000 = 275 + 1230 = 1505
+        $r = Parse-EmasDmcJson $precip $tempArr
+        $e = $r | Where-Object { $_.Codigo -eq '330113' }
+        $e.Isoterma | Should Be 1505
+    }
+    It "isoterma es null si no hay temperatura para esa estacion" {
+        $r = Parse-EmasDmcJson $precip $tempArr
+        $e = $r | Where-Object { $_.Codigo -eq '999999' }
+        $e.Isoterma | Should BeNullOrEmpty
+    }
+    It "preserva altitud" {
+        $r = Parse-EmasDmcJson $precip $tempArr
+        $e = $r | Where-Object { $_.Codigo -eq '330113' }
+        $e.Altitud | Should Be 275.0
+    }
+}

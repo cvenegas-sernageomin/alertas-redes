@@ -1,0 +1,32 @@
+[
+  {
+    "station": {
+      "id": 459,
+      "name": "El Paico",
+      "nationalCode": "330113",
+      "organization": {"id": 2, "name": "dmc"},
+      "latitude": -33.7064,
+      "longitude": -71.0081,
+      "altitude": 275.0
+    },
+    "measureType": {"id": 1, "name": "Precipitacion Horaria"},
+    "aggregatedValue": 6.5,
+    "confidence": null,
+    "targetTimestamp": 1781807400
+  },
+  {
+    "station": {
+      "id": 500,
+      "name": "Sin Temp",
+      "nationalCode": "999999",
+      "organization": {"id": 2, "name": "dmc"},
+      "latitude": -34.0,
+      "longitude": -70.5,
+      "altitude": 800.0
+    },
+    "measureType": {"id": 1, "name": "Precipitacion Horaria"},
+    "aggregatedValue": 12.0,
+    "confidence": null,
+    "targetTimestamp": 1781807400
+  }
+]

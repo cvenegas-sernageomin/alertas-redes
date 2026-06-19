@@ -48,3 +48,43 @@ function Get-Cr2AllRedes {
     $datos = $r.Content | ConvertFrom-Json
     return Parse-RedesJson $datos
 }
+
+function Parse-EmasDmcJson([array]$precipArr, [array]$tempArr) {
+    $tempIdx = @{}
+    foreach ($t in $tempArr) { $tempIdx[$t.station.nationalCode] = $t }
+
+    $result = @()
+    foreach ($p in $precipArr) {
+        $s    = $p.station
+        $tObj = $tempIdx[$s.nationalCode]
+        $tempC   = if ($tObj) { [double]$tObj.aggregatedValue } else { $null }
+        $iso     = $null
+        if ($null -ne $tempC -and $null -ne $s.altitude) {
+            $iso = [int][math]::Floor($s.altitude + ($tempC / 6.5) * 1000)
+        }
+        $result += [PSCustomObject]@{
+            Nombre   = $s.name
+            Codigo   = $s.nationalCode
+            Lat      = [double]$s.latitude
+            Lon      = [double]$s.longitude
+            Altitud  = $s.altitude
+            TasaMmH  = [double]$p.aggregatedValue
+            TempC    = $tempC
+            Isoterma = $iso
+            Epoch    = $p.targetTimestamp
+        }
+    }
+    return $result
+}
+
+function Get-Cr2EmasDmc {
+    $rutaP = "api/raw-measure/by-measure-type/1/last"
+    $rutaT = "api/raw-measure/by-measure-type/2/last"
+    $rP = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaP" `
+        -Headers @{ckey = (Sign $rutaP)} -UseBasicParsing -TimeoutSec 60
+    $rT = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaT" `
+        -Headers @{ckey = (Sign $rutaT)} -UseBasicParsing -TimeoutSec 60
+    if ($rP.Content -match '<!DOCTYPE') { throw "CR2 devolvio HTML (precip)" }
+    if ($rT.Content -match '<!DOCTYPE') { throw "CR2 devolvio HTML (temp)" }
+    return Parse-EmasDmcJson ($rP.Content | ConvertFrom-Json) ($rT.Content | ConvertFrom-Json)
+}
