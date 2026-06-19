@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Visviri",
+    "nationalCode": "01000005-K",
+    "organizationName": "dga",
+    "lat": -17.595,
+    "lng": -69.4831,
+    "timestamps": [1781794800, 1781798400, 1781802000],
+    "values": [0.0, 1.5, 3.2],
+    "measureType": 1,
+    "confidence": 0
+  },
+  {
+    "id": 2,
+    "name": "Arica Oficina",
+    "nationalCode": "01001001-K",
+    "organizationName": "dmc",
+    "lat": -18.347,
+    "lng": -70.338,
+    "timestamps": [1781794800, 1781798400, 1781802000],
+    "values": [0.0, null, null],
+    "measureType": 1,
+    "confidence": 0
+  },
+  {
+    "id": 3,
+    "name": "Calama",
+    "nationalCode": "02001001-K",
+    "organizationName": "dmc",
+    "lat": -22.498,
+    "lng": -68.903,
+    "timestamps": [1781794800, 1781798400, 1781802000],
+    "values": [null, null, null],
+    "measureType": 1,
+    "confidence": 0
+  }
+]
