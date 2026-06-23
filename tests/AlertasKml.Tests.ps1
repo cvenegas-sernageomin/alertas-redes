@@ -32,8 +32,8 @@ Describe "Get-ColorEmas" {
 
 Describe "Build-Kml" {
     $redes = @(
-        [PSCustomObject]@{Nombre='Visviri'; Codigo='01K'; Lat=-17.5; Lon=-69.4; TasaMmH=0.0; Epoch=1781802000; Red='dga'}
-        [PSCustomObject]@{Nombre='Arica';   Codigo='02K'; Lat=-18.3; Lon=-70.3; TasaMmH=7.0; Epoch=1781802000; Red='dmc'}
+        [PSCustomObject]@{Nombre='Visviri'; Codigo='01K'; Lat=-17.5; Lon=-69.4; TasaMmH=0.0; Epoch=1781802000; Red='DGA/DMC'}
+        [PSCustomObject]@{Nombre='Arica';   Codigo='02K'; Lat=-18.3; Lon=-70.3; TasaMmH=7.0; Epoch=1781802000; Red='Agromet'}
     )
     $emas = @(
         [PSCustomObject]@{Nombre='El Paico'; Codigo='330113'; Lat=-33.7; Lon=-71.0; Altitud=275.0; TasaMmH=6.5; TempC=8.0; Isoterma=1505; Epoch=1781807400}
@@ -43,8 +43,11 @@ Describe "Build-Kml" {
     It "contiene declaracion XML" {
         $kml | Should Match '<?xml'
     }
-    It "contiene carpeta DMC/DGA/Agromet" {
-        $kml | Should Match 'DMC/DGA/Agromet'
+    It "contiene subcarpeta DGA/DMC" {
+        $kml | Should Match 'DGA/DMC'
+    }
+    It "contiene subcarpeta Agromet" {
+        $kml | Should Match 'Agromet'
     }
     It "contiene carpeta EMAs DMC" {
         $kml | Should Match 'EMAs DMC'

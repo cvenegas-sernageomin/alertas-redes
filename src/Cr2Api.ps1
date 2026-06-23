@@ -12,6 +12,14 @@ function Get-EpochHora {
     return [int64]$hora.ToUnixTimeSeconds()
 }
 
+function Get-RedFromCode([string]$code) {
+    if ($code -match '^AG')   { return 'Agromet' }
+    if ($code -match '^CE')   { return 'CEAZA' }
+    if ($code -match '^(yy|zx):') { return 'RedMeteo' }
+    if ($code -match '^\d{2}') { return 'DGA/DMC' }
+    return 'Otras'
+}
+
 function Parse-RedesJson([array]$datos) {
     $result = @()
     foreach ($d in $datos) {
@@ -32,7 +40,7 @@ function Parse-RedesJson([array]$datos) {
             Lon     = [double]$d.lng
             TasaMmH = $tasa
             Epoch   = $ultimoTs
-            Red     = if ($d.organizationName) { $d.organizationName } else { '' }
+            Red     = Get-RedFromCode $d.nationalCode
         }
     }
     return $result

@@ -21,6 +21,16 @@ Describe "Get-EpochHora" {
     }
 }
 
+Describe "Get-RedFromCode" {
+    It "numerico es DGA/DMC"  { Get-RedFromCode '01000005-K' | Should Be 'DGA/DMC' }
+    It "AG es Agromet"        { Get-RedFromCode 'AG0501'     | Should Be 'Agromet' }
+    It "CE es CEAZA"          { Get-RedFromCode 'CE1234'     | Should Be 'CEAZA'   }
+    It "yy: es RedMeteo"     { Get-RedFromCode 'yy:00:00:00:00:01' | Should Be 'RedMeteo' }
+    It "zx: es RedMeteo"     { Get-RedFromCode 'zx:00:00:00:00:25' | Should Be 'RedMeteo' }
+    It "wl: es Otras"        { Get-RedFromCode 'wl:1d:0a:00:4b:ac' | Should Be 'Otras'   }
+    It "UFRO es Otras"       { Get-RedFromCode 'UFRO_PP02'  | Should Be 'Otras'   }
+}
+
 Describe "Parse-RedesJson" {
     $fixture = Get-Content "$here\fixtures\redes_3h.json" -Raw | ConvertFrom-Json
 
@@ -45,6 +55,10 @@ Describe "Parse-RedesJson" {
     It "retorna tantos registros como el fixture" {
         $r = Parse-RedesJson $fixture
         $r.Count | Should Be 3
+    }
+    It "asigna red por codigo nacional" {
+        $r = Parse-RedesJson $fixture
+        ($r | Where-Object { $_.Codigo -eq '01000005-K' }).Red | Should Be 'DGA/DMC'
     }
 }
 

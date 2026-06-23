@@ -34,5 +34,8 @@ $alertasRedes = ($redes | Where-Object { $_.TasaMmH -ge 5 }).Count
 $alertasEmas  = ($emas  | Where-Object { (Get-ColorEmas $_.TasaMmH $_.Isoterma) -ne 'verde' }).Count
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] KML escrito: $kmlPath" -ForegroundColor Green
-Write-Host "  DMC/DGA/Agromet: $($redes.Count) est. | $alertasRedes con precip>=5 mm/h" -ForegroundColor Yellow
+$redes | Group-Object Red | Sort-Object Count -Desc | ForEach-Object {
+    Write-Host "    $($_.Name): $($_.Count) est." -ForegroundColor Gray
+}
+Write-Host "  Total: $($redes.Count) est. | $alertasRedes con precip>=5 mm/h" -ForegroundColor Yellow
 Write-Host "  EMAs DMC:  $($emas.Count) est.  | $alertasEmas con alerta activa" -ForegroundColor Yellow

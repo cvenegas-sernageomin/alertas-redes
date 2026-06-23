@@ -71,9 +71,26 @@ function Build-PlacemarkEmas($e) {
 "@
 }
 
+function Build-SubfoldersRedes([array]$redes) {
+    $grupos = $redes | Group-Object Red | Sort-Object Count -Descending
+    $xml = ''
+    foreach ($g in $grupos) {
+        $pm = ($g.Group | ForEach-Object { Build-PlacemarkRedes $_ }) -join "`n"
+        $xml += @"
+    <Folder>
+      <name>$($g.Name) ($($g.Count) est.)</name>
+      <open>0</open>
+$pm
+    </Folder>
+
+"@
+    }
+    return $xml
+}
+
 function Build-Kml([array]$redes, [array]$emas) {
     $estilos = Build-Styles
-    $pmRedes = ($redes | ForEach-Object { Build-PlacemarkRedes $_ }) -join "`n"
+    $subfolders = Build-SubfoldersRedes $redes
     $pmEmas  = ($emas  | ForEach-Object { Build-PlacemarkEmas $_ })  -join "`n"
     $ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
     return @"
@@ -83,9 +100,9 @@ function Build-Kml([array]$redes, [array]$emas) {
   <name>Alertas Redes Chile - $ts</name>
 $estilos
   <Folder>
-    <name>DMC/DGA/Agromet - Precipitacion ($($redes.Count) est.)</name>
+    <name>Precipitacion ($($redes.Count) est.)</name>
     <open>1</open>
-$pmRedes
+$subfolders
   </Folder>
   <Folder>
     <name>EMAs DMC - Alerta completa ($($emas.Count) est.)</name>
