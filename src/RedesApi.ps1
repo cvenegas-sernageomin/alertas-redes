@@ -46,13 +46,13 @@ function Parse-RedesJson([array]$datos) {
     return $result
 }
 
-function Get-Cr2AllRedes {
+function Get-AllRedes {
     $epoch = Get-EpochHora
     $ruta = "api/measure/by-measure-type/1/by-timestamp/$epoch/by-interval/3"
     $k = Sign $ruta
     $r = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$ruta" `
         -Headers @{ckey = $k} -UseBasicParsing -TimeoutSec 90
-    if ($r.Content -match '<!DOCTYPE') { throw "CR2 devolvio HTML en vez de JSON" }
+    if ($r.Content -match '<!DOCTYPE') { throw "API devolvio HTML en vez de JSON" }
     $datos = $r.Content | ConvertFrom-Json
     return Parse-RedesJson $datos
 }
@@ -85,14 +85,14 @@ function Parse-EmasDmcJson([array]$precipArr, [array]$tempArr) {
     return $result
 }
 
-function Get-Cr2EmasDmc {
+function Get-EmasDmc {
     $rutaP = "api/raw-measure/by-measure-type/1/last"
     $rutaT = "api/raw-measure/by-measure-type/2/last"
     $rP = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaP" `
         -Headers @{ckey = (Sign $rutaP)} -UseBasicParsing -TimeoutSec 60
     $rT = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaT" `
         -Headers @{ckey = (Sign $rutaT)} -UseBasicParsing -TimeoutSec 60
-    if ($rP.Content -match '<!DOCTYPE') { throw "CR2 devolvio HTML (precip)" }
-    if ($rT.Content -match '<!DOCTYPE') { throw "CR2 devolvio HTML (temp)" }
+    if ($rP.Content -match '<!DOCTYPE') { throw "API devolvio HTML (precip)" }
+    if ($rT.Content -match '<!DOCTYPE') { throw "API devolvio HTML (temp)" }
     return Parse-EmasDmcJson ($rP.Content | ConvertFrom-Json) ($rT.Content | ConvertFrom-Json)
 }

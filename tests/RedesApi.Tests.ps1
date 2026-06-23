@@ -1,5 +1,5 @@
 $here = $PSScriptRoot
-. "$here\..\src\Cr2Api.ps1"
+. "$here\..\src\RedesApi.ps1"
 
 Describe "Sign" {
     It "calcula hash de 'test' correctamente" {

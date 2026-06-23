@@ -1,12 +1,12 @@
 $here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyCommand.Path -Parent }
-. "$here\src\Cr2Api.ps1"
+. "$here\src\RedesApi.ps1"
 . "$here\src\AlertasKml.ps1"
 
 $kmlPath = "$here\red_alertas.kml"
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DMC/DGA/Agromet (todas las redes)..." -ForegroundColor Cyan
 try {
-    $redes = Get-Cr2AllRedes
+    $redes = Get-AllRedes
     Write-Host "  -> $($redes.Count) estaciones" -ForegroundColor Gray
 } catch {
     Write-Warning "Error en DMC/DGA/Agromet: $_"
@@ -15,7 +15,7 @@ try {
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando EMAs DMC..." -ForegroundColor Cyan
 try {
-    $emas = Get-Cr2EmasDmc
+    $emas = Get-EmasDmc
     Write-Host "  -> $($emas.Count) estaciones" -ForegroundColor Gray
 } catch {
     Write-Warning "Error en EMAs DMC: $_"
