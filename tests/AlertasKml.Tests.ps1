@@ -43,8 +43,8 @@ Describe "Build-Kml" {
     It "contiene declaracion XML" {
         $kml | Should Match '<?xml'
     }
-    It "contiene carpeta Redes CR2" {
-        $kml | Should Match 'Redes CR2'
+    It "contiene carpeta VisMet" {
+        $kml | Should Match 'VisMet'
     }
     It "contiene carpeta EMAs DMC" {
         $kml | Should Match 'EMAs DMC'
