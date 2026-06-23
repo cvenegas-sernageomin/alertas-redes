@@ -4,12 +4,12 @@ $here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyC
 
 $kmlPath = "$here\red_alertas.kml"
 
-Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando Redes CR2 (todas las redes)..." -ForegroundColor Cyan
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando VisMet (todas las redes)..." -ForegroundColor Cyan
 try {
     $redes = Get-Cr2AllRedes
     Write-Host "  -> $($redes.Count) estaciones" -ForegroundColor Gray
 } catch {
-    Write-Warning "Error en Redes CR2: $_"
+    Write-Warning "Error en VisMet: $_"
     $redes = @()
 }
 
@@ -34,5 +34,5 @@ $alertasRedes = ($redes | Where-Object { $_.TasaMmH -ge 5 }).Count
 $alertasEmas  = ($emas  | Where-Object { (Get-ColorEmas $_.TasaMmH $_.Isoterma) -ne 'verde' }).Count
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] KML escrito: $kmlPath" -ForegroundColor Green
-Write-Host "  Redes CR2: $($redes.Count) est. | $alertasRedes con precip>=5 mm/h" -ForegroundColor Yellow
+Write-Host "  VisMet: $($redes.Count) est. | $alertasRedes con precip>=5 mm/h" -ForegroundColor Yellow
 Write-Host "  EMAs DMC:  $($emas.Count) est.  | $alertasEmas con alerta activa" -ForegroundColor Yellow
