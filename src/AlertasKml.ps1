@@ -83,7 +83,7 @@ function Build-Kml([array]$redes, [array]$emas) {
   <name>Alertas Redes Chile - $ts</name>
 $estilos
   <Folder>
-    <name>VisMet - Precipitacion ($($redes.Count) est.)</name>
+    <name>DMC/DGA/Agromet - Precipitacion ($($redes.Count) est.)</name>
     <open>1</open>
 $pmRedes
   </Folder>
