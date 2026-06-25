@@ -17,15 +17,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Restaurar red_alertas.kml previo desde live (si existe)
+      - name: Restaurar KMLs previos desde live (si existe)
         shell: pwsh
         run: |
           git fetch origin live 2>$null
           if (git branch -r | Select-String 'origin/live') {
-            git checkout origin/live -- red_alertas.kml 2>$null
+            git checkout origin/live -- red_alertas.kml    2>$null
+            git checkout origin/live -- red_pronostico.kml 2>$null
           }
 
-      - name: Generar KML
+      - name: Generar KMLs
         shell: pwsh
         run: powershell -File Actualizar.ps1
 
@@ -38,5 +39,6 @@ jobs:
           git rm -rf --cached . 2>$null
           Remove-Item .gitignore -ErrorAction SilentlyContinue
           git add red_alertas.kml
-          git commit -m "data: actualizar red_alertas.kml $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
+          if (Test-Path red_pronostico.kml) { git add red_pronostico.kml }
+          git commit -m "data: actualizar KMLs $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
           git push origin HEAD:live --force
