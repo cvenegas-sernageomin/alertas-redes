@@ -24,6 +24,7 @@ jobs:
           if (git branch -r | Select-String 'origin/live') {
             git checkout origin/live -- red_alertas.kml    2>$null
             git checkout origin/live -- red_pronostico.kml 2>$null
+            git checkout origin/live -- red_sismos.kml      2>$null
           }
           exit 0
 
@@ -41,5 +42,6 @@ jobs:
           Remove-Item .gitignore -ErrorAction SilentlyContinue
           git add red_alertas.kml
           if (Test-Path red_pronostico.kml) { git add red_pronostico.kml }
+          if (Test-Path red_sismos.kml)     { git add red_sismos.kml }
           git commit -m "data: actualizar KMLs $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
           git push origin HEAD:live --force

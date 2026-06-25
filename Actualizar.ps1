@@ -2,9 +2,11 @@ $here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyC
 . "$here\src\RedesApi.ps1"
 . "$here\src\AlertasKml.ps1"
 . "$here\src\PronosticoApi.ps1"
+. "$here\src\SismosApi.ps1"
 
 $kmlPath         = "$here\red_alertas.kml"
 $kmlPronostico   = "$here\red_pronostico.kml"
+$kmlSismos       = "$here\red_sismos.kml"
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DMC/DGA/Agromet (todas las redes)..." -ForegroundColor Cyan
 try {
@@ -54,4 +56,15 @@ try {
     Write-Host "  Grilla: $($grilla.Count) pts | $alertasPron ventanas con alerta" -ForegroundColor Yellow
 } catch {
     Write-Warning "Error en pronostico Open-Meteo: $_. Se mantiene el KML anterior."
+}
+
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando sismos (CSN + USGS)..." -ForegroundColor Cyan
+try {
+    $sismosCsn  = Get-SismosCSN
+    $sismosUsgs = Get-SismosUSGS
+    $kmlS = Build-SismosKml $sismosCsn $sismosUsgs
+    [System.IO.File]::WriteAllText($kmlSismos, $kmlS, [System.Text.Encoding]::UTF8)
+    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] KML sismos escrito: $($sismosCsn.Count) CSN + $($sismosUsgs.Count) USGS" -ForegroundColor Green
+} catch {
+    Write-Warning "Error en sismos: $_. Se mantiene el KML anterior."
 }

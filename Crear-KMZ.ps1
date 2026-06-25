@@ -9,11 +9,13 @@ if ($Online) {
     $rawBase        = $rawBase -replace '\.git$', ''
     $kmlUrl         = "$rawBase/live/red_alertas.kml"
     $pronosticoUrl  = "$rawBase/live/red_pronostico.kml"
+    $sismosUrl      = "$rawBase/live/red_sismos.kml"
     $kmzPath        = "$here\alertas-redes-online.kmz"
 } else {
     $base           = $here -replace '\\', '/'
     $kmlUrl         = "file:///$base/red_alertas.kml"
     $pronosticoUrl  = "file:///$base/red_pronostico.kml"
+    $sismosUrl      = "file:///$base/red_sismos.kml"
     $kmzPath        = "$here\alertas-redes.kmz"
 }
 
@@ -40,6 +42,15 @@ $kmlContenido = @"
       <refreshInterval>900</refreshInterval>
     </Link>
   </NetworkLink>
+  <NetworkLink>
+    <name>Sismos Chile (CSN + USGS)</name>
+    <open>1</open>
+    <Link>
+      <href>$sismosUrl</href>
+      <refreshMode>onInterval</refreshMode>
+      <refreshInterval>3600</refreshInterval>
+    </Link>
+  </NetworkLink>
 </Document>
 </kml>
 "@
@@ -57,3 +68,4 @@ Remove-Item $tmpKml
 Write-Host "KMZ generado: $kmzPath" -ForegroundColor Green
 Write-Host "  Alertas:    $kmlUrl"        -ForegroundColor Gray
 Write-Host "  Pronostico: $pronosticoUrl" -ForegroundColor Gray
+Write-Host "  Sismos:     $sismosUrl"    -ForegroundColor Gray
