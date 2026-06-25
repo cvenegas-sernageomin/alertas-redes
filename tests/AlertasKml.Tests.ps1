@@ -59,3 +59,28 @@ Describe "Build-Kml" {
         $kml | Should Match '#amarillo'
     }
 }
+
+Describe "Build-ChartUrl" {
+    $tiempos = @(1781794800, 1781798400, 1781802000)
+    $precip  = @(0.0, 3.2, 7.5)
+    $temp    = @(12.0, 11.5, 10.8)
+    $iso     = @(5646, 5569, 5461)
+
+    It "retorna URL de quickchart.io" {
+        Build-ChartUrl $tiempos $precip | Should Match 'quickchart\.io'
+    }
+    It "con solo precip no incluye Temp ni Isoterma" {
+        $url = Build-ChartUrl $tiempos $precip
+        $url | Should Not Match 'Temp'
+        $url | Should Not Match 'Isoterma'
+    }
+    It "con temp incluye dataset Temp C" {
+        Build-ChartUrl $tiempos $precip $temp | Should Match 'Temp'
+    }
+    It "con iso incluye dataset Isoterma km" {
+        Build-ChartUrl $tiempos $precip $temp $iso | Should Match 'Isoterma'
+    }
+    It "retorna cadena vacia cuando hay menos de 2 puntos" {
+        Build-ChartUrl @(1781794800) @(0.0) | Should Be ''
+    }
+}

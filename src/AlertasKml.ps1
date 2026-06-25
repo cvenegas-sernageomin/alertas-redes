@@ -1,3 +1,58 @@
+function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [array]$iso = @()) {
+    if ($tiempos.Count -lt 2) { return '' }
+
+    $labels = @($tiempos | ForEach-Object {
+        [DateTimeOffset]::FromUnixTimeSeconds([long]$_).ToLocalTime().ToString('HH:mm')
+    })
+
+    $ds = [System.Collections.Generic.List[hashtable]]::new()
+    $ds.Add(@{
+        type='bar'; label='Precip mm/h'; data=$precip
+        backgroundColor='rgba(55,138,221,0.7)'; yAxisID='yP'; order=2
+    })
+
+    if ($temp.Count -gt 0) {
+        $ds.Add(@{
+            type='line'; label='Temp C'; data=$temp
+            borderColor='#E24B4A'; borderWidth=2; pointRadius=2; tension=0.3; yAxisID='yR'; order=1
+        })
+    }
+
+    if ($iso.Count -gt 0) {
+        $isoKm = @($iso | ForEach-Object {
+            if ($null -ne $_) { [math]::Round([double]$_ / 1000.0, 2) } else { $null }
+        })
+        $ds.Add(@{
+            type='line'; label='Isoterma km'; data=$isoKm
+            borderColor='#EF9F27'; borderWidth=2; borderDash=@(4,3); pointRadius=2; tension=0.3; yAxisID='yR'; order=1
+        })
+        $ds.Add(@{
+            type='line'; label='Umbral 3km'; data=@($tiempos | ForEach-Object { 3.0 })
+            borderColor='rgba(162,45,45,0.4)'; borderWidth=1; borderDash=@(6,4); pointRadius=0; yAxisID='yR'; order=0
+        })
+    }
+
+    $escalas = @{
+        x  = @{ ticks = @{ font = @{ size = 10 } } }
+        yP = @{ position='left';  title=@{ display=$true; text='mm/h' }; ticks=@{ font=@{ size=10 } } }
+    }
+    if ($temp.Count -gt 0 -or $iso.Count -gt 0) {
+        $escalas['yR'] = @{
+            position='right'; grid=@{ drawOnChartArea=$false }
+            title=@{ display=$true; text='C/km' }; ticks=@{ font=@{ size=10 } }
+        }
+    }
+
+    $cfg = @{
+        type = 'bar'
+        data = @{ labels=$labels; datasets=$ds.ToArray() }
+        options = @{ plugins=@{ legend=@{ display=$false } }; scales=$escalas }
+    }
+    $json    = $cfg | ConvertTo-Json -Depth 15 -Compress
+    $encoded = [Uri]::EscapeDataString($json)
+    return "https://quickchart.io/chart?w=300&h=160&c=$encoded"
+}
+
 function Get-ColorRedes([double]$mmH) {
     if ($mmH -ge 10) { return 'rojo' }
     if ($mmH -ge 5)  { return 'amarillo' }
