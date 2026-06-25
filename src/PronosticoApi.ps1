@@ -1,9 +1,18 @@
 function Get-GrillaChile {
+    # lonMax por latitud: límite aproximado con Argentina/Bolivia
+    $lonMaxTab = @{
+        '-17.5'='-68'; '-19.5'='-68'; '-21.5'='-68'; '-23.5'='-68'
+        '-25.5'='-68'; '-27.5'='-69'; '-29.5'='-70'; '-31.5'='-70'
+        '-33.5'='-70'; '-35.5'='-71'; '-37.5'='-71'; '-39.5'='-71'
+        '-41.5'='-72'; '-43.5'='-72'; '-45.5'='-72'; '-47.5'='-73'
+        '-49.5'='-73'; '-51.5'='-73'; '-53.5'='-69'; '-55.5'='-69'
+    }
     $puntos = @()
     $lat = -17.5
     while ($lat -ge -56.0) {
-        $lonMin = if ($lat -gt -30) { -75.0 } elseif ($lat -gt -43) { -76.0 } else { -77.0 }
-        $lonMax = if ($lat -gt -30) { -67.0 } else { -68.0 }
+        $latKey = $lat.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+        $lonMax = if ($lonMaxTab.ContainsKey($latKey)) { [double]$lonMaxTab[$latKey] } else { -70.0 }
+        $lonMin = if ($lat -gt -43) { -75.0 } else { -77.0 }
         $lon = $lonMin
         while ($lon -le $lonMax) {
             $puntos += [PSCustomObject]@{ Lat = $lat; Lon = $lon }
