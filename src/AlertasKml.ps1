@@ -218,7 +218,11 @@ function Build-PlacemarkPronostico($v) {
             "<tr><td>ECMWF</td><td>$($v.PrecipEcmwf)</td><td>$isoE</td><td>$($v.ColorEcmwf)</td></tr>" +
             "<tr><td>GFS</td><td>$($v.PrecipGfs)</td><td>$isoG</td><td>$($v.ColorGfs)</td></tr>" +
             "<tr><td>ICON</td><td>$($v.PrecipIcon)</td><td>$isoI</td><td>$($v.ColorIcon)</td></tr>" +
-            "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)]]>"
+            "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)<br/><br/>" +
+            "<hr/><b>Leyenda (acumulado en ventana):</b><br/>" +
+            "&#x1F7E2; Verde: precip &lt; 5 mm &nbsp;O&nbsp; isoterma &lt; 2500 m<br/>" +
+            "&#x1F7E1; Amarillo: precip &ge; 5 mm &nbsp;Y&nbsp; isoterma &ge; 2500 m<br/>" +
+            "&#x1F534; Rojo: precip &ge; 20 mm &nbsp;Y&nbsp; isoterma &ge; 3000 m]]>"
     return @"
     <Placemark>
       <name>$($v.Lat),$($v.Lon)</name>
