@@ -104,7 +104,8 @@ function Build-PlacemarkRedes($e) {
         $url = Build-ChartUrl $e.TiemposSerie $e.ValoresSerie
         if ($url) { $chartImg = "<br/><small>Precip (mm/h)</small><br/><img src='$url' width='300'/>" }
     }
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg]]>"
+    $leyenda = "<hr/><b>Leyenda:</b><br/>&#x1F7E2; Verde: precip &lt; 5 mm/h<br/>&#x1F7E1; Amarillo: precip &ge; 5 mm/h<br/>&#x1F534; Rojo: precip &ge; 10 mm/h"
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
@@ -125,7 +126,8 @@ function Build-PlacemarkEmas($e) {
         $url = Build-ChartUrl $e.TiemposSerie $e.ValoresPrecip $e.ValoresTemp $e.ValoresIso
         if ($url) { $chartImg = "<br/><small>Precip mm/h | Temp C | Isoterma km</small><br/><img src='$url' width='300'/>" }
     }
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg]]>"
+    $leyenda = "<hr/><b>Leyenda:</b><br/>&#x1F7E2; Verde: condicion sin alerta<br/>&#x1F7E1; Amarillo: precip &ge; 5 mm/h &nbsp;Y&nbsp; isoterma &ge; 3000 m<br/>&#x1F534; Rojo: precip &ge; 10 mm/h &nbsp;Y&nbsp; isoterma &ge; 3000 m"
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
