@@ -25,7 +25,7 @@ $kmlContenido = @"
 <Document>
   <name>Alertas Redes Chile</name>
   <NetworkLink>
-    <name>Alertas actuales</name>
+    <name>Alertas estaciones meteorologicas</name>
     <open>0</open>
     <Link>
       <href>$kmlUrl</href>
@@ -34,7 +34,7 @@ $kmlContenido = @"
     </Link>
   </NetworkLink>
   <NetworkLink>
-    <name>Pronostico 48h</name>
+    <name>Pronosticos meteorologicos</name>
     <open>0</open>
     <Link>
       <href>$pronosticoUrl</href>
