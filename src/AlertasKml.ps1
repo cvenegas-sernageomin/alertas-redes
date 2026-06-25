@@ -104,7 +104,11 @@ function Build-PlacemarkRedes($e) {
         $url = Build-ChartUrl $e.TiemposSerie $e.ValoresSerie
         if ($url) { $chartImg = "<br/><small>Precip (mm/h)</small><br/><img src='$url' width='300'/>" }
     }
-    $leyenda = "<hr/><b>Leyenda:</b><br/><font color='#009900'>&#9632;</font> Verde: precip &lt; 5 mm/h<br/><font color='#ccaa00'>&#9632;</font> Amarillo: precip &ge; 5 mm/h<br/><font color='#cc0000'>&#9632;</font> Rojo: precip &ge; 10 mm/h"
+    $leyenda = "<hr/><b>Leyenda:</b><table cellspacing='2' cellpadding='2'>" +
+               "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: precip &lt; 5 mm/h</td></tr>" +
+               "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm/h</td></tr>" +
+               "<tr><td bgcolor='#ff0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Rojo: precip &ge; 10 mm/h</td></tr>" +
+               "</table>"
     $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
@@ -126,7 +130,11 @@ function Build-PlacemarkEmas($e) {
         $url = Build-ChartUrl $e.TiemposSerie $e.ValoresPrecip $e.ValoresTemp $e.ValoresIso
         if ($url) { $chartImg = "<br/><small>Precip mm/h | Temp C | Isoterma km</small><br/><img src='$url' width='300'/>" }
     }
-    $leyenda = "<hr/><b>Leyenda:</b><br/><font color='#009900'>&#9632;</font> Verde: condicion sin alerta<br/><font color='#ccaa00'>&#9632;</font> Amarillo: precip &ge; 5 mm/h &nbsp;Y&nbsp; isoterma &ge; 3000 m<br/><font color='#cc0000'>&#9632;</font> Rojo: precip &ge; 10 mm/h &nbsp;Y&nbsp; isoterma &ge; 3000 m"
+    $leyenda = "<hr/><b>Leyenda:</b><table cellspacing='2' cellpadding='2'>" +
+               "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: condicion sin alerta</td></tr>" +
+               "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm/h Y isoterma &ge; 3000 m</td></tr>" +
+               "<tr><td bgcolor='#ff0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Rojo: precip &ge; 10 mm/h Y isoterma &ge; 3000 m</td></tr>" +
+               "</table>"
     $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
@@ -221,10 +229,11 @@ function Build-PlacemarkPronostico($v) {
             "<tr><td>GFS</td><td>$($v.PrecipGfs)</td><td>$isoG</td><td>$($v.ColorGfs)</td></tr>" +
             "<tr><td>ICON</td><td>$($v.PrecipIcon)</td><td>$isoI</td><td>$($v.ColorIcon)</td></tr>" +
             "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)<br/><br/>" +
-            "<hr/><b>Leyenda (acumulado en ventana):</b><br/>" +
-            "<font color='#009900'>&#9632;</font> Verde: precip &lt; 5 mm &nbsp;O&nbsp; isoterma &lt; 2500 m<br/>" +
-            "<font color='#ccaa00'>&#9632;</font> Amarillo: precip &ge; 5 mm &nbsp;Y&nbsp; isoterma &ge; 2500 m<br/>" +
-            "<font color='#cc0000'>&#9632;</font> Rojo: precip &ge; 20 mm &nbsp;Y&nbsp; isoterma &ge; 3000 m]]>"
+            "<hr/><b>Leyenda (acumulado en ventana):</b><table cellspacing='2' cellpadding='2'>" +
+            "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: precip &lt; 5 mm O isoterma &lt; 2500 m</td></tr>" +
+            "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm Y isoterma &ge; 2500 m</td></tr>" +
+            "<tr><td bgcolor='#ff0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Rojo: precip &ge; 20 mm Y isoterma &ge; 3000 m</td></tr>" +
+            "</table>]]>"
     return @"
     <Placemark>
       <name>$($v.Lat),$($v.Lon)</name>
