@@ -84,3 +84,35 @@ Describe "Build-ChartUrl" {
         Build-ChartUrl @(1781794800) @(0.0) | Should Be ''
     }
 }
+
+Describe "Build-PlacemarkRedes con serie" {
+    It "incluye img cuando ValoresSerie tiene 2+ puntos" {
+        $e = [PSCustomObject]@{
+            Nombre='Visviri'; Codigo='01K'; Lat=-17.5; Lon=-69.4
+            TasaMmH=3.2; Epoch=1781802000; Red='DGA/DMC'
+            ValoresSerie=@(0.0,1.5,3.2); TiemposSerie=@(1781794800,1781798400,1781802000)
+        }
+        Build-PlacemarkRedes $e | Should Match '<img'
+    }
+    It "no incluye img cuando ValoresSerie tiene 1 punto" {
+        $e = [PSCustomObject]@{
+            Nombre='Visviri'; Codigo='01K'; Lat=-17.5; Lon=-69.4
+            TasaMmH=3.2; Epoch=1781802000; Red='DGA/DMC'
+            ValoresSerie=@(3.2); TiemposSerie=@(1781802000)
+        }
+        Build-PlacemarkRedes $e | Should Not Match '<img'
+    }
+}
+
+Describe "Build-PlacemarkEmas con serie" {
+    It "incluye img con temp e iso cuando TiemposSerie tiene 2+ puntos" {
+        $e = [PSCustomObject]@{
+            Nombre='El Paico'; Codigo='330113'; Lat=-33.7; Lon=-71.0
+            Altitud=275.0; TasaMmH=6.5; TempC=8.0; Isoterma=1505; Epoch=1781807400
+            ValoresPrecip=@(3.0,5.5,6.5); ValoresTemp=@(9.0,8.5,8.0)
+            ValoresIso=@(1659,1582,1505)
+            TiemposSerie=@(1781794800,1781798400,1781802000)
+        }
+        Build-PlacemarkEmas $e | Should Match '<img'
+    }
+}

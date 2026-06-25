@@ -99,7 +99,12 @@ function Build-Styles {
 function Build-PlacemarkRedes($e) {
     $color = Get-ColorRedes $e.TasaMmH
     $hora  = Format-Epoch $e.Epoch
-    $desc  = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora]]>"
+    $chartImg = ''
+    if ($e.ValoresSerie -and $e.ValoresSerie.Count -ge 2) {
+        $url = Build-ChartUrl $e.TiemposSerie $e.ValoresSerie
+        if ($url) { $chartImg = "<br/><small>Precip (mm/h)</small><br/><img src='$url' width='300'/>" }
+    }
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
@@ -111,11 +116,16 @@ function Build-PlacemarkRedes($e) {
 }
 
 function Build-PlacemarkEmas($e) {
-    $color = Get-ColorEmas $e.TasaMmH $e.Isoterma
-    $hora  = Format-Epoch $e.Epoch
+    $color   = Get-ColorEmas $e.TasaMmH $e.Isoterma
+    $hora    = Format-Epoch $e.Epoch
     $isoStr  = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
-    $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C"   } else { 'sin dato' }
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora]]>"
+    $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C" } else { 'sin dato' }
+    $chartImg = ''
+    if ($e.TiemposSerie -and $e.TiemposSerie.Count -ge 2) {
+        $url = Build-ChartUrl $e.TiemposSerie $e.ValoresPrecip $e.ValoresTemp $e.ValoresIso
+        if ($url) { $chartImg = "<br/><small>Precip mm/h | Temp C | Isoterma km</small><br/><img src='$url' width='300'/>" }
+    }
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
