@@ -67,7 +67,8 @@ function Build-VentanasPunto($punto) {
         @{ Nombre='+12 a 24h'; Desde=12; Hasta=23 }
         @{ Nombre='+24 a 48h'; Desde=24; Hasta=47 }
     )
-    $ventanas = @()
+    $orden    = @{ verde=0; amarillo=1; rojo=2 }
+    $ventanas = [System.Collections.ArrayList]::new()
     foreach ($cfg in $config) {
         $pE = Get-SumaVentana $punto.HourlyPrecipEcmwf $cfg.Desde $cfg.Hasta
         $pG = Get-SumaVentana $punto.HourlyPrecipGfs   $cfg.Desde $cfg.Hasta
@@ -80,12 +81,11 @@ function Build-VentanasPunto($punto) {
         $cG = Get-ColorPronostico $pG $iG
         $cI = Get-ColorPronostico $pI $iI
 
-        $orden = @{ verde=0; amarillo=1; rojo=2 }
         $colores = @($cE, $cG, $cI)
         $peor = $colores | Sort-Object { $orden[$_] } -Descending | Select-Object -First 1
         $n    = ($colores | Where-Object { $_ -eq $peor }).Count
 
-        $ventanas += [PSCustomObject]@{
+        [void]$ventanas.Add([PSCustomObject]@{
             Nombre      = $cfg.Nombre
             Lat         = $punto.Lat
             Lon         = $punto.Lon
@@ -101,7 +101,7 @@ function Build-VentanasPunto($punto) {
             ColorFinal  = $peor
             NModelos    = $n
             EstiloKml   = Get-EstiloPronostico $peor $n
-        }
+        })
     }
-    return $ventanas
+    return $ventanas.ToArray()
 }
