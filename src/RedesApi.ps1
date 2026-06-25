@@ -34,13 +34,15 @@ function Parse-RedesJson([array]$datos) {
         }
         $ultimoTs = if ($d.timestamps -and $d.timestamps.Count -gt 0) { $d.timestamps[-1] } else { 0 }
         $result += [PSCustomObject]@{
-            Nombre  = $d.name
-            Codigo  = $d.nationalCode
-            Lat     = [double]$d.lat
-            Lon     = [double]$d.lng
-            TasaMmH = $tasa
-            Epoch   = $ultimoTs
-            Red     = Get-RedFromCode $d.nationalCode
+            Nombre       = $d.name
+            Codigo       = $d.nationalCode
+            Lat          = [double]$d.lat
+            Lon          = [double]$d.lng
+            TasaMmH      = $tasa
+            Epoch        = $ultimoTs
+            Red          = Get-RedFromCode $d.nationalCode
+            ValoresSerie = if ($d.values)     { $d.values }     else { @() }
+            TiemposSerie = if ($d.timestamps) { $d.timestamps } else { @() }
         }
     }
     return $result

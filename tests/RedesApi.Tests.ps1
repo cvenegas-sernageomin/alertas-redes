@@ -60,6 +60,18 @@ Describe "Parse-RedesJson" {
         $r = Parse-RedesJson $fixture
         ($r | Where-Object { $_.Codigo -eq '01000005-K' }).Red | Should Be 'DGA/DMC'
     }
+    It "preserva ValoresSerie completo" {
+        $r = Parse-RedesJson $fixture
+        $v = $r | Where-Object { $_.Codigo -eq '01000005-K' }
+        $v.ValoresSerie.Count | Should Be 3
+        $v.ValoresSerie[2]    | Should Be 3.2
+    }
+    It "preserva TiemposSerie completo" {
+        $r = Parse-RedesJson $fixture
+        $v = $r | Where-Object { $_.Codigo -eq '01000005-K' }
+        $v.TiemposSerie.Count | Should Be 3
+        $v.TiemposSerie[0]    | Should Be 1781794800
+    }
 }
 
 Describe "Parse-EmasDmcJson" {
