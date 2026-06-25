@@ -25,6 +25,7 @@ jobs:
             git checkout origin/live -- red_alertas.kml    2>$null
             git checkout origin/live -- red_pronostico.kml 2>$null
           }
+          exit 0
 
       - name: Generar KMLs
         shell: pwsh
