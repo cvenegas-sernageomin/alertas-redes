@@ -65,7 +65,7 @@ function Get-ColorPronostico([double]$precip, $iso) {
 }
 
 function Get-EstiloPronostico([string]$colorPeor, [int]$nModelos) {
-    if ($colorPeor -eq 'verde') { return 'verde' }
+    if ($colorPeor -eq 'verde') { return 'verde_p' }
     return "${colorPeor}_${nModelos}"
 }
 

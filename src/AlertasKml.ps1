@@ -180,7 +180,15 @@ $pmEmas
 }
 
 function Build-StylesPronostico {
-    $xml = ''
+    $xml = @"
+  <Style id="verde_p">
+    <IconStyle>
+      <color>ff00cc00</color><scale>0.6</scale>
+      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href></Icon>
+    </IconStyle>
+    <LabelStyle><scale>0</scale></LabelStyle>
+  </Style>
+"@
     foreach ($color in @('amarillo', 'rojo')) {
         $kmlColor = if ($color -eq 'rojo') { 'ff0000ff' } else { 'ff00ffff' }
         foreach ($n in @(1, 2, 3)) {
