@@ -50,7 +50,7 @@ function Parse-RedesJson([array]$datos) {
 
 function Get-AllRedes {
     $epoch = Get-EpochHora
-    $ruta = "api/measure/by-measure-type/1/by-timestamp/$epoch/by-interval/3"
+    $ruta = "api/measure/by-measure-type/1/by-timestamp/$epoch/by-interval/24"
     $k = Sign $ruta
     $r = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$ruta" `
         -Headers @{ckey = $k} -UseBasicParsing -TimeoutSec 90
@@ -134,7 +134,7 @@ function Get-EmasDmc([array]$redesData) {
     foreach ($p in $precipRaw) { $altitudMap[$p.station.nationalCode] = $p.station.altitude }
 
     $epoch = Get-EpochHora
-    $rutaT = "api/measure/by-measure-type/2/by-timestamp/$epoch/by-interval/3"
+    $rutaT = "api/measure/by-measure-type/2/by-timestamp/$epoch/by-interval/24"
     $tempSerie = @()
     try {
         $rT = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaT" `
