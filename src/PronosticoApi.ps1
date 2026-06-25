@@ -112,8 +112,8 @@ function Get-PronosticoGrilla([array]$grilla) {
     while ($i -lt $grilla.Count) {
         $hasta = [Math]::Min($i + 99, $grilla.Count - 1)
         $lote  = $grilla[$i..$hasta]
-        $lats  = @($lote | ForEach-Object { [string]$_.Lat }) -join ','
-        $lons  = @($lote | ForEach-Object { [string]$_.Lon }) -join ','
+        $lats  = @($lote | ForEach-Object { $_.Lat.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ','
+        $lons  = @($lote | ForEach-Object { $_.Lon.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ','
         $url   = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons" +
                  "&hourly=precipitation,freezing_level_height" +
                  "&models=ecmwf_ifs025,gfs_seamless,icon_seamless&forecast_days=2"
