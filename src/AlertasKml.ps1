@@ -191,7 +191,7 @@ function Build-StylesPronostico {
   <Style id="${color}_${n}">
     <IconStyle>
       <color>$kmlC</color><scale>$scale</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon>
+      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href></Icon>
     </IconStyle>
     <LabelStyle><scale>0</scale></LabelStyle>
   </Style>
