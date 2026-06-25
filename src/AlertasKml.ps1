@@ -176,12 +176,12 @@ function Build-Kml([array]$redes, [array]$emas) {
 $estilos
   <Folder>
     <name>Precipitacion ($($redes.Count) est.)</name>
-    <open>1</open>
+    <open>0</open>
 $subfolders
   </Folder>
   <Folder>
     <name>EMAs DMC - Alerta completa ($($emas.Count) est.)</name>
-    <open>1</open>
+    <open>0</open>
 $pmEmas
   </Folder>
 </Document>

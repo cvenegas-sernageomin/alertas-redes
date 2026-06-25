@@ -133,7 +133,7 @@ function Build-SismosKml([array]$csn, [array]$usgs) {
   <name>Sismos Chile - $ts</name>
   <Folder>
     <name>CSN - Superficiales (&lt;30 km) ($($csnSup.Count) ev.)</name>
-    <open>1</open>
+    <open>0</open>
 $pmCsnSup
   </Folder>
   <Folder>

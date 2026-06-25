@@ -26,7 +26,7 @@ $kmlContenido = @"
   <name>Alertas Redes Chile</name>
   <NetworkLink>
     <name>Alertas actuales</name>
-    <open>1</open>
+    <open>0</open>
     <Link>
       <href>$kmlUrl</href>
       <refreshMode>onInterval</refreshMode>
@@ -35,7 +35,7 @@ $kmlContenido = @"
   </NetworkLink>
   <NetworkLink>
     <name>Pronostico 48h</name>
-    <open>1</open>
+    <open>0</open>
     <Link>
       <href>$pronosticoUrl</href>
       <refreshMode>onInterval</refreshMode>
@@ -44,7 +44,7 @@ $kmlContenido = @"
   </NetworkLink>
   <NetworkLink>
     <name>Sismos Chile (CSN + USGS)</name>
-    <open>1</open>
+    <open>0</open>
     <Link>
       <href>$sismosUrl</href>
       <refreshMode>onInterval</refreshMode>
