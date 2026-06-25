@@ -16,9 +16,9 @@ function Get-GrillaChile {
         $lon = $lonMin
         while ($lon -le $lonMax) {
             $puntos += [PSCustomObject]@{ Lat = $lat; Lon = $lon }
-            $lon = [math]::Round($lon + 2.0, 1)
+            $lon = [math]::Round($lon + 1.0, 1)
         }
-        $lat = [math]::Round($lat - 2.0, 1)
+        $lat = [math]::Round($lat - 1.0, 1)
     }
     return $puntos
 }
