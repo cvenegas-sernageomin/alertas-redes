@@ -28,7 +28,7 @@ function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [ar
         })
         $ds.Add(@{
             type='line'; label='Umbral 3km'; data=@($tiempos | ForEach-Object { 3.0 })
-            borderColor='rgba(162,45,45,0.4)'; borderWidth=1; borderDash=@(6,4); pointRadius=0; yAxisID='yR'; order=0
+            borderColor='rgba(162,45,45,0.4)'; borderWidth=1; borderDash=@(6,4); pointRadius=0; yAxisID='yR'; order=0; hidden=$true
         })
     }
 
@@ -46,7 +46,7 @@ function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [ar
     $cfg = @{
         type = 'bar'
         data = @{ labels=$labels; datasets=$ds.ToArray() }
-        options = @{ plugins=@{ legend=@{ display=$false } }; scales=$escalas }
+        options = @{ plugins=@{ legend=@{ display=$true; position='bottom'; labels=@{ boxWidth=10; font=@{ size=10 } } } }; scales=$escalas }
     }
     $json    = $cfg | ConvertTo-Json -Depth 15 -Compress
     $encoded = [Uri]::EscapeDataString($json)
