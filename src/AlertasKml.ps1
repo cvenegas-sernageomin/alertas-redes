@@ -178,3 +178,81 @@ $pmEmas
 </kml>
 "@
 }
+
+function Build-StylesPronostico {
+    $xml = ''
+    foreach ($color in @('amarillo', 'rojo')) {
+        $kmlColor = if ($color -eq 'rojo') { 'ff0000ff' } else { 'ff00ffff' }
+        foreach ($n in @(1, 2, 3)) {
+            $scale = if ($n -eq 3) { 1.0 } elseif ($n -eq 2) { 0.8 } else { 0.6 }
+            $opac  = if ($n -eq 1) { 'bb' } else { 'ff' }
+            $kmlC  = "$opac$($kmlColor.Substring(2))"
+            $xml  += @"
+  <Style id="${color}_${n}">
+    <IconStyle>
+      <color>$kmlC</color><scale>$scale</scale>
+      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon>
+    </IconStyle>
+    <LabelStyle><scale>0</scale></LabelStyle>
+  </Style>
+"@
+        }
+    }
+    return $xml
+}
+
+function Build-PlacemarkPronostico($v) {
+    $isoE = if ($null -ne $v.IsoEcmwf) { "$($v.IsoEcmwf) m" } else { 'sin dato' }
+    $isoG = if ($null -ne $v.IsoGfs)   { "$($v.IsoGfs) m"   } else { 'sin dato' }
+    $isoI = if ($null -ne $v.IsoIcon)  { "$($v.IsoIcon) m"  } else { 'sin dato' }
+    $desc = "<![CDATA[<b>$($v.Lat) / $($v.Lon)</b><br/>Ventana: $($v.Nombre)<br/><br/>" +
+            "<table><tr><th></th><th>Precip (mm)</th><th>Isoterma (m)</th><th>Alerta</th></tr>" +
+            "<tr><td>ECMWF</td><td>$($v.PrecipEcmwf)</td><td>$isoE</td><td>$($v.ColorEcmwf)</td></tr>" +
+            "<tr><td>GFS</td><td>$($v.PrecipGfs)</td><td>$isoG</td><td>$($v.ColorGfs)</td></tr>" +
+            "<tr><td>ICON</td><td>$($v.PrecipIcon)</td><td>$isoI</td><td>$($v.ColorIcon)</td></tr>" +
+            "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)]]>"
+    return @"
+    <Placemark>
+      <name>$($v.Lat),$($v.Lon)</name>
+      <styleUrl>#$($v.EstiloKml)</styleUrl>
+      <description>$desc</description>
+      <Point><coordinates>$($v.Lon),$($v.Lat),0</coordinates></Point>
+    </Placemark>
+"@
+}
+
+function Build-PronosticoFolders([array]$allVentanas) {
+    $nombres = @('+0 a 6h', '+6 a 12h', '+12 a 24h', '+24 a 48h')
+    $xml = ''
+    foreach ($nombre in $nombres) {
+        $grupo = $allVentanas | Where-Object { $_.Nombre -eq $nombre }
+        $pm    = ($grupo | ForEach-Object { Build-PlacemarkPronostico $_ }) -join "`n"
+        $xml  += @"
+  <Folder>
+    <name>$nombre ($($grupo.Count) pts)</name>
+    <open>0</open>
+$pm
+  </Folder>
+
+"@
+    }
+    return $xml
+}
+
+function Build-PronosticoKml([array]$allVentanas) {
+    $estilosBase  = Build-Styles
+    $estilosPron  = Build-StylesPronostico
+    $folders      = Build-PronosticoFolders $allVentanas
+    $ts           = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+    return @"
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Pronostico Chile - $ts</name>
+$estilosBase
+$estilosPron
+$folders
+</Document>
+</kml>
+"@
+}

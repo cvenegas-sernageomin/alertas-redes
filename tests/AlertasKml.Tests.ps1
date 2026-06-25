@@ -116,3 +116,52 @@ Describe "Build-PlacemarkEmas con serie" {
         Build-PlacemarkEmas $e | Should Match '<img'
     }
 }
+
+# Cargar PronosticoApi.ps1 también (necesario para construir las ventanas de prueba)
+. "$here\..\src\PronosticoApi.ps1"
+
+Describe "Build-StylesPronostico" {
+    $estilos = Build-StylesPronostico
+
+    It "contiene style amarillo_1" { $estilos | Should Match 'id="amarillo_1"' }
+    It "contiene style amarillo_3" { $estilos | Should Match 'id="amarillo_3"' }
+    It "contiene style rojo_2"     { $estilos | Should Match 'id="rojo_2"'     }
+    It "contiene 6 estilos en total" {
+        ($estilos | Select-String '<Style id=' -AllMatches).Matches.Count | Should Be 6
+    }
+}
+
+Describe "Build-PlacemarkPronostico" {
+    $v = [PSCustomObject]@{
+        Nombre='+12 a 24h'; Lat=-33.5; Lon=-70.5
+        PrecipEcmwf=26.0; PrecipGfs=18.0; PrecipIcon=30.0
+        IsoEcmwf=3200; IsoGfs=3100; IsoIcon=3400
+        ColorEcmwf='rojo'; ColorGfs='amarillo'; ColorIcon='rojo'
+        ColorFinal='rojo'; NModelos=2; EstiloKml='rojo_2'
+    }
+    $pm = Build-PlacemarkPronostico $v
+
+    It "es un elemento Placemark"          { $pm | Should Match '<Placemark>'   }
+    It "usa styleUrl rojo_2"               { $pm | Should Match '#rojo_2'       }
+    It "contiene ECMWF en descripcion"     { $pm | Should Match 'ECMWF'         }
+    It "contiene GFS en descripcion"       { $pm | Should Match 'GFS'           }
+    It "contiene ICON en descripcion"      { $pm | Should Match 'ICON'          }
+    It "coordenadas lon,lat"               { $pm | Should Match '-70.5,-33.5'   }
+}
+
+Describe "Build-PronosticoKml" {
+    $fixture = Get-Content "$here\fixtures\openmeteo_2pts.json" -Raw | ConvertFrom-Json
+    $puntos  = $fixture | ForEach-Object { Parse-OpenMeteoPoint $_ }
+    $ventanas = @()
+    foreach ($p in $puntos) { $ventanas += Build-VentanasPunto $p }
+    $kml = Build-PronosticoKml $ventanas
+
+    It "contiene declaracion XML"        { $kml | Should Match '<?xml'        }
+    It "contiene carpeta +0 a 6h"        { $kml | Should Match '\+0 a 6h'     }
+    It "contiene carpeta +12 a 24h"      { $kml | Should Match '\+12 a 24h'   }
+    It "contiene carpeta +24 a 48h"      { $kml | Should Match '\+24 a 48h'   }
+    It "contiene 8 placemarks (2pts x 4ventanas)" {
+        ($kml | Select-String '<Placemark>' -AllMatches).Matches.Count | Should Be 8
+    }
+    It "contiene estilo rojo_2" { $kml | Should Match 'rojo_2' }
+}
