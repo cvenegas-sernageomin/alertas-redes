@@ -59,29 +59,65 @@ function Get-AllRedes {
     return Parse-RedesJson $datos
 }
 
-function Parse-EmasDmcJson([array]$precipArr, [array]$tempArr) {
+function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$altitudMap) {
     $tempIdx = @{}
-    foreach ($t in $tempArr) { $tempIdx[$t.station.nationalCode] = $t }
+    foreach ($t in $tempSerie) { $tempIdx[$t.nationalCode] = $t }
 
     $result = @()
-    foreach ($p in $precipArr) {
-        $s    = $p.station
-        $tObj = $tempIdx[$s.nationalCode]
-        $tempC   = if ($tObj) { [double]$tObj.aggregatedValue } else { $null }
-        $iso     = $null
-        if ($null -ne $tempC -and $null -ne $s.altitude) {
-            $iso = [int][math]::Floor($s.altitude + ($tempC / 6.5) * 1000)
+    foreach ($s in $precipSerie) {
+        $alt  = $altitudMap[$s.Codigo]
+        $tObj = $tempIdx[$s.Codigo]
+
+        $tempC = $null
+        if ($tObj -and $tObj.values) {
+            for ($i = $tObj.values.Count - 1; $i -ge 0; $i--) {
+                if ($null -ne $tObj.values[$i]) { $tempC = [double]$tObj.values[$i]; break }
+            }
         }
+
+        $iso = $null
+        if ($null -ne $tempC -and $null -ne $alt) {
+            $iso = [int][math]::Floor($alt + ($tempC / 6.5) * 1000)
+        }
+
+        $tempByEpoch = @{}
+        if ($tObj -and $tObj.timestamps -and $tObj.values) {
+            for ($i = 0; $i -lt $tObj.timestamps.Count; $i++) {
+                $tempByEpoch[$tObj.timestamps[$i]] = $tObj.values[$i]
+            }
+        }
+
+        $valoresTemp = [System.Collections.ArrayList]::new()
+        $valoresIso  = [System.Collections.ArrayList]::new()
+        if ($tObj) {
+            foreach ($ts in $s.TiemposSerie) {
+                $tv = $tempByEpoch[$ts]
+                if ($null -ne $tv) {
+                    [void]$valoresTemp.Add([double]$tv)
+                    $isoTs = $null
+                    if ($null -ne $alt) { $isoTs = [int][math]::Floor($alt + ([double]$tv / 6.5) * 1000) }
+                    [void]$valoresIso.Add($isoTs)
+                } else {
+                    [void]$valoresTemp.Add($null)
+                    [void]$valoresIso.Add($null)
+                }
+            }
+        }
+
         $result += [PSCustomObject]@{
-            Nombre   = $s.name
-            Codigo   = $s.nationalCode
-            Lat      = [double]$s.latitude
-            Lon      = [double]$s.longitude
-            Altitud  = $s.altitude
-            TasaMmH  = [double]$p.aggregatedValue
-            TempC    = $tempC
-            Isoterma = $iso
-            Epoch    = $p.targetTimestamp
+            Nombre        = $s.Nombre
+            Codigo        = $s.Codigo
+            Lat           = $s.Lat
+            Lon           = $s.Lon
+            Altitud       = $alt
+            TasaMmH       = $s.TasaMmH
+            TempC         = $tempC
+            Isoterma      = $iso
+            Epoch         = $s.Epoch
+            ValoresPrecip = $s.ValoresSerie
+            ValoresTemp   = $valoresTemp.ToArray()
+            ValoresIso    = $valoresIso.ToArray()
+            TiemposSerie  = $s.TiemposSerie
         }
     }
     return $result

@@ -75,29 +75,39 @@ Describe "Parse-RedesJson" {
 }
 
 Describe "Parse-EmasDmcJson" {
-    $precip  = Get-Content "$here\fixtures\precip_last.json" -Raw | ConvertFrom-Json
-    $tempArr = Get-Content "$here\fixtures\temp_last.json"  -Raw | ConvertFrom-Json
+    $redesFixture = Get-Content "$here\fixtures\redes_3h.json" -Raw | ConvertFrom-Json
+    $precipSerie  = Parse-RedesJson $redesFixture
+    $tempSerie    = Get-Content "$here\fixtures\temp_3h.json" -Raw | ConvertFrom-Json
+    $altitudMap   = @{ '01000005-K' = 3800.0; '01001001-K' = 25.0; '02001001-K' = 2260.0 }
 
-    It "merge por nationalCode: precip y temp en mismo objeto" {
-        $r = Parse-EmasDmcJson $precip $tempArr
-        $e = $r | Where-Object { $_.Codigo -eq '330113' }
-        $e.TasaMmH | Should Be 6.5
-        $e.TempC   | Should Be 8.0
+    It "extrae TasaMmH del ultimo no-nulo de ValoresSerie" {
+        $r = Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
+        ($r | Where-Object { $_.Codigo -eq '01000005-K' }).TasaMmH | Should Be 3.2
     }
-    It "calcula isoterma 0C correctamente" {
-        # altitud=275, temp=8.0 -> iso = 275 + (8.0/6.5)*1000 = 275 + 1230 = 1505
-        $r = Parse-EmasDmcJson $precip $tempArr
-        $e = $r | Where-Object { $_.Codigo -eq '330113' }
-        $e.Isoterma | Should Be 1505
+    It "extrae TempC del ultimo no-nulo de tempSerie" {
+        $r = Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
+        ($r | Where-Object { $_.Codigo -eq '01000005-K' }).TempC | Should Be 10.8
     }
-    It "isoterma es null si no hay temperatura para esa estacion" {
-        $r = Parse-EmasDmcJson $precip $tempArr
-        $e = $r | Where-Object { $_.Codigo -eq '999999' }
-        $e.Isoterma | Should BeNullOrEmpty
+    It "calcula Isoterma correctamente" {
+        # altitud=3800, temp=10.8 -> 3800 + floor((10.8/6.5)*1000) = 3800+1661 = 5461
+        $r = Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
+        ($r | Where-Object { $_.Codigo -eq '01000005-K' }).Isoterma | Should Be 5461
     }
-    It "preserva altitud" {
-        $r = Parse-EmasDmcJson $precip $tempArr
-        $e = $r | Where-Object { $_.Codigo -eq '330113' }
-        $e.Altitud | Should Be 275.0
+    It "calcula ValoresIso por timestamp" {
+        $r = Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
+        $e = $r | Where-Object { $_.Codigo -eq '01000005-K' }
+        $e.ValoresIso.Count | Should Be 3
+        $e.ValoresIso[0]    | Should Be 5646
+        $e.ValoresIso[2]    | Should Be 5461
+    }
+    It "TempC es null cuando todos los valores de temp son null" {
+        $r = Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
+        ($r | Where-Object { $_.Codigo -eq '01001001-K' }).TempC | Should BeNullOrEmpty
+    }
+    It "ValoresTemp vacio cuando no hay entrada en tempSerie" {
+        $altSolo = @{ '02001001-K' = 2260.0 }
+        $soloCalama = $precipSerie | Where-Object { $_.Codigo -eq '02001001-K' }
+        $r = Parse-EmasDmcJson @($soloCalama) @() $altSolo
+        ($r | Where-Object { $_.Codigo -eq '02001001-K' }).ValoresTemp.Count | Should Be 0
     }
 }
