@@ -118,7 +118,7 @@ function Get-PronosticoGrilla([array]$grilla) {
                  "&hourly=precipitation,freezing_level_height" +
                  "&models=ecmwf_ifs025,gfs_seamless,icon_seamless&forecast_days=2"
         $resp  = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 60
-        $arr   = @($resp.Content | ConvertFrom-Json)
+        [array]$arr = $resp.Content | ConvertFrom-Json
         foreach ($obj in $arr) {
             $pt = Parse-OpenMeteoPoint $obj
             $allVentanas += Build-VentanasPunto $pt
