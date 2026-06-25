@@ -50,7 +50,7 @@ function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [ar
     }
     $json    = $cfg | ConvertTo-Json -Depth 15 -Compress
     $encoded = [Uri]::EscapeDataString($json)
-    return "https://quickchart.io/chart?w=300&h=160&c=$encoded"
+    return "https://quickchart.io/chart?v=4&w=300&h=160&c=$encoded"
 }
 
 function Get-ColorRedes([double]$mmH) {
