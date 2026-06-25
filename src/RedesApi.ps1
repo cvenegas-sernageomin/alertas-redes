@@ -123,14 +123,29 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
     return $result
 }
 
-function Get-EmasDmc {
+function Get-EmasDmc([array]$redesData) {
     $rutaP = "api/raw-measure/by-measure-type/1/last"
-    $rutaT = "api/raw-measure/by-measure-type/2/last"
     $rP = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaP" `
         -Headers @{ckey = (Sign $rutaP)} -UseBasicParsing -TimeoutSec 60
-    $rT = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaT" `
-        -Headers @{ckey = (Sign $rutaT)} -UseBasicParsing -TimeoutSec 60
-    if ($rP.Content -match '<!DOCTYPE') { throw "API devolvio HTML (precip)" }
-    if ($rT.Content -match '<!DOCTYPE') { throw "API devolvio HTML (temp)" }
-    return Parse-EmasDmcJson ($rP.Content | ConvertFrom-Json) ($rT.Content | ConvertFrom-Json)
+    if ($rP.Content -match '<!DOCTYPE') { throw "API devolvio HTML (precip raw)" }
+    $precipRaw = $rP.Content | ConvertFrom-Json
+
+    $altitudMap = @{}
+    foreach ($p in $precipRaw) { $altitudMap[$p.station.nationalCode] = $p.station.altitude }
+
+    $epoch = Get-EpochHora
+    $rutaT = "api/measure/by-measure-type/2/by-timestamp/$epoch/by-interval/3"
+    $tempSerie = @()
+    try {
+        $rT = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaT" `
+            -Headers @{ckey = (Sign $rutaT)} -UseBasicParsing -TimeoutSec 90
+        if ($rT.Content -notmatch '<!DOCTYPE') {
+            $tempSerie = $rT.Content | ConvertFrom-Json
+        }
+    } catch {
+        Write-Warning "Serie temperatura no disponible (se omite grafico temp): $_"
+    }
+
+    $precipSerie = @($redesData | Where-Object { $altitudMap.ContainsKey($_.Codigo) })
+    return Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
 }

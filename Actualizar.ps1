@@ -15,7 +15,7 @@ try {
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando EMAs DMC..." -ForegroundColor Cyan
 try {
-    $emas = Get-EmasDmc
+    $emas = Get-EmasDmc $redes
     Write-Host "  -> $($emas.Count) estaciones" -ForegroundColor Gray
 } catch {
     Write-Warning "Error en EMAs DMC: $_"
