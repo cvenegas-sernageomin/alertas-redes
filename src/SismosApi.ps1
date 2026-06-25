@@ -9,14 +9,14 @@ function Get-EstiloSismo([double]$mag) {
 function Get-SismosCSN {
     $ua = @{'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     try {
-        $home = (Invoke-WebRequest -Uri 'https://www.sismologia.cl/' `
-                 -UseBasicParsing -TimeoutSec 40 -Headers $ua).Content
+        $htmlCSN = (Invoke-WebRequest -Uri 'https://www.sismologia.cl/' `
+                    -UseBasicParsing -TimeoutSec 40 -Headers $ua).Content
     } catch {
         Write-Warning "CSN: no se pudo obtener pagina principal: $_"
         return @()
     }
 
-    $hrefs = [regex]::Matches($home, 'href="(/sismicidad/sismos/[^"]+\.html)"') |
+    $hrefs = [regex]::Matches($htmlCSN, 'href="(/sismicidad/sismos/[^"]+\.html)"') |
              ForEach-Object { $_.Groups[1].Value } |
              Select-Object -Unique |
              Select-Object -First 15
