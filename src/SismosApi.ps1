@@ -16,7 +16,7 @@ function Get-SismosCSN {
         return @()
     }
 
-    $hrefs = [regex]::Matches($htmlCSN, 'href="(/sismicidad/sismos/[^"]+\.html)"') |
+    $hrefs = [regex]::Matches($htmlCSN, 'href="(/sismicidad/informes/[^"]+\.html)"') |
              ForEach-Object { $_.Groups[1].Value } |
              Select-Object -Unique |
              Select-Object -First 15
@@ -32,7 +32,11 @@ function Get-SismosCSN {
             $lon   = if ($txt -match 'Longitud[^\d-]*(-?\d+\.\d+)')  { [double]$Matches[1] } else { $null }
             $prof  = if ($txt -match 'Profundidad[^\d]*(\d+)\s*km')  { [int]$Matches[1] }    else { $null }
             $mag   = if ($txt -match 'Magnitud[^\d]*([\d.]+)')        { [double]$Matches[1] } else { $null }
-            $fecha = if ($txt -match '(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})') { $Matches[1] } else { '' }
+            $fecha = ''
+            if ($txt -match 'Hora Local\s+(\d{2}:\d{2}:\d{2})\s+(\d{2}/\d{2}/\d{4})') {
+                $h = $Matches[1]; $p = $Matches[2].Split('/')
+                $fecha = "$($p[2])-$($p[1])-$($p[0]) $h"
+            }
 
             if ($null -ne $lat -and $null -ne $lon -and $null -ne $mag) {
                 $sismos += [PSCustomObject]@{
