@@ -46,3 +46,62 @@ function Get-MinVentana([array]$serie, [int]$desde, [int]$hasta) {
     }
     return $min
 }
+
+function Get-ColorPronostico([double]$precip, $iso) {
+    if ($null -eq $iso)       { return 'verde' }
+    if ($precip -lt 5)        { return 'verde' }
+    if ($iso -lt 2500)        { return 'verde' }
+    if ($precip -ge 20 -and $iso -ge 3000) { return 'rojo' }
+    return 'amarillo'
+}
+
+function Get-EstiloPronostico([string]$colorPeor, [int]$nModelos) {
+    if ($colorPeor -eq 'verde') { return 'verde' }
+    return "${colorPeor}_${nModelos}"
+}
+
+function Build-VentanasPunto($punto) {
+    $config = @(
+        @{ Nombre='+0 a 6h';   Desde=0;  Hasta=5  }
+        @{ Nombre='+6 a 12h';  Desde=6;  Hasta=11 }
+        @{ Nombre='+12 a 24h'; Desde=12; Hasta=23 }
+        @{ Nombre='+24 a 48h'; Desde=24; Hasta=47 }
+    )
+    $ventanas = @()
+    foreach ($cfg in $config) {
+        $pE = Get-SumaVentana $punto.HourlyPrecipEcmwf $cfg.Desde $cfg.Hasta
+        $pG = Get-SumaVentana $punto.HourlyPrecipGfs   $cfg.Desde $cfg.Hasta
+        $pI = Get-SumaVentana $punto.HourlyPrecipIcon  $cfg.Desde $cfg.Hasta
+        $iE = Get-MinVentana  $punto.HourlyIsoEcmwf    $cfg.Desde $cfg.Hasta
+        $iG = Get-MinVentana  $punto.HourlyIsoGfs      $cfg.Desde $cfg.Hasta
+        $iI = Get-MinVentana  $punto.HourlyIsoIcon     $cfg.Desde $cfg.Hasta
+
+        $cE = Get-ColorPronostico $pE $iE
+        $cG = Get-ColorPronostico $pG $iG
+        $cI = Get-ColorPronostico $pI $iI
+
+        $orden = @{ verde=0; amarillo=1; rojo=2 }
+        $colores = @($cE, $cG, $cI)
+        $peor = $colores | Sort-Object { $orden[$_] } -Descending | Select-Object -First 1
+        $n    = ($colores | Where-Object { $_ -eq $peor }).Count
+
+        $ventanas += [PSCustomObject]@{
+            Nombre      = $cfg.Nombre
+            Lat         = $punto.Lat
+            Lon         = $punto.Lon
+            PrecipEcmwf = $pE
+            PrecipGfs   = $pG
+            PrecipIcon  = $pI
+            IsoEcmwf    = $iE
+            IsoGfs      = $iG
+            IsoIcon     = $iI
+            ColorEcmwf  = $cE
+            ColorGfs    = $cG
+            ColorIcon   = $cI
+            ColorFinal  = $peor
+            NModelos    = $n
+            EstiloKml   = Get-EstiloPronostico $peor $n
+        }
+    }
+    return $ventanas
+}

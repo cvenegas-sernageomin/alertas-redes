@@ -93,3 +93,59 @@ Describe "Get-MinVentana" {
         Get-MinVentana $serie 0 2 | Should BeNullOrEmpty
     }
 }
+
+Describe "Get-ColorPronostico" {
+    It "verde cuando precip=0"                     { Get-ColorPronostico 0.0  3200 | Should Be 'verde'    }
+    It "verde cuando precip < 5"                   { Get-ColorPronostico 4.9  3200 | Should Be 'verde'    }
+    It "verde cuando iso < 2500 aunque precip alta"{ Get-ColorPronostico 30.0 2499 | Should Be 'verde'    }
+    It "verde cuando iso es null"                  { Get-ColorPronostico 30.0 $null | Should Be 'verde'   }
+    It "amarillo cuando precip=5 e iso=2500"       { Get-ColorPronostico 5.0  2500 | Should Be 'amarillo' }
+    It "amarillo cuando precip=19 e iso=3000"      { Get-ColorPronostico 19.0 3000 | Should Be 'amarillo' }
+    It "rojo cuando precip=20 e iso=3000"          { Get-ColorPronostico 20.0 3000 | Should Be 'rojo'     }
+    It "rojo cuando precip=30 e iso=3500"          { Get-ColorPronostico 30.0 3500 | Should Be 'rojo'     }
+}
+
+Describe "Get-EstiloPronostico" {
+    It "verde da verde"       { Get-EstiloPronostico 'verde'    0 | Should Be 'verde'     }
+    It "amarillo_1"           { Get-EstiloPronostico 'amarillo' 1 | Should Be 'amarillo_1' }
+    It "amarillo_2"           { Get-EstiloPronostico 'amarillo' 2 | Should Be 'amarillo_2' }
+    It "amarillo_3"           { Get-EstiloPronostico 'amarillo' 3 | Should Be 'amarillo_3' }
+    It "rojo_2"               { Get-EstiloPronostico 'rojo'     2 | Should Be 'rojo_2'     }
+    It "rojo_3"               { Get-EstiloPronostico 'rojo'     3 | Should Be 'rojo_3'     }
+}
+
+Describe "Build-VentanasPunto" {
+    $fixture = Get-Content "$here\fixtures\openmeteo_2pts.json" -Raw | ConvertFrom-Json
+    $punto1  = Parse-OpenMeteoPoint $fixture[0]
+    $punto2  = Parse-OpenMeteoPoint $fixture[1]
+    $v1      = Build-VentanasPunto $punto1
+    $v2      = Build-VentanasPunto $punto2
+
+    It "devuelve 4 ventanas por punto" {
+        $v1.Count | Should Be 4
+    }
+    It "ventana +0 a 6h de punto 1 es verde" {
+        ($v1 | Where-Object { $_.Nombre -eq '+0 a 6h' }).EstiloKml | Should Be 'verde'
+    }
+    It "ventana +6 a 12h de punto 1 es amarillo_2" {
+        ($v1 | Where-Object { $_.Nombre -eq '+6 a 12h' }).EstiloKml | Should Be 'amarillo_2'
+    }
+    It "ventana +12 a 24h de punto 1 es rojo_2" {
+        ($v1 | Where-Object { $_.Nombre -eq '+12 a 24h' }).EstiloKml | Should Be 'rojo_2'
+    }
+    It "ventana +24 a 48h de punto 1 es verde" {
+        ($v1 | Where-Object { $_.Nombre -eq '+24 a 48h' }).EstiloKml | Should Be 'verde'
+    }
+    It "todas las ventanas de punto 2 son verde (iso baja)" {
+        ($v2 | Where-Object { $_.EstiloKml -ne 'verde' }).Count | Should Be 0
+    }
+    It "ventana +12 a 24h de punto 1 tiene PrecipEcmwf = 26" {
+        ($v1 | Where-Object { $_.Nombre -eq '+12 a 24h' }).PrecipEcmwf | Should Be 26.0
+    }
+    It "ventana +12 a 24h de punto 1 ColorGfs = amarillo" {
+        ($v1 | Where-Object { $_.Nombre -eq '+12 a 24h' }).ColorGfs | Should Be 'amarillo'
+    }
+    It "ventana +12 a 24h de punto 1 NModelos = 2" {
+        ($v1 | Where-Object { $_.Nombre -eq '+12 a 24h' }).NModelos | Should Be 2
+    }
+}
