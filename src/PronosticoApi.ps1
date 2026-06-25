@@ -105,3 +105,26 @@ function Build-VentanasPunto($punto) {
     }
     return $ventanas.ToArray()
 }
+
+function Get-PronosticoGrilla([array]$grilla) {
+    $allVentanas = @()
+    $i = 0
+    while ($i -lt $grilla.Count) {
+        $hasta = [Math]::Min($i + 99, $grilla.Count - 1)
+        $lote  = $grilla[$i..$hasta]
+        $lats  = @($lote | ForEach-Object { [string]$_.Lat }) -join ','
+        $lons  = @($lote | ForEach-Object { [string]$_.Lon }) -join ','
+        $url   = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons" +
+                 "&hourly=precipitation,freezing_level_height" +
+                 "&models=ecmwf_ifs025,gfs_seamless,icon_seamless&forecast_days=2"
+        $resp  = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 60
+        $arr   = @($resp.Content | ConvertFrom-Json)
+        foreach ($obj in $arr) {
+            $pt = Parse-OpenMeteoPoint $obj
+            $allVentanas += Build-VentanasPunto $pt
+        }
+        $i += 100
+        if ($i -lt $grilla.Count) { Start-Sleep -Milliseconds 400 }
+    }
+    return $allVentanas
+}
