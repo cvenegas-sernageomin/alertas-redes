@@ -1,4 +1,4 @@
-$here = $PSScriptRoot
+﻿$here = $PSScriptRoot
 . "$here\..\src\RedesApi.ps1"
 
 Describe "Sign" {
@@ -72,6 +72,27 @@ Describe "Parse-RedesJson" {
         $v.TiemposSerie.Count | Should Be 3
         $v.TiemposSerie[0]    | Should Be 1781794800
     }
+}
+
+Describe "Merge-AltitudCache" {
+    $tmp = Join-Path $env:TEMP "alt_cache_test_$(Get-Random).json"
+
+    It "crea cache desde cero y persiste" {
+        $r = Merge-AltitudCache $tmp @{ 'A' = 100.0; 'B' = 200.0 }
+        $r.Keys.Count | Should Be 2
+        (Test-Path $tmp) | Should Be $true
+    }
+    It "acumula nuevas altitudes sobre las previas" {
+        $r = Merge-AltitudCache $tmp @{ 'C' = 300.0 }
+        $r.Keys.Count | Should Be 3        # A y B persisten, se suma C
+        $r['A'] | Should Be 100.0
+        $r['C'] | Should Be 300.0
+    }
+    It "actualiza el valor de una altitud existente" {
+        $r = Merge-AltitudCache $tmp @{ 'A' = 150.0 }
+        $r['A'] | Should Be 150.0
+    }
+    if (Test-Path $tmp) { Remove-Item $tmp -Force }
 }
 
 Describe "Parse-EmasDmcJson" {

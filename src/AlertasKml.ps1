@@ -120,8 +120,9 @@ function Build-GraficosAcumulado([array]$tiempos, [array]$precip) {
     $img = ''
     $c24 = Build-ChartAcumulado $tiempos $precip 24
     $c48 = Build-ChartAcumulado $tiempos $precip 48
-    if ($c24) { $img += "<br/><b>Ultimas 24 h</b><br/><img src='$c24' width='330'/>" }
-    if ($c48) { $img += "<br/><b>Ultimas 48 h</b><br/><img src='$c48' width='330'/>" }
+    # Escapar & -> &amp; para que Google Earth no corte la URL al parsear el HTML del globo
+    if ($c24) { $img += "<br/><b>Ultimas 24 h</b><br/><img src='$($c24 -replace '&','&amp;')' width='330'/>" }
+    if ($c48) { $img += "<br/><b>Ultimas 48 h</b><br/><img src='$($c48 -replace '&','&amp;')' width='330'/>" }
     return $img
 }
 

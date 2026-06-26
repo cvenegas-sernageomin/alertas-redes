@@ -20,8 +20,11 @@ try {
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando EMAs DMC..." -ForegroundColor Cyan
 try {
-    $emas = Get-EmasDmc $redes
-    Write-Host "  -> $($emas.Count) estaciones" -ForegroundColor Gray
+    $nuevasAlt = Get-AltitudesRaw
+    $altMap    = Merge-AltitudCache "$here\altitudes.json" $nuevasAlt
+    Write-Host "  altitudes: $($altMap.Keys.Count) en cache (nuevas este ciclo: $($nuevasAlt.Keys.Count))" -ForegroundColor Gray
+    $emas = Get-EmasDmc $redes $altMap
+    Write-Host "  -> $($emas.Count) EMAs (altitud + temperatura)" -ForegroundColor Gray
 } catch {
     Write-Warning "Error en EMAs DMC: $_"
     $emas = @()

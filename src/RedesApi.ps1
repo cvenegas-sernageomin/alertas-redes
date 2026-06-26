@@ -123,16 +123,44 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
     return $result.ToArray()
 }
 
-function Get-EmasDmc([array]$redesData) {
-    $rutaP = "api/raw-measure/by-measure-type/1/last"
-    $rP = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$rutaP" `
-        -Headers @{ckey = (Sign $rutaP)} -UseBasicParsing -TimeoutSec 60
-    if ($rP.Content -match '<!DOCTYPE') { throw "API devolvio HTML (precip raw)" }
-    $precipRaw = $rP.Content | ConvertFrom-Json
+# Altitudes solo existen en raw-measure/last (pocas estaciones por ciclo). Las juntamos de type 1 y 2.
+function Get-AltitudesRaw {
+    $alt = @{}
+    foreach ($mt in @(1, 2)) {
+        $ruta = "api/raw-measure/by-measure-type/$mt/last"
+        try {
+            $r = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$ruta" `
+                -Headers @{ckey = (Sign $ruta)} -UseBasicParsing -TimeoutSec 60
+            if ($r.Content -match '<!DOCTYPE') { continue }
+            foreach ($d in ($r.Content | ConvertFrom-Json)) {
+                $cod = $d.station.nationalCode
+                $a   = $d.station.altitude
+                if ($cod -and $null -ne $a) { $alt[$cod] = [double]$a }
+            }
+        } catch { Write-Warning "raw-measure type $mt no disponible: $_" }
+    }
+    return $alt
+}
 
-    $altitudMap = @{}
-    foreach ($p in $precipRaw) { $altitudMap[$p.station.nationalCode] = $p.station.altitude }
+# Caché persistente de altitudes: como son fijas, las acumulamos entre ciclos.
+function Merge-AltitudCache([string]$path, [hashtable]$nuevas) {
+    $cache = @{}
+    if (Test-Path $path) {
+        try {
+            $obj = Get-Content $path -Raw | ConvertFrom-Json
+            foreach ($p in $obj.PSObject.Properties) { $cache[$p.Name] = [double]$p.Value }
+        } catch { Write-Warning "Cache altitudes ilegible, se reinicia: $_" }
+    }
+    foreach ($k in $nuevas.Keys) { $cache[$k] = $nuevas[$k] }
+    try {
+        $ordenado = [ordered]@{}
+        foreach ($k in ($cache.Keys | Sort-Object)) { $ordenado[$k] = $cache[$k] }
+        ($ordenado | ConvertTo-Json -Depth 3) | Set-Content -Path $path -Encoding UTF8
+    } catch { Write-Warning "No se pudo guardar cache altitudes: $_" }
+    return $cache
+}
 
+function Get-EmasDmc([array]$redesData, [hashtable]$altitudMap) {
     $epoch = Get-EpochHora
     $rutaT = "api/measure/by-measure-type/2/by-timestamp/$epoch/by-interval/24"
     $tempSerie = @()
@@ -143,9 +171,20 @@ function Get-EmasDmc([array]$redesData) {
             $tempSerie = $rT.Content | ConvertFrom-Json
         }
     } catch {
-        Write-Warning "Serie temperatura no disponible (se omite grafico temp): $_"
+        Write-Warning "Serie temperatura no disponible: $_"
     }
 
-    $precipSerie = @($redesData | Where-Object { $altitudMap.ContainsKey($_.Codigo) })
+    # Estaciones con dato real de temperatura (las que sirven para isoterma)
+    $tempConDato = @{}
+    foreach ($t in $tempSerie) {
+        if ($t.values) {
+            foreach ($v in $t.values) { if ($null -ne $v) { $tempConDato[$t.nationalCode] = $true; break } }
+        }
+    }
+
+    # EMA = altitud conocida (cache) Y temperatura real disponible
+    $precipSerie = @($redesData | Where-Object {
+        $altitudMap.ContainsKey($_.Codigo) -and $tempConDato.ContainsKey($_.Codigo)
+    })
     return Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
 }
