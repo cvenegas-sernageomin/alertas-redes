@@ -87,6 +87,24 @@ function estiloSismo(m) {
 }
 
 // ---------- parseo KML en el navegador ----------
+// nombre de la carpeta (red/set) que contiene al placemark, sin el sufijo "(N est.)"
+function folderName(pm) {
+  let node = pm.parentNode;
+  while (node && node.nodeName) {
+    if (node.nodeName === "Folder") {
+      for (let c = node.firstChild; c; c = c.nextSibling) {
+        if (c.nodeName === "name") {
+          let nm = c.textContent.replace(/\s*\(\d+\s*est\.?\)\s*$/i, "").trim();
+          if (/^EMAs/i.test(nm)) nm = "EMAs DMC";
+          return nm;
+        }
+      }
+    }
+    node = node.parentNode;
+  }
+  return "";
+}
+
 function parseKml(text) {
   const doc = new DOMParser().parseFromString(text, "text/xml");
   const pms = doc.getElementsByTagName("Placemark");
@@ -105,7 +123,8 @@ function parseKml(text) {
       lat, lon,
       name: nameEl ? nameEl.textContent : "",
       desc: descEl ? descEl.textContent : "",
-      styleUrl: styEl ? styEl.textContent : ""
+      styleUrl: styEl ? styEl.textContent : "",
+      group: folderName(pm)
     });
   }
   return out;
@@ -128,7 +147,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [onlyAlerts, setOnlyAlerts] = useState(false);
-  const [show, setShow] = useState({ est: true, pron: false, sismos: true });
+  const [show, setShow] = useState({ pron: false, sismos: true });
+  const [estGroups, setEstGroups] = useState({});
   const [base, setBase] = useState("sat");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -172,11 +192,11 @@ function App() {
     }
   }, [base]);
 
-  // mostrar/ocultar capas
+  // mostrar/ocultar capas (estaciones siempre en mapa; se filtran por set en redraw)
   useEffect(() => {
     const g = groups.current, map = mapRef.current;
     if (!map || !g.est) return;
-    ["est", "pron", "sismos"].forEach(k => {
+    ["pron", "sismos"].forEach(k => {
       if (show[k]) g[k].addTo(map); else map.removeLayer(g[k]);
     });
   }, [show]);
@@ -189,6 +209,7 @@ function App() {
     data.current.est.forEach(f => {
       const niv = nivelEstacion(f.styleUrl);
       if (onlyAlerts && niv === "verde") return;
+      if (f.group && estGroups[f.group] === false) return;
       const hasChart = /<img/.test(f.desc || "");
       const r = (niv === "rojo" ? 7 : niv === "amarillo" ? 6 : 4) + (hasChart ? 1 : 0);
       L.circleMarker([f.lat, f.lon], {
@@ -225,26 +246,34 @@ function App() {
         fetchKml("red_sismos.kml")
       ]);
       data.current = { est, pron, sismos };
+      const groupCounts = {};
+      est.forEach(f => { if (f.group) groupCounts[f.group] = (groupCounts[f.group] || 0) + 1; });
       const s = {
         estRojo: est.filter(f => nivelEstacion(f.styleUrl) === "rojo").length,
         estAmar: est.filter(f => nivelEstacion(f.styleUrl) === "amarillo").length,
         estTot: est.length,
         estGraf: est.filter(f => /<img/.test(f.desc || "")).length,
+        groupCounts,
         pronRojo: pron.filter(f => /rojo/.test(f.styleUrl)).length,
         pronAmar: pron.filter(f => /amarillo/.test(f.styleUrl)).length,
         sismoFuerte: sismos.filter(f => parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0") >= 6).length,
         sismoTot: sismos.length
       };
+      // inicializar toggles por set conservando los ya elegidos por el usuario
+      setEstGroups(prev => {
+        const next = {};
+        Object.keys(groupCounts).forEach(gn => { next[gn] = (gn in prev) ? prev[gn] : true; });
+        return next;
+      });
       setStats(s); setUpdated(new Date());
-      redraw();
     } catch (e) {
       setError(String(e.message || e));
     }
     setLoading(false);
   }, []);
 
-  // redibujar al cambiar el filtro "solo con alerta"
-  useEffect(() => { redraw(); }, [onlyAlerts]);
+  // redibujar cuando llegan datos nuevos o cambian los filtros
+  useEffect(() => { redraw(); }, [updated, onlyAlerts, estGroups]);
 
   const St = ({ color, square, label, value }) => (
     <div className="stat">
@@ -278,6 +307,19 @@ function App() {
       </>}
 
       <div className="group">
+        <div className="gtitle">Sets de estaciones</div>
+        {Object.keys(estGroups).sort().map(gn => (
+          <label className="tg" key={gn}>
+            <input type="checkbox" checked={estGroups[gn]}
+              onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
+            <span>{gn}</span>
+            <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
+          </label>
+        ))}
+        {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+      </div>
+
+      <div className="group">
         <div className="gtitle">Pronóstico 48h</div>
         {stats && <>
           <St color="#ff2d2d" square label="Celdas rojas" value={stats.pronRojo} />
@@ -295,7 +337,6 @@ function App() {
 
       <div className="group">
         <div className="gtitle">Capas</div>
-        <label className="tg"><input type="checkbox" checked={show.est} onChange={e => setShow({ ...show, est: e.target.checked })} /> Estaciones</label>
         <label className="tg"><input type="checkbox" checked={show.pron} onChange={e => setShow({ ...show, pron: e.target.checked })} /> Pronóstico</label>
         <label className="tg"><input type="checkbox" checked={show.sismos} onChange={e => setShow({ ...show, sismos: e.target.checked })} /> Sismos</label>
         <label className="tg"><input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} /> Solo estaciones con alerta</label>
