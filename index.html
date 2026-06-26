@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Alertas Redes Chile — Visor</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  html, body, #root, #map { height: 100%; margin: 0; }
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+  /* Mapa: ocupa todo menos la barra lateral */
+  #map { position: absolute; top: 0; right: 0; bottom: 0; left: 300px; background: #0b1622; }
+
+  /* Barra lateral fija a la izquierda */
+  #panel {
+    position: absolute; top: 0; left: 0; bottom: 0; z-index: 1000;
+    width: 300px; overflow-y: auto;
+    background: rgba(15,22,31,0.97); color: #e7edf3;
+    padding: 14px 16px; box-shadow: 2px 0 16px rgba(0,0,0,0.45);
+    font-size: 13px;
+  }
+  #panel h1 { font-size: 15px; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
+  .collapse { display: inline-block; margin-left: auto; background: transparent !important; width: auto !important; padding: 2px 8px !important; font-size: 14px; cursor: pointer; }
+
+  /* Pantallas chicas: overlay plegable arriba a la izquierda */
+  @media (max-width: 760px) {
+    #map { left: 0; }
+    #panel {
+      top: 10px; left: 10px; bottom: auto; width: auto;
+      max-width: calc(100vw - 20px); max-height: calc(100vh - 20px);
+      border-radius: 10px; backdrop-filter: blur(4px);
+    }
+  }
+  #panel .sub { color: #93a4b5; font-size: 11px; margin-bottom: 10px; }
+  .row { display: flex; align-items: center; justify-content: space-between; margin: 5px 0; }
+  .stat { display: flex; align-items: center; gap: 7px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+  .sq  { width: 12px; height: 12px; display: inline-block; flex: none; }
+  .num { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .group { border-top: 1px solid #2a3a4a; margin-top: 8px; padding-top: 8px; }
+  .gtitle { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #8aa0b4; margin-bottom: 4px; }
+  label.tg { display: flex; align-items: center; gap: 7px; cursor: pointer; margin: 4px 0; user-select: none; }
+  button { background: #2563eb; color: #fff; border: 0; border-radius: 7px; padding: 7px 10px; cursor: pointer; font-size: 12px; width: 100%; margin-top: 8px; }
+  button:disabled { opacity: .6; cursor: default; }
+  .seg { display: flex; gap: 4px; margin-top: 4px; }
+  .seg button { width: auto; flex: 1; margin: 0; background: #1f2b3a; }
+  .seg button.on { background: #2563eb; }
+  #err { color: #ff8d7a; font-size: 11px; margin-top: 6px; }
+  .leaflet-popup-content { font-size: 12px; }
+  .leaflet-popup-content img { max-width: 330px; height: auto; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/jsx" id="app-src">
+const { useState, useEffect, useRef, useCallback } = React;
+
+const RAW = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-redes/live";
+
+// ---------- helpers de color ----------
+function colorEstacion(styleUrl) {
+  const s = styleUrl || "";
+  if (/rojo/.test(s)) return "#ff2d2d";
+  if (/amarillo/.test(s)) return "#e6b800";
+  return "#27c93f";
+}
+function nivelEstacion(styleUrl) {
+  const s = styleUrl || "";
+  if (/rojo/.test(s)) return "rojo";
+  if (/amarillo/.test(s)) return "amarillo";
+  return "verde";
+}
+function estiloSismo(m) {
+  if (m >= 7) return { c: "#cc0000", r: 11 };
+  if (m >= 6) return { c: "#ff3300", r: 9 };
+  if (m >= 5) return { c: "#ff8000", r: 7 };
+  if (m >= 4) return { c: "#ffd700", r: 5 };
+  return { c: "#80ff40", r: 4 };
+}
+
+// ---------- parseo KML en el navegador ----------
+// nombre de la carpeta (red/set) que contiene al placemark, sin el sufijo "(N est.)"
+function folderName(pm) {
+  let node = pm.parentNode;
+  while (node && node.nodeName) {
+    if (node.nodeName === "Folder") {
+      for (let c = node.firstChild; c; c = c.nextSibling) {
+        if (c.nodeName === "name") {
+          let nm = c.textContent.replace(/\s*\(\d+\s*est\.?\)\s*$/i, "").trim();
+          if (/^EMAs/i.test(nm)) nm = "EMAs DMC";
+          return nm;
+        }
+      }
+    }
+    node = node.parentNode;
+  }
+  return "";
+}
+
+function parseKml(text) {
+  const doc = new DOMParser().parseFromString(text, "text/xml");
+  const pms = doc.getElementsByTagName("Placemark");
+  const out = [];
+  for (let i = 0; i < pms.length; i++) {
+    const pm = pms[i];
+    const coordEl = pm.getElementsByTagName("coordinates")[0];
+    if (!coordEl) continue;
+    const parts = coordEl.textContent.trim().split(/\s|,/).filter(x => x !== "");
+    const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+    if (isNaN(lat) || isNaN(lon)) continue;
+    const nameEl = pm.getElementsByTagName("name")[0];
+    const descEl = pm.getElementsByTagName("description")[0];
+    const styEl  = pm.getElementsByTagName("styleUrl")[0];
+    out.push({
+      lat, lon,
+      name: nameEl ? nameEl.textContent : "",
+      desc: descEl ? descEl.textContent : "",
+      styleUrl: styEl ? styEl.textContent : "",
+      group: folderName(pm)
+    });
+  }
+  return out;
+}
+
+async function fetchKml(file) {
+  const r = await fetch(`${RAW}/${file}?t=${Date.now()}`);
+  if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
+  return parseKml(await r.text());
+}
+
+// ---------- App ----------
+function App() {
+  const mapRef = useRef(null);
+  const groups = useRef({});
+  const data = useRef({ est: [], pron: [], sismos: [] });
+
+  const [stats, setStats] = useState(null);
+  const [updated, setUpdated] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [onlyAlerts, setOnlyAlerts] = useState(false);
+  const [show, setShow] = useState({ pron: false, sismos: true });
+  const [estGroups, setEstGroups] = useState({});
+  const [base, setBase] = useState("sat");
+  const [collapsed, setCollapsed] = useState(false);
+
+  // init mapa una sola vez
+  useEffect(() => {
+    const map = L.map("map", { zoomControl: true }).setView([-35.5, -71], 4);
+    mapRef.current = map;
+
+    const sat = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 18, attribution: "Imagery © Esri" }
+    );
+    const labels = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 18 }
+    );
+    const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      { maxZoom: 18, attribution: "© OpenStreetMap" });
+
+    groups.current = {
+      est: L.layerGroup().addTo(map),
+      pron: L.layerGroup(),
+      sismos: L.layerGroup().addTo(map),
+      _sat: sat, _labels: labels, _osm: osm
+    };
+    sat.addTo(map); labels.addTo(map);
+
+    fetchAll();
+    const id = setInterval(fetchAll, 15 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // cambiar basemap
+  useEffect(() => {
+    const g = groups.current, map = mapRef.current;
+    if (!map || !g._sat) return;
+    if (base === "sat") {
+      map.removeLayer(g._osm); g._sat.addTo(map); g._labels.addTo(map);
+    } else {
+      map.removeLayer(g._sat); map.removeLayer(g._labels); g._osm.addTo(map);
+    }
+  }, [base]);
+
+  // mostrar/ocultar capas (estaciones siempre en mapa; se filtran por set en redraw)
+  useEffect(() => {
+    const g = groups.current, map = mapRef.current;
+    if (!map || !g.est) return;
+    ["pron", "sismos"].forEach(k => {
+      if (show[k]) g[k].addTo(map); else map.removeLayer(g[k]);
+    });
+  }, [show]);
+
+  function redraw() {
+    const g = groups.current;
+    if (!g.est) return;
+    g.est.clearLayers(); g.pron.clearLayers(); g.sismos.clearLayers();
+
+    data.current.est.forEach(f => {
+      const niv = nivelEstacion(f.styleUrl);
+      if (onlyAlerts && niv === "verde") return;
+      if (f.group && estGroups[f.group] === false) return;
+      const hasChart = /<img/.test(f.desc || "");
+      const r = (niv === "rojo" ? 7 : niv === "amarillo" ? 6 : 4) + (hasChart ? 1 : 0);
+      L.circleMarker([f.lat, f.lon], {
+        radius: r,
+        color: hasChart ? "#22d3ee" : "#0a0a0a",
+        weight: hasChart ? 2 : 0.6,
+        fillColor: colorEstacion(f.styleUrl), fillOpacity: 0.9
+      }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.est);
+    });
+
+    data.current.pron.forEach(f => {
+      const col = colorEstacion(f.styleUrl);
+      const html = `<div style="width:11px;height:11px;background:${col};border:1px solid #111"></div>`;
+      L.marker([f.lat, f.lon], {
+        icon: L.divIcon({ className: "", html, iconSize: [11, 11], iconAnchor: [6, 6] })
+      }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.pron);
+    });
+
+    data.current.sismos.forEach(f => {
+      const m = parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0");
+      const e = estiloSismo(m);
+      L.circleMarker([f.lat, f.lon], {
+        radius: e.r, color: "#000", weight: 0.6, fillColor: e.c, fillOpacity: 0.85
+      }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.sismos);
+    });
+  }
+
+  const fetchAll = useCallback(async () => {
+    setLoading(true); setError("");
+    try {
+      const [est, pron, sismos] = await Promise.all([
+        fetchKml("red_alertas.kml"),
+        fetchKml("red_pronostico.kml"),
+        fetchKml("red_sismos.kml")
+      ]);
+      data.current = { est, pron, sismos };
+      const groupCounts = {};
+      est.forEach(f => { if (f.group) groupCounts[f.group] = (groupCounts[f.group] || 0) + 1; });
+      const s = {
+        estRojo: est.filter(f => nivelEstacion(f.styleUrl) === "rojo").length,
+        estAmar: est.filter(f => nivelEstacion(f.styleUrl) === "amarillo").length,
+        estTot: est.length,
+        estGraf: est.filter(f => /<img/.test(f.desc || "")).length,
+        groupCounts,
+        pronRojo: pron.filter(f => /rojo/.test(f.styleUrl)).length,
+        pronAmar: pron.filter(f => /amarillo/.test(f.styleUrl)).length,
+        sismoFuerte: sismos.filter(f => parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0") >= 6).length,
+        sismoTot: sismos.length
+      };
+      // inicializar toggles por set conservando los ya elegidos por el usuario
+      setEstGroups(prev => {
+        const next = {};
+        Object.keys(groupCounts).forEach(gn => { next[gn] = (gn in prev) ? prev[gn] : true; });
+        return next;
+      });
+      setStats(s); setUpdated(new Date());
+    } catch (e) {
+      setError(String(e.message || e));
+    }
+    setLoading(false);
+  }, []);
+
+  // redibujar cuando llegan datos nuevos o cambian los filtros
+  useEffect(() => { redraw(); }, [updated, onlyAlerts, estGroups]);
+
+  const St = ({ color, square, label, value }) => (
+    <div className="stat">
+      <span className={square ? "sq" : "dot"} style={{ background: color }}></span>
+      <span>{label}</span>
+      <span className="num" style={{ marginLeft: "auto" }}>{value}</span>
+    </div>
+  );
+
+  return (
+    <div id="panel">
+      <h1>🌧️ Alertas Redes Chile
+        <button className="collapse" onClick={() => setCollapsed(!collapsed)}>{collapsed ? "▸" : "▾"}</button>
+      </h1>
+      <div className="sub">
+        {updated ? `Actualizado ${updated.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}` : "Cargando…"}
+        {loading ? " · ⏳" : ""}
+      </div>
+
+      {!collapsed && <div className="pbody">
+      <div className="gtitle">Estaciones (precipitación)</div>
+      {stats && <>
+        <St color="#ff2d2d" label="Rojo ≥10 mm/h" value={stats.estRojo} />
+        <St color="#e6b800" label="Amarillo ≥5 mm/h" value={stats.estAmar} />
+        <div className="row"><span style={{ color: "#93a4b5" }}>Total estaciones</span><span className="num">{stats.estTot}</span></div>
+        <div className="stat" style={{ marginTop: 4 }}>
+          <span className="dot" style={{ background: "transparent", border: "2px solid #22d3ee" }}></span>
+          <span>Con gráficos 48h</span>
+          <span className="num" style={{ marginLeft: "auto" }}>{stats.estGraf}</span>
+        </div>
+      </>}
+
+      <div className="group">
+        <div className="gtitle">Sets de estaciones</div>
+        {Object.keys(estGroups).sort().map(gn => (
+          <label className="tg" key={gn}>
+            <input type="checkbox" checked={estGroups[gn]}
+              onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
+            <span>{gn}</span>
+            <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
+          </label>
+        ))}
+        {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+      </div>
+
+      <div className="group">
+        <div className="gtitle">Pronóstico 48h</div>
+        {stats && <>
+          <St color="#ff2d2d" square label="Celdas rojas" value={stats.pronRojo} />
+          <St color="#e6b800" square label="Celdas amarillas" value={stats.pronAmar} />
+        </>}
+      </div>
+
+      <div className="group">
+        <div className="gtitle">Sismos</div>
+        {stats && <>
+          <St color="#ff3300" label="M ≥ 6 (recientes)" value={stats.sismoFuerte} />
+          <div className="row"><span style={{ color: "#93a4b5" }}>Total mostrados</span><span className="num">{stats.sismoTot}</span></div>
+        </>}
+      </div>
+
+      <div className="group">
+        <div className="gtitle">Capas</div>
+        <label className="tg"><input type="checkbox" checked={show.pron} onChange={e => setShow({ ...show, pron: e.target.checked })} /> Pronóstico</label>
+        <label className="tg"><input type="checkbox" checked={show.sismos} onChange={e => setShow({ ...show, sismos: e.target.checked })} /> Sismos</label>
+        <label className="tg"><input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} /> Solo estaciones con alerta</label>
+      </div>
+
+      <div className="group">
+        <div className="gtitle">Fondo</div>
+        <div className="seg">
+          <button className={base === "sat" ? "on" : ""} onClick={() => setBase("sat")}>Satélite</button>
+          <button className={base === "calle" ? "on" : ""} onClick={() => setBase("calle")}>Calles</button>
+        </div>
+      </div>
+
+      <button onClick={fetchAll} disabled={loading}>{loading ? "Actualizando…" : "↻ Actualizar ahora"}</button>
+      {error && <div id="err">⚠ {error}</div>}
+      </div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<script>
+  // Compilar con runtime CLASICO (React.createElement) para evitar imports de jsx-runtime
+  (function () {
+    try {
+      var src = document.getElementById("app-src").textContent;
+      var code = Babel.transform(src, { presets: [["react", { runtime: "classic" }]] }).code;
+      (0, eval)(code);
+    } catch (err) {
+      console.error("Bootstrap error:", err && err.message);
+      document.getElementById("root").innerHTML =
+        '<div style="color:#fff;padding:20px;font-family:sans-serif">Error al iniciar: ' +
+        (err && err.message) + "</div>";
+    }
+  })();
+</script>
+</body>
+</html>
