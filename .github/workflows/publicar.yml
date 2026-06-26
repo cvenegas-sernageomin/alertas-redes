@@ -34,12 +34,8 @@ jobs:
           TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          Write-Host "=== ultimas 15 lineas de Actualizar.ps1 ===" -ForegroundColor Yellow
-          Get-Content .\Actualizar.ps1 | Select-Object -Last 15
-          Write-Host "=== fin ===" -ForegroundColor Yellow
           $ErrorActionPreference = 'Continue'
           .\Actualizar.ps1
-          Write-Host "=== SCRIPT COMPLETADO ===" -ForegroundColor Yellow
           exit 0
 
       - name: Publicar en rama live

@@ -73,26 +73,27 @@ try {
 }
 
 # --- Notificación Telegram (solo si se configuraron los secrets) ---
-Write-Host "[$(Get-Date -Format 'HH:mm:ss')] DEBUG: iniciando bloque Telegram" -ForegroundColor Magenta
 $tgToken  = $env:TELEGRAM_TOKEN
 $tgChatId = $env:TELEGRAM_CHAT_ID
-Write-Host "  DEBUG: token=$( if ($tgToken) { 'SI' } else { 'NO' } ) chatId=$( if ($tgChatId) { 'SI' } else { 'NO' } )" -ForegroundColor Magenta
-try {
-    if ($tgToken -and $tgChatId) {
+if ($tgToken -and $tgChatId) {
+    try {
         $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
         $sismosTodos = @(); $sismosTodos += $sismosCsn; $sismosTodos += $sismosUsgs
-        Write-Host "  DEBUG: llamando Build-ResumenAlertas (redes=$($redes.Count) emas=$($emas.Count) ventanas=$($ventanasParaNot.Count) sismos=$($sismosTodos.Count))" -ForegroundColor Magenta
         $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot $sismosTodos
-        if (-not $msg) {
+        # Sin alertas: enviar solo un "latido" diario (12:00 UTC = 08:00 Chile) para no saturar cada hora
+        if (-not $msg -and (Get-Date).ToUniversalTime().Hour -eq 12) {
             $ts  = (Get-Date).ToUniversalTime().ToString('HH:mm UTC')
-            $msg = "OK $ts | Redes: $($redes.Count) | EMAs: $($emas.Count) | Pron: $($ventanasParaNot.Count) ventanas | sin alertas activas"
+            $msg = "OK $ts | Redes: $($redes.Count) | EMAs: $($emas.Count) | Pron: $($ventanasParaNot.Count) | Sismos: $($sismosTodos.Count) | sin alertas activas"
         }
-        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Enviando notificacion Telegram..." -ForegroundColor Cyan
-        $ok = Send-TelegramMensaje $tgToken $tgChatId $msg
-        if ($ok) { Write-Host "  -> Mensaje enviado." -ForegroundColor Green }
-    } else {
-        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] TELEGRAM_TOKEN/TELEGRAM_CHAT_ID no definidos — omitido." -ForegroundColor Gray
+        if ($msg) {
+            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Enviando notificacion Telegram..." -ForegroundColor Cyan
+            if (Send-TelegramMensaje $tgToken $tgChatId $msg) { Write-Host "  -> Mensaje enviado." -ForegroundColor Green }
+        } else {
+            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Sin alertas; sin latido (no es 12:00 UTC)." -ForegroundColor Gray
+        }
+    } catch {
+        Write-Warning "Error en bloque Telegram: $_"
     }
-} catch {
-    Write-Warning "Error en bloque Telegram: $_"
+} else {
+    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Telegram no configurado (sin secrets)." -ForegroundColor Gray
 }

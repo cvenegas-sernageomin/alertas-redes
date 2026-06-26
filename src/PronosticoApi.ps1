@@ -131,7 +131,7 @@ function Build-VentanasPunto($punto) {
 }
 
 function Get-PronosticoGrilla([array]$grilla) {
-    $allVentanas = @()
+    $allVentanas = [System.Collections.Generic.List[object]]::new()
     $i = 0
     while ($i -lt $grilla.Count) {
         $hasta = [Math]::Min($i + 99, $grilla.Count - 1)
@@ -145,10 +145,10 @@ function Get-PronosticoGrilla([array]$grilla) {
         [array]$arr = $resp.Content | ConvertFrom-Json
         foreach ($obj in $arr) {
             $pt = Parse-OpenMeteoPoint $obj
-            $allVentanas += Build-VentanasPunto $pt
+            foreach ($v in Build-VentanasPunto $pt) { $allVentanas.Add($v) }
         }
         $i += 100
         if ($i -lt $grilla.Count) { Start-Sleep -Milliseconds 400 }
     }
-    return $allVentanas
+    return $allVentanas.ToArray()
 }

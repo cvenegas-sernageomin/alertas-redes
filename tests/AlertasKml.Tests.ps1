@@ -1,4 +1,4 @@
-$here = $PSScriptRoot
+﻿$here = $PSScriptRoot
 . "$here\..\src\AlertasKml.ps1"
 
 Describe "Get-ColorRedes" {
@@ -101,6 +101,24 @@ Describe "Build-PlacemarkRedes con serie" {
             ValoresSerie=@(3.2); TiemposSerie=@(1781802000)
         }
         Build-PlacemarkRedes $e | Should Not Match '<img'
+    }
+    It "no incluye img cuando la estacion esta seca (toda la serie en 0)" {
+        $e = [PSCustomObject]@{
+            Nombre='Visviri'; Codigo='01K'; Lat=-17.5; Lon=-69.4
+            TasaMmH=0.0; Epoch=1781802000; Red='DGA/DMC'
+            ValoresSerie=@(0.0,0.0,0.0,0.0); TiemposSerie=@(1781791200,1781794800,1781798400,1781802000)
+        }
+        Build-PlacemarkRedes $e | Should Not Match '<img'
+    }
+    It "incluye dos img cuando hubo lluvia (24h y 48h)" {
+        $tiempos = @(0..47 | ForEach-Object { 1781600000 + ($_ * 3600) })
+        $precip  = @(0..47 | ForEach-Object { if ($_ -ge 40) { 2.0 } else { 0.0 } })
+        $e = [PSCustomObject]@{
+            Nombre='Lluviosa'; Codigo='09K'; Lat=-38.0; Lon=-72.0
+            TasaMmH=2.0; Epoch=1781600000; Red='DGA/DMC'
+            ValoresSerie=$precip; TiemposSerie=$tiempos
+        }
+        ([regex]::Matches((Build-PlacemarkRedes $e), '<img')).Count | Should Be 2
     }
 }
 

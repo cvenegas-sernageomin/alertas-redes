@@ -21,7 +21,7 @@ function Get-RedFromCode([string]$code) {
 }
 
 function Parse-RedesJson([array]$datos) {
-    $result = @()
+    $result = [System.Collections.Generic.List[object]]::new()
     foreach ($d in $datos) {
         $tasa = 0.0
         if ($d.values -and $d.values.Count -gt 0) {
@@ -33,7 +33,7 @@ function Parse-RedesJson([array]$datos) {
             }
         }
         $ultimoTs = if ($d.timestamps -and $d.timestamps.Count -gt 0) { $d.timestamps[-1] } else { 0 }
-        $result += [PSCustomObject]@{
+        $result.Add([PSCustomObject]@{
             Nombre       = $d.name
             Codigo       = $d.nationalCode
             Lat          = [double]$d.lat
@@ -43,9 +43,9 @@ function Parse-RedesJson([array]$datos) {
             Red          = Get-RedFromCode $d.nationalCode
             ValoresSerie = if ($d.values)     { $d.values }     else { @() }
             TiemposSerie = if ($d.timestamps) { $d.timestamps } else { @() }
-        }
+        })
     }
-    return $result
+    return $result.ToArray()
 }
 
 function Get-AllRedes {
@@ -63,7 +63,7 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
     $tempIdx = @{}
     foreach ($t in $tempSerie) { $tempIdx[$t.nationalCode] = $t }
 
-    $result = @()
+    $result = [System.Collections.Generic.List[object]]::new()
     foreach ($s in $precipSerie) {
         $alt  = $altitudMap[$s.Codigo]
         $tObj = $tempIdx[$s.Codigo]
@@ -104,7 +104,7 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
             }
         }
 
-        $result += [PSCustomObject]@{
+        $result.Add([PSCustomObject]@{
             Nombre        = $s.Nombre
             Codigo        = $s.Codigo
             Lat           = $s.Lat
@@ -118,9 +118,9 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
             ValoresTemp   = $valoresTemp.ToArray()
             ValoresIso    = $valoresIso.ToArray()
             TiemposSerie  = $s.TiemposSerie
-        }
+        })
     }
-    return $result
+    return $result.ToArray()
 }
 
 function Get-EmasDmc([array]$redesData) {

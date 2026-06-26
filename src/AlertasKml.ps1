@@ -113,6 +113,10 @@ function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas) {
 
 function Build-GraficosAcumulado([array]$tiempos, [array]$precip) {
     if (-not $tiempos -or $tiempos.Count -lt 2) { return '' }
+    # Sin lluvia en la ventana -> sin graficos (estacion seca = linea plana en 0, no aporta y abulta el KML)
+    $total = 0.0
+    foreach ($v in $precip) { if ($null -ne $v) { $total += [double]$v } }
+    if ($total -lt 0.1) { return '' }
     $img = ''
     $c24 = Build-ChartAcumulado $tiempos $precip 24
     $c48 = Build-ChartAcumulado $tiempos $precip 48
@@ -168,11 +172,7 @@ function Build-PlacemarkRedes($e) {
     $color = Get-ColorRedes $e.TasaMmH
     $hora  = Format-Epoch $e.Epoch
     $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresSerie
-    $leyenda = "<hr/><b>Leyenda:</b><table cellspacing='2' cellpadding='2'>" +
-               "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: precip &lt; 5 mm/h</td></tr>" +
-               "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm/h</td></tr>" +
-               "<tr><td bgcolor='#ff0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Rojo: precip &ge; 10 mm/h</td></tr>" +
-               "</table>"
+    $leyenda = "<hr/><small><b>Umbrales:</b> Verde &lt;5 mm/h &middot; Amarillo &ge;5 &middot; Rojo &ge;10</small>"
     $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
@@ -190,11 +190,7 @@ function Build-PlacemarkEmas($e) {
     $isoStr  = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
     $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C" } else { 'sin dato' }
     $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresPrecip
-    $leyenda = "<hr/><b>Leyenda:</b><table cellspacing='2' cellpadding='2'>" +
-               "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: condicion sin alerta</td></tr>" +
-               "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm/h Y isoterma &ge; 3000 m</td></tr>" +
-               "<tr><td bgcolor='#ff0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Rojo: precip &ge; 10 mm/h Y isoterma &ge; 3000 m</td></tr>" +
-               "</table>"
+    $leyenda = "<hr/><small><b>Umbrales EMA:</b> Amarillo precip &ge;5 mm/h + isoterma &ge;3000 m &middot; Rojo &ge;10 + iso &ge;3000</small>"
     $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
@@ -289,11 +285,7 @@ function Build-PlacemarkPronostico($v) {
             "<tr><td>GFS</td><td>$($v.PrecipGfs)</td><td>$isoG</td><td>$($v.ColorGfs)</td></tr>" +
             "<tr><td>ICON</td><td>$($v.PrecipIcon)</td><td>$isoI</td><td>$($v.ColorIcon)</td></tr>" +
             "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)<br/><br/>" +
-            "<hr/><b>Leyenda (acumulado en ventana):</b><table cellspacing='2' cellpadding='2'>" +
-            "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: precip &lt; 5 mm O isoterma &lt; 2500 m</td></tr>" +
-            "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm Y isoterma &ge; 2500 m</td></tr>" +
-            "<tr><td bgcolor='#ff0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Rojo: precip &ge; 20 mm Y isoterma &ge; 3000 m</td></tr>" +
-            "</table>]]>"
+            "<hr/><small><b>Umbrales (acumulado ventana):</b> Verde &lt;5 mm o iso &lt;2500 m &middot; Amarillo &ge;5 + iso &ge;2500 &middot; Rojo &ge;20 + iso &ge;3000</small>]]>"
     return @"
     <Placemark>
       <name>$($v.Lat),$($v.Lon)</name>
