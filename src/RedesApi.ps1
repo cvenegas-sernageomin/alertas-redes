@@ -174,17 +174,7 @@ function Get-EmasDmc([array]$redesData, [hashtable]$altitudMap) {
         Write-Warning "Serie temperatura no disponible: $_"
     }
 
-    # Estaciones con dato real de temperatura (las que sirven para isoterma)
-    $tempConDato = @{}
-    foreach ($t in $tempSerie) {
-        if ($t.values) {
-            foreach ($v in $t.values) { if ($null -ne $v) { $tempConDato[$t.nationalCode] = $true; break } }
-        }
-    }
-
-    # EMA = altitud conocida (cache) Y temperatura real disponible
-    $precipSerie = @($redesData | Where-Object {
-        $altitudMap.ContainsKey($_.Codigo) -and $tempConDato.ContainsKey($_.Codigo)
-    })
+    # EMA = altitud conocida (cache). Si no hay temperatura, igual aparece con isoterma "sin dato".
+    $precipSerie = @($redesData | Where-Object { $altitudMap.ContainsKey($_.Codigo) })
     return Parse-EmasDmcJson $precipSerie $tempSerie $altitudMap
 }
