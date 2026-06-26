@@ -1,4 +1,4 @@
-function Sign([string]$u) {
+﻿function Sign([string]$u) {
     [int64]$h = 0
     foreach ($ch in $u.ToCharArray()) {
         $h = (($h * 31) + [int][char]$ch) -band 0xFFFFFFFFL
@@ -50,7 +50,7 @@ function Parse-RedesJson([array]$datos) {
 
 function Get-AllRedes {
     $epoch = Get-EpochHora
-    $ruta = "api/measure/by-measure-type/1/by-timestamp/$epoch/by-interval/24"
+    $ruta = "api/measure/by-measure-type/1/by-timestamp/$epoch/by-interval/48"
     $k = Sign $ruta
     $r = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$ruta" `
         -Headers @{ckey = $k} -UseBasicParsing -TimeoutSec 90

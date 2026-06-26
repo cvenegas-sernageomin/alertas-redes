@@ -53,6 +53,74 @@
     return "https://quickchart.io/chart?v=4&w=300&h=160&c=$encoded"
 }
 
+function Build-AcumuladoSerie([array]$precip) {
+    $acc = 0.0
+    $out = [System.Collections.Generic.List[double]]::new()
+    foreach ($v in $precip) {
+        if ($null -ne $v) { $acc += [double]$v }
+        $out.Add([math]::Round($acc, 1))
+    }
+    return $out.ToArray()
+}
+
+function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas) {
+    if ($tiempos.Count -lt 2) { return '' }
+    # Tomar las ultimas $horas muestras (paso horario)
+    $n     = $tiempos.Count
+    $desde = [math]::Max(0, $n - $horas)
+    $t = @($tiempos[$desde..($n - 1)])
+    $p = @($precip[$desde..($n - 1)])
+    if ($t.Count -lt 2) { return '' }
+
+    $labels = @($t | ForEach-Object {
+        [DateTimeOffset]::FromUnixTimeSeconds([long]$_).ToLocalTime().ToString('dd HH:mm')
+    })
+    $acum    = Build-AcumuladoSerie $p
+    $totalMm = if ($acum.Count -gt 0) { $acum[-1] } else { 0 }
+
+    $ds = [System.Collections.Generic.List[hashtable]]::new()
+    $ds.Add(@{
+        type='bar'; label='Precip mm/h'; data=$p
+        backgroundColor='rgba(55,138,221,0.7)'; yAxisID='yP'; order=2
+    })
+    $ds.Add(@{
+        type='line'; label='Acumulado mm'; data=$acum
+        borderColor='#1f7a1f'; backgroundColor='rgba(31,122,31,0.15)'; fill=$true
+        borderWidth=2; pointRadius=0; tension=0.2; yAxisID='yA'; order=1
+    })
+
+    $escalas = @{
+        x  = @{ ticks=@{ font=@{ size=9 }; maxTicksLimit=8 } }
+        yP = @{ position='left';  title=@{ display=$true; text='mm/h' };    ticks=@{ font=@{ size=9 } } }
+        yA = @{ position='right'; grid=@{ drawOnChartArea=$false }
+               title=@{ display=$true; text='Acum mm' }; ticks=@{ font=@{ size=9 } }; beginAtZero=$true }
+    }
+    $cfg = @{
+        type = 'bar'
+        data = @{ labels=$labels; datasets=$ds.ToArray() }
+        options = @{
+            plugins = @{
+                legend = @{ display=$true; position='bottom'; labels=@{ boxWidth=10; font=@{ size=9 } } }
+                title  = @{ display=$true; text="Acumulado ${horas}h: $totalMm mm"; font=@{ size=11 } }
+            }
+            scales = $escalas
+        }
+    }
+    $json    = $cfg | ConvertTo-Json -Depth 15 -Compress
+    $encoded = [Uri]::EscapeDataString($json)
+    return "https://quickchart.io/chart?v=4&w=330&h=180&c=$encoded"
+}
+
+function Build-GraficosAcumulado([array]$tiempos, [array]$precip) {
+    if (-not $tiempos -or $tiempos.Count -lt 2) { return '' }
+    $img = ''
+    $c24 = Build-ChartAcumulado $tiempos $precip 24
+    $c48 = Build-ChartAcumulado $tiempos $precip 48
+    if ($c24) { $img += "<br/><b>Ultimas 24 h</b><br/><img src='$c24' width='330'/>" }
+    if ($c48) { $img += "<br/><b>Ultimas 48 h</b><br/><img src='$c48' width='330'/>" }
+    return $img
+}
+
 function Get-ColorRedes([double]$mmH) {
     if ($mmH -ge 10) { return 'rojo' }
     if ($mmH -ge 5)  { return 'amarillo' }
@@ -99,11 +167,7 @@ function Build-Styles {
 function Build-PlacemarkRedes($e) {
     $color = Get-ColorRedes $e.TasaMmH
     $hora  = Format-Epoch $e.Epoch
-    $chartImg = ''
-    if ($e.ValoresSerie -and $e.ValoresSerie.Count -ge 2) {
-        $url = Build-ChartUrl $e.TiemposSerie $e.ValoresSerie
-        if ($url) { $chartImg = "<br/><small>Precip (mm/h)</small><br/><img src='$url' width='300'/>" }
-    }
+    $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresSerie
     $leyenda = "<hr/><b>Leyenda:</b><table cellspacing='2' cellpadding='2'>" +
                "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: precip &lt; 5 mm/h</td></tr>" +
                "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm/h</td></tr>" +
@@ -125,11 +189,7 @@ function Build-PlacemarkEmas($e) {
     $hora    = Format-Epoch $e.Epoch
     $isoStr  = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
     $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C" } else { 'sin dato' }
-    $chartImg = ''
-    if ($e.TiemposSerie -and $e.TiemposSerie.Count -ge 2) {
-        $url = Build-ChartUrl $e.TiemposSerie $e.ValoresPrecip $e.ValoresTemp $e.ValoresIso
-        if ($url) { $chartImg = "<br/><small>Precip mm/h | Temp C | Isoterma km</small><br/><img src='$url' width='300'/>" }
-    }
+    $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresPrecip
     $leyenda = "<hr/><b>Leyenda:</b><table cellspacing='2' cellpadding='2'>" +
                "<tr><td bgcolor='#00cc00' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Verde: condicion sin alerta</td></tr>" +
                "<tr><td bgcolor='#cc9900' width='14'>&nbsp;&nbsp;</td><td>&nbsp;Amarillo: precip &ge; 5 mm/h Y isoterma &ge; 3000 m</td></tr>" +
