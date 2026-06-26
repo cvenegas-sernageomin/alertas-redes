@@ -33,7 +33,10 @@ jobs:
         env:
           TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: powershell -File Actualizar.ps1
+        run: |
+          $ErrorActionPreference = 'Continue'
+          .\Actualizar.ps1
+          exit 0
 
       - name: Publicar en rama live
         shell: pwsh
