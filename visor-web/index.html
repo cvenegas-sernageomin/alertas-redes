@@ -189,9 +189,12 @@ function App() {
     data.current.est.forEach(f => {
       const niv = nivelEstacion(f.styleUrl);
       if (onlyAlerts && niv === "verde") return;
-      const r = niv === "rojo" ? 7 : niv === "amarillo" ? 6 : 4;
+      const hasChart = /<img/.test(f.desc || "");
+      const r = (niv === "rojo" ? 7 : niv === "amarillo" ? 6 : 4) + (hasChart ? 1 : 0);
       L.circleMarker([f.lat, f.lon], {
-        radius: r, color: "#0a0a0a", weight: 0.6,
+        radius: r,
+        color: hasChart ? "#22d3ee" : "#0a0a0a",
+        weight: hasChart ? 2 : 0.6,
         fillColor: colorEstacion(f.styleUrl), fillOpacity: 0.9
       }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.est);
     });
@@ -226,6 +229,7 @@ function App() {
         estRojo: est.filter(f => nivelEstacion(f.styleUrl) === "rojo").length,
         estAmar: est.filter(f => nivelEstacion(f.styleUrl) === "amarillo").length,
         estTot: est.length,
+        estGraf: est.filter(f => /<img/.test(f.desc || "")).length,
         pronRojo: pron.filter(f => /rojo/.test(f.styleUrl)).length,
         pronAmar: pron.filter(f => /amarillo/.test(f.styleUrl)).length,
         sismoFuerte: sismos.filter(f => parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0") >= 6).length,
@@ -266,6 +270,11 @@ function App() {
         <St color="#ff2d2d" label="Rojo ≥10 mm/h" value={stats.estRojo} />
         <St color="#e6b800" label="Amarillo ≥5 mm/h" value={stats.estAmar} />
         <div className="row"><span style={{ color: "#93a4b5" }}>Total estaciones</span><span className="num">{stats.estTot}</span></div>
+        <div className="stat" style={{ marginTop: 4 }}>
+          <span className="dot" style={{ background: "transparent", border: "2px solid #22d3ee" }}></span>
+          <span>Con gráficos 48h</span>
+          <span className="num" style={{ marginLeft: "auto" }}>{stats.estGraf}</span>
+        </div>
       </>}
 
       <div className="group">
