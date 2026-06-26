@@ -7,17 +7,31 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   html, body, #root, #map { height: 100%; margin: 0; }
-  #map { width: 100%; background: #0b1622; }
   * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 
+  /* Mapa: ocupa todo menos la barra lateral */
+  #map { position: absolute; top: 0; right: 0; bottom: 0; left: 300px; background: #0b1622; }
+
+  /* Barra lateral fija a la izquierda */
   #panel {
-    position: absolute; top: 10px; right: 10px; z-index: 1000;
-    width: 270px; max-width: calc(100vw - 20px);
-    background: rgba(17,24,33,0.92); color: #e7edf3; border-radius: 10px;
-    padding: 12px 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.45);
-    font-size: 13px; backdrop-filter: blur(4px);
+    position: absolute; top: 0; left: 0; bottom: 0; z-index: 1000;
+    width: 300px; overflow-y: auto;
+    background: rgba(15,22,31,0.97); color: #e7edf3;
+    padding: 14px 16px; box-shadow: 2px 0 16px rgba(0,0,0,0.45);
+    font-size: 13px;
   }
   #panel h1 { font-size: 15px; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
+  .collapse { display: inline-block; margin-left: auto; background: transparent !important; width: auto !important; padding: 2px 8px !important; font-size: 14px; cursor: pointer; }
+
+  /* Pantallas chicas: overlay plegable arriba a la izquierda */
+  @media (max-width: 760px) {
+    #map { left: 0; }
+    #panel {
+      top: 10px; left: 10px; bottom: auto; width: auto;
+      max-width: calc(100vw - 20px); max-height: calc(100vh - 20px);
+      border-radius: 10px; backdrop-filter: blur(4px);
+    }
+  }
   #panel .sub { color: #93a4b5; font-size: 11px; margin-bottom: 10px; }
   .row { display: flex; align-items: center; justify-content: space-between; margin: 5px 0; }
   .stat { display: flex; align-items: center; gap: 7px; }
@@ -116,6 +130,7 @@ function App() {
   const [onlyAlerts, setOnlyAlerts] = useState(false);
   const [show, setShow] = useState({ est: true, pron: false, sismos: true });
   const [base, setBase] = useState("sat");
+  const [collapsed, setCollapsed] = useState(false);
 
   // init mapa una sola vez
   useEffect(() => {
@@ -237,12 +252,15 @@ function App() {
 
   return (
     <div id="panel">
-      <h1>🌧️ Alertas Redes Chile</h1>
+      <h1>🌧️ Alertas Redes Chile
+        <button className="collapse" onClick={() => setCollapsed(!collapsed)}>{collapsed ? "▸" : "▾"}</button>
+      </h1>
       <div className="sub">
         {updated ? `Actualizado ${updated.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}` : "Cargando…"}
         {loading ? " · ⏳" : ""}
       </div>
 
+      {!collapsed && <div className="pbody">
       <div className="gtitle">Estaciones (precipitación)</div>
       {stats && <>
         <St color="#ff2d2d" label="Rojo ≥10 mm/h" value={stats.estRojo} />
@@ -284,6 +302,7 @@ function App() {
 
       <button onClick={fetchAll} disabled={loading}>{loading ? "Actualizando…" : "↻ Actualizar ahora"}</button>
       {error && <div id="err">⚠ {error}</div>}
+      </div>}
     </div>
   );
 }
