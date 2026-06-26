@@ -71,18 +71,25 @@ try {
 }
 
 # --- Notificación Telegram (solo si se configuraron los secrets) ---
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] DEBUG: iniciando bloque Telegram" -ForegroundColor Magenta
 $tgToken  = $env:TELEGRAM_TOKEN
 $tgChatId = $env:TELEGRAM_CHAT_ID
-if ($tgToken -and $tgChatId) {
-    $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
-    $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot
-    if (-not $msg) {
-        $ts  = (Get-Date).ToUniversalTime().ToString('HH:mm') + ' UTC — ' + (Get-Date).ToLocalTime().ToString('dd-MMM-yyyy')
-        $msg = "✅ <b>Sin alertas activas — $ts</b>`nRedes: $($redes.Count) est. | EMAs: $($emas.Count) est. | Pronóstico: $($ventanasParaNot.Count) ventanas — todo en verde."
+Write-Host "  DEBUG: token=$( if ($tgToken) { 'SI' } else { 'NO' } ) chatId=$( if ($tgChatId) { 'SI' } else { 'NO' } )" -ForegroundColor Magenta
+try {
+    if ($tgToken -and $tgChatId) {
+        $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
+        Write-Host "  DEBUG: llamando Build-ResumenAlertas (redes=$($redes.Count) emas=$($emas.Count) ventanas=$($ventanasParaNot.Count))" -ForegroundColor Magenta
+        $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot
+        if (-not $msg) {
+            $ts  = (Get-Date).ToUniversalTime().ToString('HH:mm UTC')
+            $msg = "OK $ts | Redes: $($redes.Count) | EMAs: $($emas.Count) | Pron: $($ventanasParaNot.Count) ventanas | sin alertas activas"
+        }
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Enviando notificacion Telegram..." -ForegroundColor Cyan
+        $ok = Send-TelegramMensaje $tgToken $tgChatId $msg
+        if ($ok) { Write-Host "  -> Mensaje enviado." -ForegroundColor Green }
+    } else {
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] TELEGRAM_TOKEN/TELEGRAM_CHAT_ID no definidos — omitido." -ForegroundColor Gray
     }
-    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Enviando notificacion Telegram..." -ForegroundColor Cyan
-    $ok = Send-TelegramMensaje $tgToken $tgChatId $msg
-    if ($ok) { Write-Host "  -> Mensaje enviado." -ForegroundColor Green }
-} else {
-    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] TELEGRAM_TOKEN/TELEGRAM_CHAT_ID no definidos — notificacion omitida." -ForegroundColor Gray
+} catch {
+    Write-Warning "Error en bloque Telegram: $_"
 }
