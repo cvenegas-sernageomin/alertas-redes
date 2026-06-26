@@ -1,4 +1,4 @@
-$here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyCommand.Path -Parent }
+﻿$here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyCommand.Path -Parent }
 . "$here\src\RedesApi.ps1"
 . "$here\src\AlertasKml.ps1"
 . "$here\src\PronosticoApi.ps1"
@@ -60,6 +60,8 @@ try {
 }
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando sismos (CSN + USGS)..." -ForegroundColor Cyan
+$sismosCsn  = @()
+$sismosUsgs = @()
 try {
     $sismosCsn  = Get-SismosCSN
     $sismosUsgs = Get-SismosUSGS
@@ -78,8 +80,9 @@ Write-Host "  DEBUG: token=$( if ($tgToken) { 'SI' } else { 'NO' } ) chatId=$( i
 try {
     if ($tgToken -and $tgChatId) {
         $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
-        Write-Host "  DEBUG: llamando Build-ResumenAlertas (redes=$($redes.Count) emas=$($emas.Count) ventanas=$($ventanasParaNot.Count))" -ForegroundColor Magenta
-        $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot
+        $sismosTodos = @(); $sismosTodos += $sismosCsn; $sismosTodos += $sismosUsgs
+        Write-Host "  DEBUG: llamando Build-ResumenAlertas (redes=$($redes.Count) emas=$($emas.Count) ventanas=$($ventanasParaNot.Count) sismos=$($sismosTodos.Count))" -ForegroundColor Magenta
+        $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot $sismosTodos
         if (-not $msg) {
             $ts  = (Get-Date).ToUniversalTime().ToString('HH:mm UTC')
             $msg = "OK $ts | Redes: $($redes.Count) | EMAs: $($emas.Count) | Pron: $($ventanasParaNot.Count) ventanas | sin alertas activas"

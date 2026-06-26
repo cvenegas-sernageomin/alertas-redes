@@ -1,6 +1,30 @@
-# Requiere que AlertasKml.ps1 ya este cargado (Get-ColorRedes, Get-ColorEmas)
+﻿# Requiere que AlertasKml.ps1 ya este cargado (Get-ColorRedes, Get-ColorEmas)
 
-function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas) {
+function Get-SismosFuertes([array]$sismos, [double]$minMag = 6.0, [int]$ventanaMin = 90) {
+    if ($null -eq $sismos -or $sismos.Count -eq 0) { return @() }
+    $ahora = [datetime]::UtcNow
+    $candidatos = @($sismos | Where-Object {
+        $_.Mag -ge $minMag -and $null -ne $_.FechaUtc -and
+        ($ahora - $_.FechaUtc).TotalMinutes -le $ventanaMin -and
+        ($ahora - $_.FechaUtc).TotalMinutes -ge -10
+    })
+    # Dedup: mismo evento reportado por CSN y USGS (proximidad espacio-temporal)
+    $unicos = [System.Collections.ArrayList]::new()
+    foreach ($s in ($candidatos | Sort-Object FechaUtc -Descending)) {
+        $dup = $false
+        foreach ($u in $unicos) {
+            if ([math]::Abs($s.Lat - $u.Lat) -le 0.5 -and
+                [math]::Abs($s.Lon - $u.Lon) -le 0.5 -and
+                [math]::Abs(($s.FechaUtc - $u.FechaUtc).TotalMinutes) -le 5) {
+                $dup = $true; break
+            }
+        }
+        if (-not $dup) { [void]$unicos.Add($s) }
+    }
+    return $unicos.ToArray()
+}
+
+function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, [array]$sismos = @()) {
     $ts = (Get-Date).ToUniversalTime().ToString('HH:mm') + ' UTC — ' + (Get-Date).ToLocalTime().ToString('dd-MMM-yyyy')
 
     # --- Condiciones actuales ---
@@ -14,17 +38,35 @@ function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas) 
     $rojoPron      = @($allVentanas | Where-Object { $_.ColorFinal -eq 'rojo' })
     $amarilloPron  = @($allVentanas | Where-Object { $_.ColorFinal -eq 'amarillo' })
 
+    # --- Sismos fuertes (M >= 6, recientes, deduplicados) ---
+    $sismosFuertes = @(Get-SismosFuertes $sismos)
+
     $hayAlertas = ($rojasRedes.Count + $amarillasRedes.Count + $rojasEmas.Count +
-                   $amarillasEmas.Count + $rojoPron.Count + $amarilloPron.Count) -gt 0
+                   $amarillasEmas.Count + $rojoPron.Count + $amarilloPron.Count +
+                   $sismosFuertes.Count) -gt 0
     if (-not $hayAlertas) { return $null }
 
-    $nivel = if ($rojasRedes.Count -gt 0 -or $rojasEmas.Count -gt 0 -or $rojoPron.Count -gt 0) {
+    $hayRojo = $rojasRedes.Count -gt 0 -or $rojasEmas.Count -gt 0 -or $rojoPron.Count -gt 0
+    $nivel = if ($sismosFuertes.Count -gt 0) {
+        '🌋 SISMO FUERTE (M&ge;6)'
+    } elseif ($hayRojo) {
         '🔴 ALERTA ROJA activa'
     } else {
         '🟡 Alerta moderada'
     }
 
     $lineas = @("<b>$nivel — $ts</b>`n")
+
+    # --- Sismos: primero por urgencia ---
+    if ($sismosFuertes.Count -gt 0) {
+        $lineas += "🌋 <b>Sismo(s) M&ge;6 en los últimos 90 min: $($sismosFuertes.Count)</b>"
+        foreach ($s in $sismosFuertes) {
+            $prof  = if ($null -ne $s.Prof) { "$($s.Prof) km" } else { 's/d' }
+            $lugar = if ($s.Lugar) { " — $($s.Lugar)" } else { '' }
+            $lineas += "  • <b>M $($s.Mag)</b> | prof $prof | $($s.Lat)°, $($s.Lon)°$lugar [$($s.Fuente)] $($s.Fecha)"
+        }
+        $lineas += ''
+    }
 
     # --- Redes (precipitación sola) ---
     if ($rojasRedes.Count -gt 0) {

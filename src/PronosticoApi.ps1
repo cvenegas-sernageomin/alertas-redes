@@ -1,4 +1,4 @@
-function Get-GrillaChile {
+﻿function Get-GrillaChile {
     # lonMax (este): limite con Argentina/Bolivia por latitud
     $lonMaxTab = @{
         '-17.5'='-68';'-18.5'='-68';'-19.5'='-68';'-20.5'='-68';'-21.5'='-68';'-22.5'='-68'

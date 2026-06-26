@@ -1,4 +1,4 @@
-function Get-EstiloSismo([double]$mag) {
+﻿function Get-EstiloSismo([double]$mag) {
     if ($mag -ge 7) { return @{ Color='ff0000cc'; Scale=1.8 } }
     if ($mag -ge 6) { return @{ Color='ff0033ff'; Scale=1.3 } }
     if ($mag -ge 5) { return @{ Color='ff0080ff'; Scale=1.0 } }
@@ -33,9 +33,15 @@ function Get-SismosCSN {
             $prof  = if ($txt -match 'Profundidad[^\d]*(\d+)\s*km')  { [int]$Matches[1] }    else { $null }
             $mag   = if ($txt -match 'Magnitud[^\d]*([\d.]+)')        { [double]$Matches[1] } else { $null }
             $fecha = ''
+            $fechaUtc = $null
             if ($txt -match 'Hora Local\s+(\d{2}:\d{2}:\d{2})\s+(\d{2}/\d{2}/\d{4})') {
                 $h = $Matches[1]; $p = $Matches[2].Split('/')
                 $fecha = "$($p[2])-$($p[1])-$($p[0]) $h"
+                try {
+                    $localDt  = [datetime]::ParseExact($fecha, 'yyyy-MM-dd HH:mm:ss', [System.Globalization.CultureInfo]::InvariantCulture)
+                    $tzChile  = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time')
+                    $fechaUtc = [System.TimeZoneInfo]::ConvertTimeToUtc($localDt, $tzChile)
+                } catch { $fechaUtc = $null }
             }
 
             if ($null -ne $lat -and $null -ne $lon -and $null -ne $mag) {
@@ -43,6 +49,7 @@ function Get-SismosCSN {
                     Lat    = $lat; Lon    = $lon
                     Prof   = $prof; Mag   = $mag
                     Fecha  = $fecha; Lugar = ''
+                    FechaUtc = $fechaUtc
                     Url    = $url; Fuente = 'CSN'
                 }
             }
@@ -61,11 +68,13 @@ function Get-SismosUSGS {
         [array]$feats = ($resp.Content | ConvertFrom-Json).features
         return $feats | ForEach-Object {
             $p = $_.properties; $c = $_.geometry.coordinates
+            $epochMs = [long]$p.time
             [PSCustomObject]@{
                 Lat    = [double]$c[1]; Lon  = [double]$c[0]
                 Prof   = if ($null -ne $c[2]) { [int]$c[2] } else { $null }
                 Mag    = [double]$p.mag
-                Fecha  = [DateTimeOffset]::FromUnixTimeMilliseconds([long]$p.time).ToLocalTime().ToString('yyyy-MM-dd HH:mm:ss')
+                Fecha  = [DateTimeOffset]::FromUnixTimeMilliseconds($epochMs).ToLocalTime().ToString('yyyy-MM-dd HH:mm:ss')
+                FechaUtc = [DateTimeOffset]::FromUnixTimeMilliseconds($epochMs).UtcDateTime
                 Lugar  = $p.place; Url = $p.url; Fuente = 'USGS'
             }
         }

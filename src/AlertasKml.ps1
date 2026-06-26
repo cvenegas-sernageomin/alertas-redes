@@ -1,4 +1,4 @@
-function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [array]$iso = @()) {
+﻿function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [array]$iso = @()) {
     if ($tiempos.Count -lt 2) { return '' }
 
     $labels = @($tiempos | ForEach-Object {
