@@ -172,7 +172,10 @@ function Build-PlacemarkRedes($e) {
     $color = Get-ColorRedes $e.TasaMmH
     $hora  = Format-Epoch $e.Epoch
     $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresSerie
-    $leyenda = "<hr/><small><b>Umbrales:</b> Verde &lt;5 mm/h &middot; Amarillo &ge;5 &middot; Rojo &ge;10</small>"
+    $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
+               "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
+               "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
+               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10</small></td></tr></table>"
     $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
@@ -190,7 +193,9 @@ function Build-PlacemarkEmas($e) {
     $isoStr  = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
     $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C" } else { 'sin dato' }
     $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresPrecip
-    $leyenda = "<hr/><small><b>Umbrales EMA:</b> Amarillo precip &ge;5 mm/h + isoterma &ge;3000 m &middot; Rojo &ge;10 + iso &ge;3000</small>"
+    $leyenda = "<hr/><small><b>EMA (precip + iso):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
+               "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 mm/h + iso&ge;3000 m&nbsp;</small></td>" +
+               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10 + iso&ge;3000</small></td></tr></table>"
     $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
@@ -285,7 +290,10 @@ function Build-PlacemarkPronostico($v) {
             "<tr><td>GFS</td><td>$($v.PrecipGfs)</td><td>$isoG</td><td>$($v.ColorGfs)</td></tr>" +
             "<tr><td>ICON</td><td>$($v.PrecipIcon)</td><td>$isoI</td><td>$($v.ColorIcon)</td></tr>" +
             "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)<br/><br/>" +
-            "<hr/><small><b>Umbrales (acumulado ventana):</b> Verde &lt;5 mm o iso &lt;2500 m &middot; Amarillo &ge;5 + iso &ge;2500 &middot; Rojo &ge;20 + iso &ge;3000</small>]]>"
+            "<hr/><small><b>Pronostico (acum ventana):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
+            "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5 o iso&lt;2500&nbsp;</small></td>" +
+            "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 + iso&ge;2500&nbsp;</small></td>" +
+            "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;20 + iso&ge;3000</small></td></tr></table>]]>"
     return @"
     <Placemark>
       <name>$($v.Lat),$($v.Lon)</name>
