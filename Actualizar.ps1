@@ -3,6 +3,7 @@ $here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyC
 . "$here\src\AlertasKml.ps1"
 . "$here\src\PronosticoApi.ps1"
 . "$here\src\SismosApi.ps1"
+. "$here\src\Notificaciones.ps1"
 
 $kmlPath         = "$here\red_alertas.kml"
 $kmlPronostico   = "$here\red_pronostico.kml"
@@ -67,4 +68,21 @@ try {
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] KML sismos escrito: $($sismosCsn.Count) CSN + $($sismosUsgs.Count) USGS" -ForegroundColor Green
 } catch {
     Write-Warning "Error en sismos: $_. Se mantiene el KML anterior."
+}
+
+# --- Notificación Telegram (solo si se configuraron los secrets) ---
+$tgToken  = $env:TELEGRAM_TOKEN
+$tgChatId = $env:TELEGRAM_CHAT_ID
+if ($tgToken -and $tgChatId) {
+    $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
+    $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot
+    if (-not $msg) {
+        $ts  = (Get-Date).ToUniversalTime().ToString('HH:mm') + ' UTC — ' + (Get-Date).ToLocalTime().ToString('dd-MMM-yyyy')
+        $msg = "✅ <b>Sin alertas activas — $ts</b>`nRedes: $($redes.Count) est. | EMAs: $($emas.Count) est. | Pronóstico: $($ventanasParaNot.Count) ventanas — todo en verde."
+    }
+    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Enviando notificacion Telegram..." -ForegroundColor Cyan
+    $ok = Send-TelegramMensaje $tgToken $tgChatId $msg
+    if ($ok) { Write-Host "  -> Mensaje enviado." -ForegroundColor Green }
+} else {
+    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] TELEGRAM_TOKEN/TELEGRAM_CHAT_ID no definidos — notificacion omitida." -ForegroundColor Gray
 }

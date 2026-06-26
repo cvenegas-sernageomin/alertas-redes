@@ -30,6 +30,9 @@ jobs:
 
       - name: Generar KMLs
         shell: pwsh
+        env:
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: powershell -File Actualizar.ps1
 
       - name: Publicar en rama live
