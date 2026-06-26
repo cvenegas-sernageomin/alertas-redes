@@ -126,8 +126,8 @@ Describe "Build-StylesPronostico" {
     It "contiene style amarillo_1" { $estilos | Should Match 'id="amarillo_1"' }
     It "contiene style amarillo_3" { $estilos | Should Match 'id="amarillo_3"' }
     It "contiene style rojo_2"     { $estilos | Should Match 'id="rojo_2"'     }
-    It "contiene 6 estilos en total" {
-        ($estilos | Select-String '<Style id=' -AllMatches).Matches.Count | Should Be 6
+    It "contiene 7 estilos en total (verde_p + amarillo/rojo x3)" {
+        ($estilos | Select-String '<Style id=' -AllMatches).Matches.Count | Should Be 7
     }
 }
 
