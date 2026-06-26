@@ -280,52 +280,70 @@ function Build-StylesPronostico {
     return $xml
 }
 
-function Build-PlacemarkPronostico($v) {
-    $isoE = if ($null -ne $v.IsoEcmwf) { "$($v.IsoEcmwf) m" } else { 'sin dato' }
-    $isoG = if ($null -ne $v.IsoGfs)   { "$($v.IsoGfs) m"   } else { 'sin dato' }
-    $isoI = if ($null -ne $v.IsoIcon)  { "$($v.IsoIcon) m"  } else { 'sin dato' }
-    $desc = "<![CDATA[<b>$($v.Lat) / $($v.Lon)</b><br/>Ventana: $($v.Nombre)<br/><br/>" +
-            "<table><tr><th></th><th>Precip (mm)</th><th>Isoterma (m)</th><th>Alerta</th></tr>" +
-            "<tr><td>ECMWF</td><td>$($v.PrecipEcmwf)</td><td>$isoE</td><td>$($v.ColorEcmwf)</td></tr>" +
-            "<tr><td>GFS</td><td>$($v.PrecipGfs)</td><td>$isoG</td><td>$($v.ColorGfs)</td></tr>" +
-            "<tr><td>ICON</td><td>$($v.PrecipIcon)</td><td>$isoI</td><td>$($v.ColorIcon)</td></tr>" +
-            "</table><br/>Acuerdo: $($v.NModelos)/3 modelos en $($v.ColorFinal)<br/><br/>" +
-            "<hr/><small><b>Pronostico (acum ventana):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
+function Build-PlacemarkPuntoPronostico([array]$vs) {
+    $orden     = @{ verde=0; amarillo=1; rojo=2 }
+    $secuencia = @('+0 a 6h', '+6 a 12h', '+12 a 24h', '+24 a 48h')
+    $lat = $vs[0].Lat; $lon = $vs[0].Lon
+
+    # Peor color del punto en las 4 ventanas + su mayor confianza (define el icono)
+    $peor = 'verde'; $peorN = 1
+    foreach ($v in $vs) {
+        if ($orden[$v.ColorFinal] -gt $orden[$peor]) { $peor = $v.ColorFinal; $peorN = $v.NModelos }
+        elseif ($v.ColorFinal -eq $peor -and $v.NModelos -gt $peorN) { $peorN = $v.NModelos }
+    }
+    $estilo = Get-EstiloPronostico $peor $peorN
+
+    # Una fila por ventana con precip acumulada de los 3 modelos + isoterma minima
+    $filas = ''
+    foreach ($nombre in $secuencia) {
+        $v = $vs | Where-Object { $_.Nombre -eq $nombre } | Select-Object -First 1
+        if (-not $v) { continue }
+        $bg   = switch ($v.ColorFinal) { 'rojo' { '#ff0000' } 'amarillo' { '#cc9900' } default { '#00cc00' } }
+        $isos = @($v.IsoEcmwf, $v.IsoGfs, $v.IsoIcon) | Where-Object { $null -ne $_ }
+        $isoMin = if ($isos.Count -gt 0) { "$(($isos | Measure-Object -Minimum).Minimum) m" } else { 's/d' }
+        $filas += "<tr><td><b>$($v.Nombre)</b></td>" +
+                  "<td align='right'>$($v.PrecipEcmwf)</td>" +
+                  "<td align='right'>$($v.PrecipGfs)</td>" +
+                  "<td align='right'>$($v.PrecipIcon)</td>" +
+                  "<td align='right'>$isoMin</td>" +
+                  "<td bgcolor='$bg'>&nbsp;&nbsp;</td></tr>"
+    }
+
+    $desc = "<![CDATA[<b>Pronostico 48h</b><br/>$lat, $lon<br/><br/>" +
+            "<table border='1' cellspacing='0' cellpadding='3'>" +
+            "<tr><th>Ventana</th><th>ECMWF</th><th>GFS</th><th>ICON</th><th>Iso min</th><th>Alerta</th></tr>" +
+            "$filas</table>" +
+            "<small>Precip acumulada por ventana (mm), por modelo. Iso min = isoterma 0&deg;C mas baja.</small><br/><br/>" +
+            "<hr/><small><b>Umbrales:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
             "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5 o iso&lt;2500&nbsp;</small></td>" +
             "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 + iso&ge;2500&nbsp;</small></td>" +
             "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;20 + iso&ge;3000</small></td></tr></table>]]>"
     return @"
     <Placemark>
-      <name>$($v.Lat),$($v.Lon)</name>
-      <styleUrl>#$($v.EstiloKml)</styleUrl>
+      <name>$lat,$lon</name>
+      <styleUrl>#$estilo</styleUrl>
       <description>$desc</description>
-      <Point><coordinates>$($v.Lon),$($v.Lat),0</coordinates></Point>
+      <Point><coordinates>$lon,$lat,0</coordinates></Point>
     </Placemark>
 "@
 }
 
-function Build-PronosticoFolders([array]$allVentanas) {
-    $nombres = @('+0 a 6h', '+6 a 12h', '+12 a 24h', '+24 a 48h')
-    $xml = ''
-    foreach ($nombre in $nombres) {
-        $grupo = $allVentanas | Where-Object { $_.Nombre -eq $nombre }
-        $pm    = ($grupo | ForEach-Object { Build-PlacemarkPronostico $_ }) -join "`n"
-        $xml  += @"
+function Build-PuntosPronostico([array]$allVentanas) {
+    $grupos = $allVentanas | Group-Object { "$($_.Lat)|$($_.Lon)" }
+    $pm = ($grupos | ForEach-Object { Build-PlacemarkPuntoPronostico $_.Group }) -join "`n"
+    return @"
   <Folder>
-    <name>$nombre ($($grupo.Count) pts)</name>
+    <name>Pronostico 48h ($($grupos.Count) pts)</name>
     <open>0</open>
 $pm
   </Folder>
-
 "@
-    }
-    return $xml
 }
 
 function Build-PronosticoKml([array]$allVentanas) {
     $estilosBase  = Build-Styles
     $estilosPron  = Build-StylesPronostico
-    $folders      = Build-PronosticoFolders $allVentanas
+    $folders      = Build-PuntosPronostico $allVentanas
     $ts           = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
     return @"
 <?xml version="1.0" encoding="UTF-8"?>

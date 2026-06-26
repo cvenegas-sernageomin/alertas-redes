@@ -149,22 +149,27 @@ Describe "Build-StylesPronostico" {
     }
 }
 
-Describe "Build-PlacemarkPronostico" {
-    $v = [PSCustomObject]@{
-        Nombre='+12 a 24h'; Lat=-33.5; Lon=-70.5
-        PrecipEcmwf=26.0; PrecipGfs=18.0; PrecipIcon=30.0
-        IsoEcmwf=3200; IsoGfs=3100; IsoIcon=3400
-        ColorEcmwf='rojo'; ColorGfs='amarillo'; ColorIcon='rojo'
-        ColorFinal='rojo'; NModelos=2; EstiloKml='rojo_2'
-    }
-    $pm = Build-PlacemarkPronostico $v
+Describe "Build-PlacemarkPuntoPronostico" {
+    $vs = @(
+        [PSCustomObject]@{ Nombre='+0 a 6h';   Lat=-33.5; Lon=-70.5; PrecipEcmwf=1.0;  PrecipGfs=0.5;  PrecipIcon=2.0;  IsoEcmwf=3200; IsoGfs=3100; IsoIcon=3400; ColorEcmwf='verde';    ColorGfs='verde';    ColorIcon='verde';    ColorFinal='verde';    NModelos=3; EstiloKml='verde_p'   }
+        [PSCustomObject]@{ Nombre='+6 a 12h';  Lat=-33.5; Lon=-70.5; PrecipEcmwf=6.0;  PrecipGfs=7.0;  PrecipIcon=5.0;  IsoEcmwf=2600; IsoGfs=2700; IsoIcon=2800; ColorEcmwf='amarillo'; ColorGfs='amarillo'; ColorIcon='amarillo'; ColorFinal='amarillo'; NModelos=3; EstiloKml='amarillo_3' }
+        [PSCustomObject]@{ Nombre='+12 a 24h'; Lat=-33.5; Lon=-70.5; PrecipEcmwf=26.0; PrecipGfs=18.0; PrecipIcon=30.0; IsoEcmwf=3200; IsoGfs=3100; IsoIcon=3400; ColorEcmwf='rojo';     ColorGfs='amarillo'; ColorIcon='rojo';     ColorFinal='rojo';     NModelos=2; EstiloKml='rojo_2'     }
+        [PSCustomObject]@{ Nombre='+24 a 48h'; Lat=-33.5; Lon=-70.5; PrecipEcmwf=2.0;  PrecipGfs=1.0;  PrecipIcon=0.0;  IsoEcmwf=3000; IsoGfs=2900; IsoIcon=3100; ColorEcmwf='verde';    ColorGfs='verde';    ColorIcon='verde';    ColorFinal='verde';    NModelos=3; EstiloKml='verde_p'   }
+    )
+    $pm = Build-PlacemarkPuntoPronostico $vs
 
-    It "es un elemento Placemark"          { $pm | Should Match '<Placemark>'   }
-    It "usa styleUrl rojo_2"               { $pm | Should Match '#rojo_2'       }
-    It "contiene ECMWF en descripcion"     { $pm | Should Match 'ECMWF'         }
-    It "contiene GFS en descripcion"       { $pm | Should Match 'GFS'           }
-    It "contiene ICON en descripcion"      { $pm | Should Match 'ICON'          }
-    It "coordenadas lon,lat"               { $pm | Should Match '-70.5,-33.5'   }
+    It "es un elemento Placemark"            { $pm | Should Match '<Placemark>' }
+    It "usa el peor estilo del punto (rojo_2)" { $pm | Should Match '#rojo_2'   }
+    It "incluye las 4 ventanas en el popup"  {
+        $pm | Should Match '\+0 a 6h'
+        $pm | Should Match '\+6 a 12h'
+        $pm | Should Match '\+12 a 24h'
+        $pm | Should Match '\+24 a 48h'
+    }
+    It "tiene una sola coordenada (1 punto)" {
+        ([regex]::Matches($pm, '<coordinates>')).Count | Should Be 1
+    }
+    It "coordenadas lon,lat"                 { $pm | Should Match '-70.5,-33.5' }
 }
 
 Describe "Build-PronosticoKml" {
@@ -174,12 +179,13 @@ Describe "Build-PronosticoKml" {
     foreach ($p in $puntos) { $ventanas += Build-VentanasPunto $p }
     $kml = Build-PronosticoKml $ventanas
 
-    It "contiene declaracion XML"        { $kml | Should Match '<?xml'        }
-    It "contiene carpeta +0 a 6h"        { $kml | Should Match '\+0 a 6h'     }
-    It "contiene carpeta +12 a 24h"      { $kml | Should Match '\+12 a 24h'   }
-    It "contiene carpeta +24 a 48h"      { $kml | Should Match '\+24 a 48h'   }
-    It "contiene 8 placemarks (2pts x 4ventanas)" {
-        ($kml | Select-String '<Placemark>' -AllMatches).Matches.Count | Should Be 8
+    It "contiene declaracion XML"           { $kml | Should Match '<?xml'          }
+    It "contiene la carpeta Pronostico 48h" { $kml | Should Match 'Pronostico 48h' }
+    It "contiene 2 placemarks (1 por punto)" {
+        ($kml | Select-String '<Placemark>' -AllMatches).Matches.Count | Should Be 2
     }
-    It "contiene estilo rojo_2" { $kml | Should Match 'rojo_2' }
+    It "cada popup trae las 4 ventanas"     {
+        $kml | Should Match '\+0 a 6h'
+        $kml | Should Match '\+24 a 48h'
+    }
 }
