@@ -46,8 +46,9 @@
     label.tg input[type="checkbox"] { width: 20px; height: 20px; flex: none; }
     .seg button { padding: 12px 10px; font-size: 14px; }
     button { padding: 12px 12px; font-size: 14px; }
-    /* popup más ancho y alto en teléfono, con scroll si el gráfico es grande */
-    .leaflet-popup-content { max-height: 70vh; }
+    /* popup ancho útil en teléfono (que no se colapse al texto) con imagen a ancho completo */
+    .leaflet-popup-content { width: min(86vw, 340px) !important; max-height: 70vh; }
+    .leaflet-popup-content img { width: 100%; max-width: 100%; }
   }
   #panel .sub { color: #93a4b5; font-size: 11px; margin-bottom: 10px; }
   .hint { color: #7fd4ff; font-size: 12px; margin-top: 6px; cursor: pointer; }
@@ -65,8 +66,8 @@
   .seg button { width: auto; flex: 1; margin: 0; background: #1f2b3a; }
   .seg button.on { background: #2563eb; }
   #err { color: #ff8d7a; font-size: 11px; margin-top: 6px; }
-  .leaflet-popup-content { font-size: 12px; max-height: 60vh; overflow-y: auto; overflow-x: hidden; }
-  .leaflet-popup-content img { max-width: 100%; height: auto; display: block; }
+  .leaflet-popup-content { font-size: 12px; max-height: 70vh; overflow-y: auto; overflow-x: hidden; }
+  .leaflet-popup-content img { max-width: 330px; height: auto; display: block; }
 </style>
 </head>
 <body>
