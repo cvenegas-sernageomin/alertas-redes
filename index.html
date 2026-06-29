@@ -67,7 +67,10 @@
   .seg button.on { background: #2563eb; }
   #err { color: #ff8d7a; font-size: 11px; margin-top: 6px; }
   .leaflet-popup-content { font-size: 12px; max-height: 70vh; overflow-y: auto; overflow-x: hidden; }
-  .leaflet-popup-content img { max-width: 330px; height: auto; display: block; }
+  /* gráficos 24h/48h (quickchart, 330x180): reservar el alto con aspect-ratio ANTES de
+     que carguen, para que el popup nazca con su tamaño final y el auto-pan calcule bien
+     (si no, las imágenes cargan tarde y empujan el popup hacia arriba, detrás del panel) */
+  .leaflet-popup-content img { width: 330px; max-width: 330px; aspect-ratio: 11 / 6; height: auto; display: block; margin: 2px 0 6px; }
   /* el popup va POR ENCIMA del panel (z-index 1000), nunca detrás */
   .leaflet-pane.leaflet-popup-pane { z-index: 1200; }
 </style>
