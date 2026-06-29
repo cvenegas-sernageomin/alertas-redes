@@ -68,6 +68,8 @@
   #err { color: #ff8d7a; font-size: 11px; margin-top: 6px; }
   .leaflet-popup-content { font-size: 12px; max-height: 70vh; overflow-y: auto; overflow-x: hidden; }
   .leaflet-popup-content img { max-width: 330px; height: auto; display: block; }
+  /* el popup va POR ENCIMA del panel (z-index 1000), nunca detrás */
+  .leaflet-pane.leaflet-popup-pane { z-index: 1200; }
 </style>
 </head>
 <body>
