@@ -105,6 +105,19 @@ function estiloSismo(m) {
   return { c: "#80ff40", r: 4 };
 }
 
+// ---------- sismos: actuales vs históricos ----------
+// "Actual" = ocurrido en las últimas 24h respecto al sismo más reciente del set
+// (usar el más reciente, y no Date.now(), evita líos de zona horaria).
+const SISMO_VENTANA_MS = 24 * 60 * 60 * 1000;
+function refTimeSismos(sismos) {
+  let max = 0;
+  for (const s of sismos) if (s.date && s.date > max) max = s.date;
+  return max;
+}
+function esSismoActual(s, ref) {
+  return ref > 0 && s.date != null && (ref - s.date) <= SISMO_VENTANA_MS;
+}
+
 // ---------- parseo KML en el navegador ----------
 // nombre de la carpeta (red/set) que contiene al placemark, sin el sufijo "(N est.)"
 function folderName(pm) {
@@ -138,12 +151,16 @@ function parseKml(text) {
     const nameEl = pm.getElementsByTagName("name")[0];
     const descEl = pm.getElementsByTagName("description")[0];
     const styEl  = pm.getElementsByTagName("styleUrl")[0];
+    const descTxt = descEl ? descEl.textContent : "";
+    // fecha del evento (sismos): "2026-06-29 12:20:49" → ms (UTC para evitar líos de zona)
+    const fm = descTxt.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
     out.push({
       lat, lon,
       name: nameEl ? nameEl.textContent : "",
-      desc: descEl ? descEl.textContent : "",
+      desc: descTxt,
       styleUrl: styEl ? styEl.textContent : "",
-      group: folderName(pm)
+      group: folderName(pm),
+      date: fm ? Date.UTC(+fm[1], +fm[2] - 1, +fm[3], +fm[4], +fm[5], +fm[6]) : null
     });
   }
   return out;
@@ -166,7 +183,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [onlyAlerts, setOnlyAlerts] = useState(false);
-  const [show, setShow] = useState({ pron: false, sismos: true });
+  const [show, setShow] = useState({ pron: false });
+  // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
+  const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
   const [estGroups, setEstGroups] = useState({});
   const [base, setBase] = useState("sat");
   // En teléfonos arranca plegado para ver primero el mapa
@@ -226,13 +245,11 @@ function App() {
     }
   }, [base]);
 
-  // mostrar/ocultar capas (estaciones siempre en mapa; se filtran por set en redraw)
+  // mostrar/ocultar pronóstico (estaciones y sismos van siempre en el mapa; se filtran en redraw)
   useEffect(() => {
     const g = groups.current, map = mapRef.current;
     if (!map || !g.est) return;
-    ["pron", "sismos"].forEach(k => {
-      if (show[k]) g[k].addTo(map); else map.removeLayer(g[k]);
-    });
+    if (show.pron) g.pron.addTo(map); else map.removeLayer(g.pron);
   }, [show]);
 
   function redraw() {
@@ -262,11 +279,16 @@ function App() {
       }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.pron);
     });
 
+    const refSis = refTimeSismos(data.current.sismos);
     data.current.sismos.forEach(f => {
+      const actual = esSismoActual(f, refSis);
+      if (actual && !sismoView.actuales) return;
+      if (!actual && !sismoView.historicos) return;
       const m = parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0");
       const e = estiloSismo(m);
       L.circleMarker([f.lat, f.lon], {
-        radius: e.r, color: "#000", weight: 0.6, fillColor: e.c, fillOpacity: 0.85
+        radius: e.r, color: "#000", weight: 0.6,
+        fillColor: e.c, fillOpacity: actual ? 0.9 : 0.45   // históricos más tenues
       }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.sismos);
     });
   }
@@ -291,7 +313,9 @@ function App() {
         pronRojo: pron.filter(f => /rojo/.test(f.styleUrl)).length,
         pronAmar: pron.filter(f => /amarillo/.test(f.styleUrl)).length,
         sismoFuerte: sismos.filter(f => parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0") >= 6).length,
-        sismoTot: sismos.length
+        sismoTot: sismos.length,
+        sismoActuales: (() => { const r = refTimeSismos(sismos); return sismos.filter(f => esSismoActual(f, r)).length; })(),
+        sismoHistoricos: (() => { const r = refTimeSismos(sismos); return sismos.filter(f => !esSismoActual(f, r)).length; })()
       };
       // inicializar toggles por set conservando los ya elegidos por el usuario
       setEstGroups(prev => {
@@ -307,7 +331,7 @@ function App() {
   }, []);
 
   // redibujar cuando llegan datos nuevos o cambian los filtros
-  useEffect(() => { redraw(); }, [updated, onlyAlerts, estGroups]);
+  useEffect(() => { redraw(); }, [updated, onlyAlerts, estGroups, sismoView]);
 
   const St = ({ color, square, label, value }) => (
     <div className="stat">
@@ -364,16 +388,24 @@ function App() {
 
       <div className="group">
         <div className="gtitle">Sismos</div>
-        {stats && <>
-          <St color="#ff3300" label="M ≥ 6 (recientes)" value={stats.sismoFuerte} />
-          <div className="row"><span style={{ color: "#93a4b5" }}>Total mostrados</span><span className="num">{stats.sismoTot}</span></div>
-        </>}
+        <label className="tg">
+          <input type="checkbox" checked={sismoView.actuales}
+            onChange={e => setSismoView({ ...sismoView, actuales: e.target.checked })} />
+          <span>Actuales (≤24h)</span>
+          <span className="num" style={{ marginLeft: "auto" }}>{stats ? stats.sismoActuales : ""}</span>
+        </label>
+        <label className="tg">
+          <input type="checkbox" checked={sismoView.historicos}
+            onChange={e => setSismoView({ ...sismoView, historicos: e.target.checked })} />
+          <span>Históricos</span>
+          <span className="num" style={{ marginLeft: "auto" }}>{stats ? stats.sismoHistoricos : ""}</span>
+        </label>
+        {stats && <div className="row"><span style={{ color: "#93a4b5" }}>M ≥ 6</span><span className="num">{stats.sismoFuerte}</span></div>}
       </div>
 
       <div className="group">
         <div className="gtitle">Capas</div>
         <label className="tg"><input type="checkbox" checked={show.pron} onChange={e => setShow({ ...show, pron: e.target.checked })} /> Pronóstico</label>
-        <label className="tg"><input type="checkbox" checked={show.sismos} onChange={e => setShow({ ...show, sismos: e.target.checked })} /> Sismos</label>
         <label className="tg"><input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} /> Solo estaciones con alerta</label>
       </div>
 
