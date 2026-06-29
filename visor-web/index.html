@@ -169,9 +169,14 @@ function App() {
 
   // init mapa una sola vez
   useEffect(() => {
-    // Evitar doble inicialización (React 18 monta el efecto dos veces):
-    // sin esto, L.map() lanza "Map container is already initialized" y rompe el panel.
-    if (mapRef.current) return;
+    // Evitar "Map container is already initialized": si React re-monta el componente,
+    // el <div id="map"> puede quedar con un mapa Leaflet huérfano. Lo liberamos antes
+    // de crear el nuevo (un guard sobre el ref no basta: el ref se reinicia al remontar).
+    const cont = L.DomUtil.get("map");
+    if (cont != null && cont._leaflet_id != null) {
+      cont._leaflet_id = null;
+      cont.innerHTML = "";
+    }
     const map = L.map("map", { zoomControl: true }).setView([-35.5, -71], 4);
     mapRef.current = map;
 
@@ -196,7 +201,12 @@ function App() {
 
     fetchAll();
     const id = setInterval(fetchAll, 15 * 60 * 1000);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      map.remove();              // libera el contenedor para un remontaje limpio
+      mapRef.current = null;
+      groups.current = {};
+    };
   }, []);
 
   // cambiar basemap
