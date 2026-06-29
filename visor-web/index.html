@@ -86,6 +86,11 @@ const { useState, useEffect, useRef, useCallback } = React;
 
 const RAW = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-redes/live";
 
+// Opciones de popup: auto-desplaza el mapa para que el popup NO quede detrás del panel.
+// El popup vive dentro de .leaflet-map-pane (con transform => contexto de apilado propio),
+// así que no se puede subir con z-index; en su lugar reservamos espacio arriba (140px).
+const POPUP_OPTS = { maxWidth: 360, autoPanPaddingTopLeft: [16, 140], autoPanPaddingBottomRight: [16, 24] };
+
 // ---------- helpers de color ----------
 function colorEstacion(styleUrl) {
   const s = styleUrl || "";
@@ -270,7 +275,7 @@ function App() {
         color: hasChart ? "#22d3ee" : "#0a0a0a",
         weight: hasChart ? 2 : 0.6,
         fillColor: colorEstacion(f.styleUrl), fillOpacity: 0.9
-      }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.est);
+      }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.est);
     });
 
     data.current.pron.forEach(f => {
@@ -278,7 +283,7 @@ function App() {
       const html = `<div style="width:11px;height:11px;background:${col};border:1px solid #111"></div>`;
       L.marker([f.lat, f.lon], {
         icon: L.divIcon({ className: "", html, iconSize: [11, 11], iconAnchor: [6, 6] })
-      }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.pron);
+      }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.pron);
     });
 
     const refSis = refTimeSismos(data.current.sismos);
@@ -291,7 +296,7 @@ function App() {
       L.circleMarker([f.lat, f.lon], {
         radius: e.r, color: "#000", weight: 0.6,
         fillColor: e.c, fillOpacity: actual ? 0.9 : 0.45   // históricos más tenues
-      }).bindPopup(f.desc || f.name, { maxWidth: 360 }).addTo(g.sismos);
+      }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.sismos);
     });
   }
 
