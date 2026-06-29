@@ -304,14 +304,19 @@ function App() {
         fetchKml("red_sismos.kml")
       ]);
       data.current = { est, pron, sismos };
-      const groupCounts = {};
-      est.forEach(f => { if (f.group) groupCounts[f.group] = (groupCounts[f.group] || 0) + 1; });
+      const groupCounts = {}, groupGraf = {};
+      est.forEach(f => {
+        if (!f.group) return;
+        groupCounts[f.group] = (groupCounts[f.group] || 0) + 1;
+        if (/<img/.test(f.desc || "")) groupGraf[f.group] = (groupGraf[f.group] || 0) + 1;
+      });
       const s = {
         estRojo: est.filter(f => nivelEstacion(f.styleUrl) === "rojo").length,
         estAmar: est.filter(f => nivelEstacion(f.styleUrl) === "amarillo").length,
         estTot: est.length,
         estGraf: est.filter(f => /<img/.test(f.desc || "")).length,
         groupCounts,
+        groupGraf,
         pronRojo: pron.filter(f => /rojo/.test(f.styleUrl)).length,
         pronAmar: pron.filter(f => /amarillo/.test(f.styleUrl)).length,
         sismoFuerte: sismos.filter(f => parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0") >= 6).length,
@@ -373,7 +378,7 @@ function App() {
           <label className="tg" key={gn}>
             <input type="checkbox" checked={estGroups[gn]}
               onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
-            <span>{gn}</span>
+            <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
             <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
           </label>
         ))}
