@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Alertas Redes Chile — Visor</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -23,14 +23,27 @@
   #panel h1 { font-size: 15px; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
   .collapse { display: inline-block; margin-left: auto; background: transparent !important; width: auto !important; padding: 2px 8px !important; font-size: 14px; cursor: pointer; }
 
-  /* Pantallas chicas: overlay plegable arriba a la izquierda */
+  /* Pantallas chicas: overlay plegable arriba, con áreas táctiles grandes */
   @media (max-width: 760px) {
     #map { left: 0; }
     #panel {
-      top: 10px; left: 10px; bottom: auto; width: auto;
-      max-width: calc(100vw - 20px); max-height: calc(100vh - 20px);
-      border-radius: 10px; backdrop-filter: blur(4px);
+      top: calc(8px + env(safe-area-inset-top)); left: 8px; right: 8px; bottom: auto;
+      width: auto; max-width: none;
+      max-height: calc(100vh - 16px - env(safe-area-inset-top));
+      border-radius: 14px; backdrop-filter: blur(6px);
+      padding: 12px 14px; font-size: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
     }
+    /* cuando está plegado, que sea una píldora compacta y no estorbe el mapa */
+    #panel:not(.open) { right: auto; }
+    #panel h1 { font-size: 16px; cursor: pointer; }
+    .collapse { padding: 6px 12px !important; font-size: 18px; }
+    /* objetivos táctiles ≥40px y casillas más grandes */
+    label.tg { min-height: 40px; margin: 2px 0; }
+    label.tg input[type="checkbox"] { width: 20px; height: 20px; flex: none; }
+    .seg button { padding: 12px 10px; font-size: 14px; }
+    button { padding: 12px 12px; font-size: 14px; }
+    .leaflet-popup-content img { max-width: min(78vw, 330px); }
   }
   #panel .sub { color: #93a4b5; font-size: 11px; margin-bottom: 10px; }
   .row { display: flex; align-items: center; justify-content: space-between; margin: 5px 0; }
@@ -150,7 +163,9 @@ function App() {
   const [show, setShow] = useState({ pron: false, sismos: true });
   const [estGroups, setEstGroups] = useState({});
   const [base, setBase] = useState("sat");
-  const [collapsed, setCollapsed] = useState(false);
+  // En teléfonos arranca plegado para ver primero el mapa
+  const [collapsed, setCollapsed] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 760px)").matches);
 
   // init mapa una sola vez
   useEffect(() => {
@@ -287,9 +302,9 @@ function App() {
   );
 
   return (
-    <div id="panel">
-      <h1>🌧️ Alertas Redes Chile
-        <button className="collapse" onClick={() => setCollapsed(!collapsed)}>{collapsed ? "▸" : "▾"}</button>
+    <div id="panel" className={collapsed ? "" : "open"}>
+      <h1 onClick={() => setCollapsed(!collapsed)}>🌧️ Alertas Redes Chile
+        <button className="collapse" onClick={(e) => { e.stopPropagation(); setCollapsed(!collapsed); }}>{collapsed ? "▸" : "▾"}</button>
       </h1>
       <div className="sub">
         {updated ? `Actualizado ${updated.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}` : "Cargando…"}
