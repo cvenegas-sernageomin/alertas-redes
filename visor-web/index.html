@@ -216,12 +216,19 @@ function App() {
 
   // init mapa una sola vez
   useEffect(() => {
-    // React 18 monta el efecto dos veces. Destruir DE VERDAD el mapa anterior (no solo
-    // limpiar su HTML): map.remove() quita todas sus escuchas de eventos, evitando el
-    // mapa huérfano cuyos listeners pegados al contenedor rompían el arrastre con un dedo.
+    // React 18 monta el efecto dos veces. (1) Destruir DE VERDAD el mapa anterior con
+    // map.remove(): quita todas sus escuchas de eventos (si no, el mapa huérfano deja
+    // listeners pegados al contenedor que rompían el arrastre con un dedo). (2) Además
+    // resetear el contenedor a mano, porque remove() no libera el _leaflet_id y sin eso
+    // L.map() lanzaría "Map container is already initialized".
     if (_mapaActivo) {
       try { _mapaActivo.remove(); } catch (e) {}
       _mapaActivo = null;
+    }
+    const cont = L.DomUtil.get("map");
+    if (cont != null && cont._leaflet_id != null) {
+      cont._leaflet_id = null;
+      cont.innerHTML = "";
     }
     // preferCanvas: dibuja las estaciones en UN canvas (no miles de SVG), para que el
     // arrastre con un dedo no quede bloqueado por los marcadores y vaya más fluido en móvil.
