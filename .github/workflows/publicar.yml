@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '0 * * * *'   # cada 60 min
   workflow_dispatch:
+    inputs:
+      prueba:
+        description: 'Enviar mensaje de PRUEBA a Telegram (datos ficticios)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -34,6 +39,7 @@ jobs:
         env:
           TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PRUEBA:           ${{ inputs.prueba }}
         run: |
           $ErrorActionPreference = 'Continue'
           .\Actualizar.ps1

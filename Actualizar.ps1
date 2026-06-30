@@ -80,6 +80,20 @@ $tgToken  = $env:TELEGRAM_TOKEN
 $tgChatId = $env:TELEGRAM_CHAT_ID
 if ($tgToken -and $tgChatId) {
     try {
+        if ($env:PRUEBA -eq 'true') {
+            # Modo prueba: enviar un mensaje de ejemplo con estaciones ficticias
+            # para ver el formato (incluye "pueblo grande mas cercano").
+            $demo = @(
+                [pscustomobject]@{ Nombre = 'Demo Talca';   Red = 'DGA'; TasaMmH = 12.4; Lat = -35.42; Lon = -71.66 }
+                [pscustomobject]@{ Nombre = 'Demo Chillan';  Red = 'DMC'; TasaMmH = 15.1; Lat = -36.61; Lon = -72.10 }
+                [pscustomobject]@{ Nombre = 'Demo Pucon';    Red = 'DGA'; TasaMmH = 6.2;  Lat = -39.27; Lon = -71.95 }
+            )
+            $msg = "🧪 PRUEBA (datos ficticios)`n" + (Build-ResumenAlertas $demo @() @() @())
+            if (Send-TelegramMensaje $tgToken $tgChatId $msg) {
+                Write-Host "  -> Mensaje de PRUEBA enviado." -ForegroundColor Green
+            }
+            return
+        }
         $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
         $sismosTodos = @(); $sismosTodos += $sismosCsn; $sismosTodos += $sismosUsgs
         $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot $sismosTodos
