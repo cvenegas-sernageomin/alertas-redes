@@ -49,7 +49,8 @@ $script:PueblosCL = @(
     @{N='Chaiten';La=-42.920;Lo=-72.710},          @{N='Coyhaique';La=-45.572;Lo=-72.068},
     @{N='Puerto Aysen';La=-45.400;Lo=-72.690},     @{N='Cochrane';La=-47.250;Lo=-72.570},
     @{N='Punta Arenas';La=-53.163;Lo=-70.917},     @{N='Puerto Natales';La=-51.730;Lo=-72.510},
-    @{N='Porvenir';La=-53.300;Lo=-70.370}
+    @{N='Porvenir';La=-53.300;Lo=-70.370},
+    @{N='Hanga Roa';La=-27.147;Lo=-109.432},        @{N='San Juan Bautista';La=-33.638;Lo=-78.828}
 )
 
 function Get-PuebloCercano([double]$lat, [double]$lon) {
