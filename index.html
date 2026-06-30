@@ -223,6 +223,9 @@ function App() {
     // arrastre con un dedo no quede bloqueado por los marcadores y vaya más fluido en móvil.
     const map = L.map("map", { zoomControl: true, preferCanvas: true, tap: false }).setView([-35.5, -71], 4);
     mapRef.current = map;
+    window._map = map;
+    window._dragLog = [];
+    map.on('movestart dragstart drag dragend zoomstart', e => window._dragLog.push(e.type));
 
     const sat = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
