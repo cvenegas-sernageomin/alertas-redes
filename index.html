@@ -211,6 +211,7 @@ function App() {
 
   // init mapa una sola vez
   useEffect(() => {
+    window._initCount = (window._initCount || 0) + 1;
     // Evitar "Map container is already initialized": si React re-monta el componente,
     // el <div id="map"> puede quedar con un mapa Leaflet huérfano. Lo liberamos antes
     // de crear el nuevo (un guard sobre el ref no basta: el ref se reinicia al remontar).
