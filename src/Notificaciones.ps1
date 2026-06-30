@@ -1,5 +1,81 @@
 ﻿# Requiere que AlertasKml.ps1 ya este cargado (Get-ColorRedes, Get-ColorEmas)
 
+# --- Pueblos/ciudades grandes de Chile (para ubicar la estacion mas cercana) ---
+$script:PueblosCL = @(
+    @{N='Arica';La=-18.478;Lo=-70.321},           @{N='Iquique';La=-20.214;Lo=-70.152},
+    @{N='Alto Hospicio';La=-20.250;Lo=-70.100},    @{N='Pozo Almonte';La=-20.258;Lo=-69.785},
+    @{N='Calama';La=-22.456;Lo=-68.924},           @{N='Antofagasta';La=-23.650;Lo=-70.400},
+    @{N='Tocopilla';La=-22.092;Lo=-70.197},        @{N='Mejillones';La=-23.100;Lo=-70.450},
+    @{N='Taltal';La=-25.410;Lo=-70.480},           @{N='Copiapo';La=-27.366;Lo=-70.332},
+    @{N='Vallenar';La=-28.576;Lo=-70.759},         @{N='Caldera';La=-27.070;Lo=-70.820},
+    @{N='Chanaral';La=-26.348;Lo=-70.620},         @{N='La Serena';La=-29.907;Lo=-71.252},
+    @{N='Coquimbo';La=-29.953;Lo=-71.343},         @{N='Ovalle';La=-30.601;Lo=-71.199},
+    @{N='Illapel';La=-31.633;Lo=-71.168},          @{N='Vicuna';La=-30.034;Lo=-70.713},
+    @{N='Los Vilos';La=-31.910;Lo=-71.510},        @{N='Salamanca';La=-31.780;Lo=-70.960},
+    @{N='La Ligua';La=-32.450;Lo=-71.230},         @{N='San Felipe';La=-32.750;Lo=-70.720},
+    @{N='Los Andes';La=-32.834;Lo=-70.598},        @{N='Quillota';La=-32.880;Lo=-71.249},
+    @{N='Valparaiso';La=-33.046;Lo=-71.620},       @{N='Vina del Mar';La=-33.024;Lo=-71.552},
+    @{N='Quilpue';La=-33.047;Lo=-71.442},          @{N='Villa Alemana';La=-33.043;Lo=-71.373},
+    @{N='San Antonio';La=-33.594;Lo=-71.606},      @{N='Casablanca';La=-33.320;Lo=-71.410},
+    @{N='Santiago';La=-33.450;Lo=-70.667},         @{N='Puente Alto';La=-33.611;Lo=-70.576},
+    @{N='Maipu';La=-33.510;Lo=-70.760},            @{N='Melipilla';La=-33.690;Lo=-71.215},
+    @{N='Talagante';La=-33.665;Lo=-70.928},        @{N='Buin';La=-33.730;Lo=-70.740},
+    @{N='Colina';La=-33.200;Lo=-70.670},           @{N='Rancagua';La=-34.170;Lo=-70.740},
+    @{N='San Fernando';La=-34.585;Lo=-70.989},     @{N='Rengo';La=-34.410;Lo=-70.860},
+    @{N='Santa Cruz';La=-34.640;Lo=-71.360},       @{N='Pichilemu';La=-34.390;Lo=-72.000},
+    @{N='Curico';La=-34.983;Lo=-71.239},           @{N='Talca';La=-35.426;Lo=-71.665},
+    @{N='Linares';La=-35.846;Lo=-71.593},          @{N='Constitucion';La=-35.330;Lo=-72.410},
+    @{N='Cauquenes';La=-35.970;Lo=-72.320},        @{N='Parral';La=-36.140;Lo=-71.830},
+    @{N='Molina';La=-35.110;Lo=-71.280},           @{N='Chillan';La=-36.606;Lo=-72.103},
+    @{N='San Carlos';La=-36.420;Lo=-71.960},       @{N='Bulnes';La=-36.740;Lo=-72.300},
+    @{N='Concepcion';La=-36.827;Lo=-73.050},       @{N='Talcahuano';La=-36.720;Lo=-73.120},
+    @{N='Coronel';La=-37.030;Lo=-73.140},          @{N='Lota';La=-37.090;Lo=-73.160},
+    @{N='Los Angeles';La=-37.469;Lo=-72.354},      @{N='Canete';La=-37.800;Lo=-73.390},
+    @{N='Lebu';La=-37.610;Lo=-73.650},             @{N='Mulchen';La=-37.720;Lo=-72.240},
+    @{N='Nacimiento';La=-37.500;Lo=-72.670},       @{N='Angol';La=-37.795;Lo=-72.716},
+    @{N='Victoria';La=-38.230;Lo=-72.330},         @{N='Traiguen';La=-38.250;Lo=-72.670},
+    @{N='Collipulli';La=-37.950;Lo=-72.430},       @{N='Temuco';La=-38.736;Lo=-72.590},
+    @{N='Padre Las Casas';La=-38.770;Lo=-72.600},  @{N='Lautaro';La=-38.530;Lo=-72.440},
+    @{N='Nueva Imperial';La=-38.740;Lo=-72.950},   @{N='Villarrica';La=-39.286;Lo=-72.228},
+    @{N='Pucon';La=-39.270;Lo=-71.980},            @{N='Loncoche';La=-39.370;Lo=-72.630},
+    @{N='Pitrufquen';La=-38.980;Lo=-72.640},       @{N='Valdivia';La=-39.814;Lo=-73.245},
+    @{N='La Union';La=-40.290;Lo=-73.080},         @{N='Rio Bueno';La=-40.330;Lo=-72.950},
+    @{N='Paillaco';La=-40.070;Lo=-72.870},         @{N='Osorno';La=-40.573;Lo=-73.133},
+    @{N='Rio Negro';La=-40.790;Lo=-73.220},        @{N='Purranque';La=-40.910;Lo=-73.160},
+    @{N='Puerto Montt';La=-41.469;Lo=-72.941},     @{N='Puerto Varas';La=-41.320;Lo=-72.990},
+    @{N='Llanquihue';La=-41.250;Lo=-73.010},       @{N='Frutillar';La=-41.130;Lo=-73.050},
+    @{N='Calbuco';La=-41.770;Lo=-73.130},          @{N='Ancud';La=-41.870;Lo=-73.830},
+    @{N='Castro';La=-42.480;Lo=-73.760},           @{N='Quellon';La=-43.120;Lo=-73.620},
+    @{N='Chaiten';La=-42.920;Lo=-72.710},          @{N='Coyhaique';La=-45.572;Lo=-72.068},
+    @{N='Puerto Aysen';La=-45.400;Lo=-72.690},     @{N='Cochrane';La=-47.250;Lo=-72.570},
+    @{N='Punta Arenas';La=-53.163;Lo=-70.917},     @{N='Puerto Natales';La=-51.730;Lo=-72.510},
+    @{N='Porvenir';La=-53.300;Lo=-70.370}
+)
+
+function Get-PuebloCercano([double]$lat, [double]$lon) {
+    $best = $null; $bestKm = [double]::MaxValue
+    $rad = [math]::PI / 180.0
+    foreach ($p in $script:PueblosCL) {
+        $dLat = ($p.La - $lat) * $rad
+        $dLon = ($p.Lo - $lon) * $rad
+        $a = [math]::Sin($dLat / 2) * [math]::Sin($dLat / 2) +
+             [math]::Cos($lat * $rad) * [math]::Cos($p.La * $rad) *
+             [math]::Sin($dLon / 2) * [math]::Sin($dLon / 2)
+        $km = 6371.0 * 2 * [math]::Atan2([math]::Sqrt($a), [math]::Sqrt(1 - $a))
+        if ($km -lt $bestKm) { $bestKm = $km; $best = $p }
+    }
+    if ($null -eq $best) { return $null }
+    return [pscustomobject]@{ Nombre = $best.N; Km = [int][math]::Round($bestKm) }
+}
+
+# Sufijo " — cerca de <Pueblo> (~N km)" para una estacion con Lat/Lon
+function Get-CercaDe($e) {
+    if ($null -eq $e.Lat -or $null -eq $e.Lon) { return '' }
+    $pc = Get-PuebloCercano ([double]$e.Lat) ([double]$e.Lon)
+    if ($null -eq $pc) { return '' }
+    return " — cerca de $($pc.Nombre) (~$($pc.Km) km)"
+}
+
 function Get-SismosFuertes([array]$sismos, [double]$minMag = 6.0, [int]$ventanaMin = 90) {
     if ($null -eq $sismos -or $sismos.Count -eq 0) { return @() }
     $ahora = [datetime]::UtcNow
@@ -73,7 +149,7 @@ function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, 
         $lineas += "🔴 <b>Redes: $($rojasRedes.Count) est. con precip ≥ 10 mm/h</b>"
         $top = $rojasRedes | Sort-Object TasaMmH -Descending | Select-Object -First 5
         foreach ($e in $top) {
-            $lineas += "  • <b>$($e.Nombre)</b> [$($e.Red)]: $($e.TasaMmH) mm/h"
+            $lineas += "  • <b>$($e.Nombre)</b> [$($e.Red)]: $($e.TasaMmH) mm/h$(Get-CercaDe $e)"
         }
         if ($rojasRedes.Count -gt 5) { $lineas += "  … y $($rojasRedes.Count - 5) más" }
     }
@@ -81,7 +157,7 @@ function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, 
         $lineas += "🟡 <b>Redes: $($amarillasRedes.Count) est. con precip ≥ 5 mm/h</b>"
         $top = $amarillasRedes | Sort-Object TasaMmH -Descending | Select-Object -First 3
         foreach ($e in $top) {
-            $lineas += "  • $($e.Nombre) [$($e.Red)]: $($e.TasaMmH) mm/h"
+            $lineas += "  • $($e.Nombre) [$($e.Red)]: $($e.TasaMmH) mm/h$(Get-CercaDe $e)"
         }
         if ($amarillasRedes.Count -gt 3) { $lineas += "  … y $($amarillasRedes.Count - 3) más" }
     }
@@ -91,14 +167,14 @@ function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, 
         $lineas += "🔴 <b>EMAs: $($rojasEmas.Count) est. — precip alta + isoterma 0°C elevada</b>"
         foreach ($e in $rojasEmas | Sort-Object TasaMmH -Descending) {
             $isoStr = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
-            $lineas += "  • <b>$($e.Nombre)</b>: $($e.TasaMmH) mm/h | iso $isoStr | alt $($e.Altitud) m"
+            $lineas += "  • <b>$($e.Nombre)</b>: $($e.TasaMmH) mm/h | iso $isoStr | alt $($e.Altitud) m$(Get-CercaDe $e)"
         }
     }
     if ($amarillasEmas.Count -gt 0) {
         $lineas += "🟡 <b>EMAs: $($amarillasEmas.Count) est. — alerta moderada</b>"
         foreach ($e in $amarillasEmas | Sort-Object TasaMmH -Descending) {
             $isoStr = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
-            $lineas += "  • $($e.Nombre): $($e.TasaMmH) mm/h | iso $isoStr"
+            $lineas += "  • $($e.Nombre): $($e.TasaMmH) mm/h | iso $isoStr$(Get-CercaDe $e)"
         }
     }
 
