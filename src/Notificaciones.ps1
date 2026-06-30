@@ -220,7 +220,7 @@ function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, 
             $pMax = [math]::Max([double]$v.PrecipEcmwf, [math]::Max([double]$v.PrecipGfs, [double]$v.PrecipIcon))
             $iMin = @($v.IsoEcmwf, $v.IsoGfs, $v.IsoIcon) | Where-Object { $null -ne $_ } | Measure-Object -Minimum | Select-Object -ExpandProperty Minimum
             $iStr = if ($null -ne $iMin) { "$iMin m" } else { '-' }
-            $lineas += "  • $($v.Lat)°S $($v.Lon)°W [$($v.Nombre)]: máx $pMax mm | iso $iStr | $($v.NModelos)/3 modelos"
+            $lineas += "  • $($v.Lat)°S $($v.Lon)°W [$($v.Nombre)]: máx $pMax mm | iso $iStr | $($v.NModelos)/3 modelos$(Get-CercaDe $v)"
         }
         if ($rojoPron.Count -gt 4) { $lineas += "  … y $($rojoPron.Count - 4) celdas más" }
     }
@@ -231,7 +231,7 @@ function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, 
         } -Descending | Select-Object -First 2
         foreach ($v in $top) {
             $pMax = [math]::Max([double]$v.PrecipEcmwf, [math]::Max([double]$v.PrecipGfs, [double]$v.PrecipIcon))
-            $lineas += "  • $($v.Lat)°S $($v.Lon)°W [$($v.Nombre)]: máx $pMax mm | $($v.NModelos)/3 modelos"
+            $lineas += "  • $($v.Lat)°S $($v.Lon)°W [$($v.Nombre)]: máx $pMax mm | $($v.NModelos)/3 modelos$(Get-CercaDe $v)"
         }
     }
 

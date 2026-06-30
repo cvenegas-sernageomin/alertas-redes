@@ -88,7 +88,11 @@ if ($tgToken -and $tgChatId) {
                 [pscustomobject]@{ Nombre = 'Demo Chillan';  Red = 'DMC'; TasaMmH = 15.1; Lat = -36.61; Lon = -72.10 }
                 [pscustomobject]@{ Nombre = 'Demo Pucon';    Red = 'DGA'; TasaMmH = 6.2;  Lat = -39.27; Lon = -71.95 }
             )
-            $msg = "🧪 PRUEBA (datos ficticios)`n" + (Build-ResumenAlertas $demo @() @() @())
+            $demoPron = @(
+                [pscustomobject]@{ Nombre = '+12 a 24h'; ColorFinal = 'rojo'; Lat = -40.57; Lon = -73.13;
+                    PrecipEcmwf = 32; PrecipGfs = 28; PrecipIcon = 25; IsoEcmwf = 3200; IsoGfs = 3100; IsoIcon = 3000; NModelos = 3 }
+            )
+            $msg = "🧪 PRUEBA (datos ficticios)`n" + (Build-ResumenAlertas $demo @() $demoPron @())
             if (Send-TelegramMensaje $tgToken $tgChatId $msg) {
                 Write-Host "  -> Mensaje de PRUEBA enviado." -ForegroundColor Green
             }
