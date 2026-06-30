@@ -101,6 +101,11 @@ const RAW = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-rede
 // así que no se puede subir con z-index; en su lugar reservamos espacio arriba (140px).
 const POPUP_OPTS = { maxWidth: 360, autoPanPaddingTopLeft: [16, 124], autoPanPaddingBottomRight: [16, 20] };
 
+// Referencia al mapa a nivel de módulo: sobrevive al doble montaje de React 18 para poder
+// DESTRUIR el mapa anterior por completo (y sus escuchas de eventos) antes de crear el nuevo.
+// Si no, el mapa huérfano deja listeners pegados al contenedor que rompen el arrastre táctil.
+let _mapaActivo = null;
+
 // ---------- helpers de color ----------
 function colorEstacion(styleUrl) {
   const s = styleUrl || "";
@@ -211,22 +216,18 @@ function App() {
 
   // init mapa una sola vez
   useEffect(() => {
-    window._initCount = (window._initCount || 0) + 1;
-    // Evitar "Map container is already initialized": si React re-monta el componente,
-    // el <div id="map"> puede quedar con un mapa Leaflet huérfano. Lo liberamos antes
-    // de crear el nuevo (un guard sobre el ref no basta: el ref se reinicia al remontar).
-    const cont = L.DomUtil.get("map");
-    if (cont != null && cont._leaflet_id != null) {
-      cont._leaflet_id = null;
-      cont.innerHTML = "";
+    // React 18 monta el efecto dos veces. Destruir DE VERDAD el mapa anterior (no solo
+    // limpiar su HTML): map.remove() quita todas sus escuchas de eventos, evitando el
+    // mapa huérfano cuyos listeners pegados al contenedor rompían el arrastre con un dedo.
+    if (_mapaActivo) {
+      try { _mapaActivo.remove(); } catch (e) {}
+      _mapaActivo = null;
     }
     // preferCanvas: dibuja las estaciones en UN canvas (no miles de SVG), para que el
     // arrastre con un dedo no quede bloqueado por los marcadores y vaya más fluido en móvil.
     const map = L.map("map", { zoomControl: true, preferCanvas: true, tap: false }).setView([-35.5, -71], 4);
     mapRef.current = map;
-    window._map = map;
-    window._dragLog = [];
-    map.on('movestart dragstart drag dragend zoomstart', e => window._dragLog.push(e.type));
+    _mapaActivo = map;
 
     const sat = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -251,7 +252,8 @@ function App() {
     const id = setInterval(fetchAll, 15 * 60 * 1000);
     return () => {
       clearInterval(id);
-      map.remove();              // libera el contenedor para un remontaje limpio
+      try { map.remove(); } catch (e) {}   // libera el contenedor y sus escuchas
+      if (_mapaActivo === map) _mapaActivo = null;
       mapRef.current = null;
       groups.current = {};
     };
