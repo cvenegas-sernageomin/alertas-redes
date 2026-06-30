@@ -91,7 +91,10 @@
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-<script type="text/jsx" id="app-src">
+<!-- type="text/plain": evita que Babel Standalone AUTO-ejecute este script. Solo lo corre
+     el bootstrap manual de abajo (UNA vez). Con "text/jsx" se ejecutaba dos veces -> dos
+     mapas -> mapa huérfano cuyo _onDown crasheaba y rompía el arrastre con un dedo en móvil. -->
+<script type="text/plain" id="app-src">
 const { useState, useEffect, useRef, useCallback } = React;
 
 const RAW = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-redes/live";
