@@ -296,9 +296,15 @@ function App() {
       if (!actual && !sismoView.historicos) return;
       const m = parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0");
       const e = estiloSismo(m);
-      L.circleMarker([f.lat, f.lon], {
-        radius: e.r, color: "#000", weight: 0.6,
-        fillColor: e.c, fillOpacity: actual ? 0.9 : 0.45   // históricos más tenues
+      // Sismos = TRIÁNGULO (distinto de los círculos de estaciones)
+      const size = Math.round(e.r * 2 + 6);
+      const op = actual ? 0.95 : 0.5;   // históricos más tenues
+      const html =
+        `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display:block">` +
+        `<polygon points="12,2.5 22,21 2,21" fill="${e.c}" fill-opacity="${op}" ` +
+        `stroke="#000" stroke-width="1.6" stroke-opacity="0.85" stroke-linejoin="round"/></svg>`;
+      L.marker([f.lat, f.lon], {
+        icon: L.divIcon({ className: "", html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
       }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.sismos);
     });
   }
@@ -348,6 +354,13 @@ function App() {
   // redibujar cuando llegan datos nuevos o cambian los filtros
   useEffect(() => { redraw(); }, [updated, onlyAlerts, estGroups, sismoView]);
 
+  // activar/desactivar TODOS los sets de estaciones de un golpe
+  const setAllSets = (val) => setEstGroups(prev => {
+    const next = {};
+    Object.keys(prev).forEach(k => { next[k] = val; });
+    return next;
+  });
+
   const St = ({ color, square, label, value }) => (
     <div className="stat">
       <span className={square ? "sq" : "dot"} style={{ background: color }}></span>
@@ -382,6 +395,11 @@ function App() {
 
       <div className="group">
         <div className="gtitle">Sets de estaciones</div>
+        {Object.keys(estGroups).length > 0 &&
+          <div className="seg" style={{ marginBottom: 6 }}>
+            <button onClick={() => setAllSets(true)}>✓ Todas</button>
+            <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
+          </div>}
         {Object.keys(estGroups).sort().map(gn => (
           <label className="tg" key={gn}>
             <input type="checkbox" checked={estGroups[gn]}
