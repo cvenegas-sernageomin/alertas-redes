@@ -235,6 +235,8 @@ function App() {
     const map = L.map("map", { zoomControl: true, preferCanvas: true, tap: false }).setView([-35.5, -71], 4);
     mapRef.current = map;
     _mapaActivo = map;
+    window._map = map; window._initCount = (window._initCount||0)+1; window._dragLog = window._dragLog||[];
+    map.on('movestart dragstart drag dragend', e => window._dragLog.push(e.type));
 
     const sat = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
