@@ -92,7 +92,20 @@ function Get-LugarNominatim([double]$lat, [double]$lon) {
     return $lugar
 }
 
-# Sufijo " — <Pueblo cercano> — cerca de <Ciudad grande> (~N km)" para una estacion con Lat/Lon
+# Hora local actual del lugar de la alerta. Isla de Pascua (lon < -100) usa su propia
+# zona horaria; el resto del pais, hora continental. El horario de verano se aplica solo.
+function Get-HoraLocal([double]$lon) {
+    $tzId = if ($lon -lt -100) { 'Easter Island Standard Time' } else { 'Pacific SA Standard Time' }
+    try {
+        $tz = [System.TimeZoneInfo]::FindSystemTimeZoneById($tzId)
+        $local = [System.TimeZoneInfo]::ConvertTimeFromUtc([datetime]::UtcNow, $tz)
+        return $local.ToString('HH:mm')
+    } catch {
+        return $null
+    }
+}
+
+# Sufijo " — <Pueblo cercano> — cerca de <Ciudad grande> (~N km) · 🕒 HH:mm (local)"
 function Get-CercaDe($e) {
     if ($null -eq $e.Lat -or $null -eq $e.Lon) { return '' }
     $lat = [double]$e.Lat; $lon = [double]$e.Lon
@@ -105,8 +118,11 @@ function Get-CercaDe($e) {
         $mismo = $pueblo -and (($pueblo -replace '\s', '').ToLower() -eq ($ciudad.Nombre -replace '\s', '').ToLower())
         if (-not $mismo) { $partes += "cerca de $($ciudad.Nombre) (~$($ciudad.Km) km)" }
     }
-    if ($partes.Count -eq 0) { return '' }
-    return ' — ' + ($partes -join ' — ')
+    $sufijo = ''
+    if ($partes.Count -gt 0) { $sufijo = ' — ' + ($partes -join ' — ') }
+    $hora = Get-HoraLocal $lon
+    if ($hora) { $sufijo += " · 🕒 $hora hrs (local)" }
+    return $sufijo
 }
 
 function Get-SismosFuertes([array]$sismos, [double]$minMag = 6.0, [int]$ventanaMin = 90) {
