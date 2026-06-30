@@ -68,12 +68,44 @@ function Get-PuebloCercano([double]$lat, [double]$lon) {
     return [pscustomobject]@{ Nombre = $best.N; Km = [int][math]::Round($bestKm) }
 }
 
-# Sufijo " — cerca de <Pueblo> (~N km)" para una estacion con Lat/Lon
+# Pueblo/localidad REAL mas cercano por geocodificacion inversa (Nominatim/OSM).
+# Devuelve el nombre del lugar mas fino disponible, o $null si falla.
+$script:GeoCache = @{}
+function Get-LugarNominatim([double]$lat, [double]$lon) {
+    $key = '{0:F3},{1:F3}' -f $lat, $lon
+    if ($script:GeoCache.ContainsKey($key)) { return $script:GeoCache[$key] }
+    $lugar = $null
+    try {
+        $url = "https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$lon&format=jsonv2&zoom=14&addressdetails=1&accept-language=es"
+        $headers = @{ 'User-Agent' = 'alertas-redes-sernageomin/1.0 (notificador precipitacion)' }
+        $r = Invoke-RestMethod -Uri $url -Headers $headers -TimeoutSec 15
+        $a = $r.address
+        foreach ($campo in 'village','hamlet','town','suburb','neighbourhood','city_district','locality','municipality','city','county') {
+            if ($a.$campo) { $lugar = [string]$a.$campo; break }
+        }
+        Start-Sleep -Milliseconds 1100   # politica Nominatim: <= 1 req/s
+    } catch {
+        $lugar = $null
+    }
+    $script:GeoCache[$key] = $lugar
+    return $lugar
+}
+
+# Sufijo " — <Pueblo cercano> — cerca de <Ciudad grande> (~N km)" para una estacion con Lat/Lon
 function Get-CercaDe($e) {
     if ($null -eq $e.Lat -or $null -eq $e.Lon) { return '' }
-    $pc = Get-PuebloCercano ([double]$e.Lat) ([double]$e.Lon)
-    if ($null -eq $pc) { return '' }
-    return " — cerca de $($pc.Nombre) (~$($pc.Km) km)"
+    $lat = [double]$e.Lat; $lon = [double]$e.Lon
+    $ciudad = Get-PuebloCercano $lat $lon
+    $pueblo = Get-LugarNominatim $lat $lon
+    $partes = @()
+    if ($pueblo) { $partes += $pueblo }
+    if ($null -ne $ciudad) {
+        # no repetir si el pueblo ya es la misma ciudad grande
+        $mismo = $pueblo -and (($pueblo -replace '\s', '').ToLower() -eq ($ciudad.Nombre -replace '\s', '').ToLower())
+        if (-not $mismo) { $partes += "cerca de $($ciudad.Nombre) (~$($ciudad.Km) km)" }
+    }
+    if ($partes.Count -eq 0) { return '' }
+    return ' — ' + ($partes -join ' — ')
 }
 
 function Get-SismosFuertes([array]$sismos, [double]$minMag = 6.0, [int]$ventanaMin = 90) {
