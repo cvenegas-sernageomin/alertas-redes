@@ -197,6 +197,18 @@ async function fetchKml(file) {
   return parseKml(await r.text());
 }
 
+// Fila de estadística (definida a nivel de módulo: si vive dentro de App, React
+// la trata como un tipo nuevo en cada render y remonta el subárbol innecesariamente).
+function St({ color, square, label, value }) {
+  return (
+    <div className="stat">
+      <span className={square ? "sq" : "dot"} style={{ background: color }}></span>
+      <span>{label}</span>
+      <span className="num" style={{ marginLeft: "auto" }}>{value}</span>
+    </div>
+  );
+}
+
 // ---------- App ----------
 function App() {
   const mapRef = useRef(null);
@@ -337,11 +349,19 @@ function App() {
   const fetchAll = useCallback(async () => {
     setLoading(true); setError("");
     try {
-      const [est, pron, sismos] = await Promise.all([
+      // allSettled: si una capa falla (red), las otras dos igual se actualizan;
+      // la capa que falló conserva sus datos previos en vez de tumbar todo el ciclo.
+      const res = await Promise.allSettled([
         fetchKml("red_alertas.kml"),
         fetchKml("red_pronostico.kml"),
         fetchKml("red_sismos.kml")
       ]);
+      const val = (r, prev) => r.status === "fulfilled" ? r.value : prev;
+      const est    = val(res[0], data.current.est);
+      const pron   = val(res[1], data.current.pron);
+      const sismos = val(res[2], data.current.sismos);
+      const fallidos = res.filter(r => r.status === "rejected")
+                          .map(r => String((r.reason && r.reason.message) || r.reason));
       data.current = { est, pron, sismos };
       const groupCounts = {}, groupGraf = {};
       est.forEach(f => {
@@ -370,6 +390,7 @@ function App() {
         return next;
       });
       setStats(s); setUpdated(new Date());
+      if (fallidos.length) setError("Algunas capas no se actualizaron: " + fallidos.join("; "));
     } catch (e) {
       setError(String(e.message || e));
     }
@@ -385,14 +406,6 @@ function App() {
     Object.keys(prev).forEach(k => { next[k] = val; });
     return next;
   });
-
-  const St = ({ color, square, label, value }) => (
-    <div className="stat">
-      <span className={square ? "sq" : "dot"} style={{ background: color }}></span>
-      <span>{label}</span>
-      <span className="num" style={{ marginLeft: "auto" }}>{value}</span>
-    </div>
-  );
 
   return (
     <div id="panel" className={collapsed ? "" : "open"}>
