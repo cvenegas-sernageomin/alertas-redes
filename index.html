@@ -91,6 +91,9 @@
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+<!-- type="text/plain": evita que Babel Standalone AUTO-ejecute este script. Solo lo corre
+     el bootstrap manual de abajo (UNA vez). Con "text/jsx" se ejecutaba dos veces -> dos
+     mapas -> mapa huérfano cuyo _onDown crasheaba y rompía el arrastre con un dedo en móvil. -->
 <script type="text/plain" id="app-src">
 const { useState, useEffect, useRef, useCallback } = React;
 
@@ -235,8 +238,6 @@ function App() {
     const map = L.map("map", { zoomControl: true, preferCanvas: true, tap: false }).setView([-35.5, -71], 4);
     mapRef.current = map;
     _mapaActivo = map;
-    window._map = map; window._initCount = (window._initCount||0)+1; window._dragLog = window._dragLog||[];
-    map.on('movestart dragstart drag dragend', e => window._dragLog.push(e.type));
 
     const sat = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
