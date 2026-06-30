@@ -212,7 +212,9 @@ function App() {
       cont._leaflet_id = null;
       cont.innerHTML = "";
     }
-    const map = L.map("map", { zoomControl: true }).setView([-35.5, -71], 4);
+    // preferCanvas: dibuja las estaciones en UN canvas (no miles de SVG), para que el
+    // arrastre con un dedo no quede bloqueado por los marcadores y vaya más fluido en móvil.
+    const map = L.map("map", { zoomControl: true, preferCanvas: true, tap: false }).setView([-35.5, -71], 4);
     mapRef.current = map;
 
     const sat = L.tileLayer(
