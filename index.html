@@ -73,6 +73,13 @@
   .leaflet-popup-content img { width: 330px; max-width: 330px; aspect-ratio: 11 / 6; height: auto; display: block; margin: 2px 0 6px; }
   /* el popup va POR ENCIMA del panel (z-index 1000), nunca detrás */
   .leaflet-pane.leaflet-popup-pane { z-index: 1200; }
+  /* Permitir arrastrar el mapa con UN dedo en móvil: el navegador no debe robar el
+     gesto (scroll/pan) sobre las superficies del mapa. NO se aplica al popup, para
+     que su contenido siga haciendo scroll con el dedo. */
+  .leaflet-tile-pane, .leaflet-tile-pane *,
+  .leaflet-overlay-pane, .leaflet-overlay-pane *,
+  .leaflet-marker-pane, .leaflet-marker-pane *,
+  .leaflet-container > canvas { touch-action: none !important; }
 </style>
 </head>
 <body>
@@ -216,7 +223,6 @@ function App() {
     // arrastre con un dedo no quede bloqueado por los marcadores y vaya más fluido en móvil.
     const map = L.map("map", { zoomControl: true, preferCanvas: true, tap: false }).setView([-35.5, -71], 4);
     mapRef.current = map;
-    window._map = map;  // debug temporal
 
     const sat = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
