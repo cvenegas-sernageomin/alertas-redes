@@ -312,6 +312,8 @@ function App() {
   const [onlyAlerts, setOnlyAlerts] = useState(false);
   // Inactivas (sin dato real hace >3h) se muestran por defecto, en gris punteado
   const [hideInactivas, setHideInactivas] = useState(false);
+  // Sets de estaciones: plegado por defecto (la lista de 9 redes molestaba ocupando el panel)
+  const [setsOpen, setSetsOpen] = useState(false);
   const [show, setShow] = useState({ pron: false });
   // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
   const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
@@ -563,21 +565,32 @@ function App() {
       </label>
 
       <div className="group">
-        <div className="gtitle">Sets de estaciones</div>
-        {Object.keys(estGroups).length > 0 &&
-          <div className="seg" style={{ marginBottom: 6 }}>
-            <button onClick={() => setAllSets(true)}>✓ Todas</button>
-            <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
-          </div>}
-        {Object.keys(estGroups).sort().map(gn => (
-          <label className="tg" key={gn}>
-            <input type="checkbox" checked={estGroups[gn]}
-              onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
-            <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
-            <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
-          </label>
-        ))}
-        {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+        <div className="gtitle" style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+          onClick={() => setSetsOpen(!setsOpen)}>
+          <span>Sets de estaciones</span>
+          <span style={{ marginLeft: "auto", color: "#8aa0b4" }}>
+            {Object.keys(estGroups).length > 0
+              ? `${Object.values(estGroups).filter(Boolean).length}/${Object.keys(estGroups).length}`
+              : ""}
+            {" "}{setsOpen ? "▾" : "▸"}
+          </span>
+        </div>
+        {setsOpen && <>
+          {Object.keys(estGroups).length > 0 &&
+            <div className="seg" style={{ marginBottom: 6 }}>
+              <button onClick={() => setAllSets(true)}>✓ Todas</button>
+              <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
+            </div>}
+          {Object.keys(estGroups).sort().map(gn => (
+            <label className="tg" key={gn}>
+              <input type="checkbox" checked={estGroups[gn]}
+                onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
+              <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
+              <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
+            </label>
+          ))}
+          {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+        </>}
       </div>
 
       <div className="group">
