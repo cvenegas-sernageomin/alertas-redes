@@ -540,6 +540,10 @@ function App() {
           <span className="num" style={{ marginLeft: "auto" }}>{stats.estGraf}</span>
         </div>
       </>}
+      <label className="tg" style={{ marginTop: 6 }}>
+        <input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} />
+        <span>Solo estaciones con alerta</span>
+      </label>
 
       <div className="group">
         <div className="gtitle">Sets de estaciones</div>
@@ -561,6 +565,10 @@ function App() {
 
       <div className="group">
         <div className="gtitle">Pronóstico 48h</div>
+        <label className="tg">
+          <input type="checkbox" checked={show.pron} onChange={e => setShow({ ...show, pron: e.target.checked })} />
+          <span>Mostrar en el mapa</span>
+        </label>
         {stats && <>
           <St color="#ff2d2d" square label="Celdas rojas" value={stats.pronRojo} />
           <St color="#e6b800" square label="Celdas amarillas" value={stats.pronAmar} />
@@ -582,12 +590,6 @@ function App() {
           <span className="num" style={{ marginLeft: "auto" }}>{stats ? stats.sismoHistoricos : ""}</span>
         </label>
         {stats && <div className="row"><span style={{ color: "#93a4b5" }}>M ≥ 6</span><span className="num">{stats.sismoFuerte}</span></div>}
-      </div>
-
-      <div className="group">
-        <div className="gtitle">Capas</div>
-        <label className="tg"><input type="checkbox" checked={show.pron} onChange={e => setShow({ ...show, pron: e.target.checked })} /> Pronóstico</label>
-        <label className="tg"><input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} /> Solo estaciones con alerta</label>
       </div>
 
       <div className="group">
