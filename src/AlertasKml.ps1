@@ -329,19 +329,24 @@ function Build-PlacemarkPuntoPronostico([array]$vs) {
         $bg   = switch ($v.ColorFinal) { 'rojo' { '#ff0000' } 'amarillo' { '#cc9900' } default { '#00cc00' } }
         $isos = @($v.IsoEcmwf, $v.IsoGfs, $v.IsoIcon) | Where-Object { $null -ne $_ }
         $isoMin = if ($isos.Count -gt 0) { "$(($isos | Measure-Object -Minimum).Minimum) m" } else { 's/d' }
+        $tempStr = if ($null -ne $v.TempMinC -and $null -ne $v.TempMaxC) { "$($v.TempMinC)&deg; a $($v.TempMaxC)&deg;" } else { 's/d' }
+        $vientoStr = if ($null -ne $v.VientoMaxKmh) { "$($v.VientoMaxKmh) km/h" } else { 's/d' }
         $filas += "<tr><td><b>$($v.Nombre)</b></td>" +
                   "<td align='right'>$($v.PrecipEcmwf)</td>" +
                   "<td align='right'>$($v.PrecipGfs)</td>" +
                   "<td align='right'>$($v.PrecipIcon)</td>" +
                   "<td align='right'>$isoMin</td>" +
+                  "<td align='right'>$tempStr</td>" +
+                  "<td align='right'>$vientoStr</td>" +
                   "<td bgcolor='$bg'>&nbsp;&nbsp;</td></tr>"
     }
 
     $desc = "<![CDATA[<b>Pronostico 48h</b><br/>$lat, $lon<br/><br/>" +
             "<table border='1' cellspacing='0' cellpadding='3'>" +
-            "<tr><th>Ventana</th><th>ECMWF</th><th>GFS</th><th>ICON</th><th>Iso min</th><th>Alerta</th></tr>" +
+            "<tr><th>Ventana</th><th>ECMWF</th><th>GFS</th><th>ICON</th><th>Iso min</th><th>Temp</th><th>Rafaga</th><th>Alerta</th></tr>" +
             "$filas</table>" +
-            "<small>Precip acumulada por ventana (mm), por modelo. Iso min = isoterma 0&deg;C mas baja.</small><br/><br/>" +
+            "<small>Precip acumulada por ventana (mm), por modelo. Iso min = isoterma 0&deg;C mas baja. " +
+            "Temp = min-max (prom. 3 modelos). Rafaga = maxima de viento (peor caso, 10m).</small><br/><br/>" +
             "<hr/><small><b>Umbrales:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
             "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5 o iso&lt;2500&nbsp;</small></td>" +
             "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 + iso&ge;2500&nbsp;</small></td>" +

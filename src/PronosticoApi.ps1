@@ -49,6 +49,13 @@ function Parse-OpenMeteoPoint($obj) {
         HourlyIsoEcmwf    = @($h.freezing_level_height_ecmwf_ifs025)
         HourlyIsoGfs      = @($h.freezing_level_height_gfs_seamless)
         HourlyIsoIcon     = @($h.freezing_level_height_icon_seamless)
+        # Temperatura y viento: solo informativos, no alteran la logica de alertas (precip+iso).
+        HourlyTempEcmwf   = @($h.temperature_2m_ecmwf_ifs025)
+        HourlyTempGfs     = @($h.temperature_2m_gfs_seamless)
+        HourlyTempIcon    = @($h.temperature_2m_icon_seamless)
+        HourlyGustEcmwf   = @($h.wind_gusts_10m_ecmwf_ifs025)
+        HourlyGustGfs     = @($h.wind_gusts_10m_gfs_seamless)
+        HourlyGustIcon    = @($h.wind_gusts_10m_icon_seamless)
     }
 }
 
@@ -69,6 +76,17 @@ function Get-MinVentana([array]$serie, [int]$desde, [int]$hasta) {
         }
     }
     return $min
+}
+
+function Get-MaxVentana([array]$serie, [int]$desde, [int]$hasta) {
+    $max = $null
+    for ($i = $desde; $i -le $hasta; $i++) {
+        if ($null -ne $serie[$i]) {
+            $v = [double]$serie[$i]
+            if ($null -eq $max -or $v -gt $max) { $max = $v }
+        }
+    }
+    return $max
 }
 
 function Get-ColorPronostico([double]$precip, $iso) {
@@ -101,6 +119,27 @@ function Build-VentanasPunto($punto) {
         $iG = Get-MinVentana  $punto.HourlyIsoGfs      $cfg.Desde $cfg.Hasta
         $iI = Get-MinVentana  $punto.HourlyIsoIcon     $cfg.Desde $cfg.Hasta
 
+        # Temperatura y viento (solo informativos, no entran en Get-ColorPronostico):
+        # temperatura = promedio entre los 3 modelos; viento = rafaga maxima (peor caso).
+        $tMins = @(
+            (Get-MinVentana $punto.HourlyTempEcmwf $cfg.Desde $cfg.Hasta),
+            (Get-MinVentana $punto.HourlyTempGfs   $cfg.Desde $cfg.Hasta),
+            (Get-MinVentana $punto.HourlyTempIcon  $cfg.Desde $cfg.Hasta)
+        ) | Where-Object { $null -ne $_ }
+        $tMaxs = @(
+            (Get-MaxVentana $punto.HourlyTempEcmwf $cfg.Desde $cfg.Hasta),
+            (Get-MaxVentana $punto.HourlyTempGfs   $cfg.Desde $cfg.Hasta),
+            (Get-MaxVentana $punto.HourlyTempIcon  $cfg.Desde $cfg.Hasta)
+        ) | Where-Object { $null -ne $_ }
+        $tempMin = if ($tMins.Count -gt 0) { [math]::Round(($tMins | Measure-Object -Average).Average, 1) } else { $null }
+        $tempMax = if ($tMaxs.Count -gt 0) { [math]::Round(($tMaxs | Measure-Object -Average).Average, 1) } else { $null }
+        $gustos  = @(
+            (Get-MaxVentana $punto.HourlyGustEcmwf $cfg.Desde $cfg.Hasta),
+            (Get-MaxVentana $punto.HourlyGustGfs   $cfg.Desde $cfg.Hasta),
+            (Get-MaxVentana $punto.HourlyGustIcon  $cfg.Desde $cfg.Hasta)
+        ) | Where-Object { $null -ne $_ }
+        $vientoMax = if ($gustos.Count -gt 0) { [math]::Round(($gustos | Measure-Object -Maximum).Maximum) } else { $null }
+
         $cE = Get-ColorPronostico $pE $iE
         $cG = Get-ColorPronostico $pG $iG
         $cI = Get-ColorPronostico $pI $iI
@@ -116,6 +155,9 @@ function Build-VentanasPunto($punto) {
             PrecipEcmwf = $pE
             PrecipGfs   = $pG
             PrecipIcon  = $pI
+            TempMinC    = $tempMin
+            TempMaxC    = $tempMax
+            VientoMaxKmh = $vientoMax
             IsoEcmwf    = $iE
             IsoGfs      = $iG
             IsoIcon     = $iI
@@ -139,7 +181,7 @@ function Get-PronosticoGrilla([array]$grilla) {
         $lats  = @($lote | ForEach-Object { $_.Lat.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ','
         $lons  = @($lote | ForEach-Object { $_.Lon.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ','
         $url   = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons" +
-                 "&hourly=precipitation,freezing_level_height" +
+                 "&hourly=precipitation,freezing_level_height,temperature_2m,wind_gusts_10m" +
                  "&models=ecmwf_ifs025,gfs_seamless,icon_seamless&forecast_days=2"
         $resp  = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 60
         [array]$arr = $resp.Content | ConvertFrom-Json
