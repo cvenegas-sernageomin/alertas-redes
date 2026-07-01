@@ -1,4 +1,12 @@
-﻿function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [array]$iso = @()) {
+﻿# Una estacion se considera INACTIVA si su ultimo dato real tiene mas de $umbralHoras.
+# UltimoDatoEpoch es null si la estacion nunca reporto un valor en la ventana consultada.
+function Test-EstacionInactiva($ultimoDatoEpoch, [double]$umbralHoras = 3.0) {
+    if ($null -eq $ultimoDatoEpoch) { return $true }
+    $ahora = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    return (($ahora - $ultimoDatoEpoch) / 3600.0) -gt $umbralHoras
+}
+
+function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [array]$iso = @()) {
     if ($tiempos.Count -lt 2) { return '' }
 
     $labels = @($tiempos | ForEach-Object {
@@ -166,18 +174,31 @@ function Build-Styles {
     </IconStyle>
     <LabelStyle><scale>0.7</scale></LabelStyle>
   </Style>
+  <Style id="gris">
+    <IconStyle>
+      <color>ff888888</color><scale>0.5</scale>
+      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon>
+    </IconStyle>
+    <LabelStyle><scale>0</scale></LabelStyle>
+  </Style>
 "@
 }
 
 function Build-PlacemarkRedes($e) {
-    $color = Get-ColorRedes $e.TasaMmH
+    $inactiva = Test-EstacionInactiva $e.UltimoDatoEpoch
+    $color = if ($inactiva) { 'gris' } else { Get-ColorRedes $e.TasaMmH }
     $hora  = Format-Epoch $e.Epoch
     $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresSerie
+    $aviso = if ($inactiva) {
+        $ultStr = if ($e.UltimoDatoEpoch) { Format-Epoch $e.UltimoDatoEpoch } else { 'sin registro' }
+        "<br/><b style='color:#888'>&#9888; Sin datos recientes</b> (ultimo dato: $ultStr)"
+    } else { '' }
     $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
                "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
-               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10</small></td></tr></table>"
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
+               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10</small></td>" +
+               "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
@@ -189,15 +210,21 @@ function Build-PlacemarkRedes($e) {
 }
 
 function Build-PlacemarkEmas($e) {
-    $color   = Get-ColorEmas $e.TasaMmH $e.Isoterma
+    $inactiva = Test-EstacionInactiva $e.UltimoDatoEpoch
+    $color   = if ($inactiva) { 'gris' } else { Get-ColorEmas $e.TasaMmH $e.Isoterma }
     $hora    = Format-Epoch $e.Epoch
     $isoStr  = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 'sin dato' }
     $tempStr = if ($null -ne $e.TempC)    { "$($e.TempC) grados C" } else { 'sin dato' }
     $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresPrecip
+    $aviso = if ($inactiva) {
+        $ultStr = if ($e.UltimoDatoEpoch) { Format-Epoch $e.UltimoDatoEpoch } else { 'sin registro' }
+        "<br/><b style='color:#888'>&#9888; Sin datos recientes</b> (ultimo dato: $ultStr)"
+    } else { '' }
     $leyenda = "<hr/><small><b>EMA (precip + iso):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 mm/h + iso&ge;3000 m&nbsp;</small></td>" +
-               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10 + iso&ge;3000</small></td></tr></table>"
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$chartImg<br/><br/>$leyenda]]>"
+               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10 + iso&ge;3000</small></td>" +
+               "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>

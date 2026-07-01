@@ -12,6 +12,16 @@ function Get-EpochHora {
     return [int64]$hora.ToUnixTimeSeconds()
 }
 
+# Epoch del ULTIMO valor no-nulo de la serie (a diferencia de $timestamps[-1], que solo
+# marca la hora consultada). Sirve para saber si una estacion realmente dejo de reportar.
+function Get-UltimoDatoEpoch([array]$timestamps, [array]$values) {
+    if ($null -eq $timestamps -or $null -eq $values -or $timestamps.Count -eq 0 -or $values.Count -eq 0) { return $null }
+    for ($i = $values.Count - 1; $i -ge 0; $i--) {
+        if ($null -ne $values[$i]) { return [int64]$timestamps[$i] }
+    }
+    return $null
+}
+
 function Get-RedFromCode([string]$code) {
     if ($code -match '^AG')   { return 'Agromet' }
     if ($code -match '^CE')   { return 'CEAZA' }
@@ -40,13 +50,14 @@ function Parse-RedesJson([array]$datos) {
         }
         $ultimoTs = if ($d.timestamps -and $d.timestamps.Count -gt 0) { $d.timestamps[-1] } else { 0 }
         $result.Add([PSCustomObject]@{
-            Nombre       = $d.name
-            Codigo       = $d.nationalCode
-            Lat          = [double]$d.lat
-            Lon          = [double]$d.lng
-            TasaMmH      = $tasa
-            Epoch        = $ultimoTs
-            Red          = Get-RedFromCode $d.nationalCode
+            Nombre          = $d.name
+            Codigo          = $d.nationalCode
+            Lat             = [double]$d.lat
+            Lon             = [double]$d.lng
+            TasaMmH         = $tasa
+            Epoch           = $ultimoTs
+            UltimoDatoEpoch = Get-UltimoDatoEpoch $d.timestamps $d.values
+            Red             = Get-RedFromCode $d.nationalCode
             ValoresSerie = if ($d.values)     { $d.values }     else { @() }
             TiemposSerie = if ($d.timestamps) { $d.timestamps } else { @() }
         })
@@ -120,6 +131,7 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
             TempC         = $tempC
             Isoterma      = $iso
             Epoch         = $s.Epoch
+            UltimoDatoEpoch = $s.UltimoDatoEpoch
             ValoresPrecip = $s.ValoresSerie
             ValoresTemp   = $valoresTemp.ToArray()
             ValoresIso    = $valoresIso.ToArray()
