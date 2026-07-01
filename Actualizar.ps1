@@ -30,6 +30,31 @@ try {
     $emas = @()
 }
 
+# --- Fuente/organizacion CONFIRMADA por vismet/CR2 (solo informativa, no reemplaza Get-RedFromCode) ---
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando organizacion confirmada (raw-measure)..." -ForegroundColor Cyan
+try {
+    $nuevasOrg = Get-OrganizacionesRaw
+    $orgMap    = Merge-OrganizacionCache "$here\organizaciones.json" $nuevasOrg
+    Write-Host "  organizaciones: $($orgMap.Keys.Count) en cache (nuevas este ciclo: $($nuevasOrg.Keys.Count))" -ForegroundColor Gray
+
+    $coinciden = 0; $difieren = 0
+    foreach ($e in @($redes) + @($emas)) {
+        if ($e.Id -and $orgMap.ContainsKey("$($e.Id)")) {
+            $e.OrgConfirmada = $orgMap["$($e.Id)"]
+            $heur = $e.Red
+            if ($heur -and ($e.OrgConfirmada -match [regex]::Escape($heur) -or $heur -match [regex]::Escape($e.OrgConfirmada))) {
+                $coinciden++
+            } elseif ($heur) {
+                $difieren++
+                Write-Host "    DIFIERE: id=$($e.Id) '$($e.Nombre)' heuristica='$heur' vs confirmada='$($e.OrgConfirmada)'" -ForegroundColor Yellow
+            }
+        }
+    }
+    Write-Host "  comparacion heuristica vs confirmada: coinciden=$coinciden difieren=$difieren" -ForegroundColor Gray
+} catch {
+    Write-Warning "Error en organizacion confirmada (no bloqueante): $_"
+}
+
 if ($redes.Count -eq 0 -and $emas.Count -eq 0) {
     Write-Warning "Sin datos de ninguna fuente. Se mantiene el KML anterior."
     exit 1

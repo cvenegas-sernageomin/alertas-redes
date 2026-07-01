@@ -50,6 +50,7 @@ function Parse-RedesJson([array]$datos) {
         }
         $ultimoTs = if ($d.timestamps -and $d.timestamps.Count -gt 0) { $d.timestamps[-1] } else { 0 }
         $result.Add([PSCustomObject]@{
+            Id              = $d.id
             Nombre          = $d.name
             Codigo          = $d.nationalCode
             Lat             = [double]$d.lat
@@ -57,6 +58,7 @@ function Parse-RedesJson([array]$datos) {
             TasaMmH         = $tasa
             Epoch           = $ultimoTs
             UltimoDatoEpoch = Get-UltimoDatoEpoch $d.timestamps $d.values
+            OrgConfirmada   = $null   # se completa despues, si vismet la confirma (raw-measure/last)
             Red             = Get-RedFromCode $d.nationalCode
             ValoresSerie = if ($d.values)     { $d.values }     else { @() }
             TiemposSerie = if ($d.timestamps) { $d.timestamps } else { @() }
@@ -122,6 +124,7 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
         }
 
         $result.Add([PSCustomObject]@{
+            Id            = $s.Id
             Nombre        = $s.Nombre
             Codigo        = $s.Codigo
             Lat           = $s.Lat
@@ -132,6 +135,7 @@ function Parse-EmasDmcJson([array]$precipSerie, [array]$tempSerie, [hashtable]$a
             Isoterma      = $iso
             Epoch         = $s.Epoch
             UltimoDatoEpoch = $s.UltimoDatoEpoch
+            OrgConfirmada = $null
             ValoresPrecip = $s.ValoresSerie
             ValoresTemp   = $valoresTemp.ToArray()
             ValoresIso    = $valoresIso.ToArray()
@@ -175,6 +179,47 @@ function Merge-AltitudCache([string]$path, [hashtable]$nuevas) {
         foreach ($k in ($cache.Keys | Sort-Object)) { $ordenado[$k] = $cache[$k] }
         ($ordenado | ConvertTo-Json -Depth 3) | Set-Content -Path $path -Encoding UTF8
     } catch { Write-Warning "No se pudo guardar cache altitudes: $_" }
+    return $cache
+}
+
+# Organizacion (fuente) REAL de cada estacion, confirmada por vismet/CR2 via raw-measure/last.
+# Igual que Get-AltitudesRaw: cada ciclo solo trae una muestra rotativa pequena, por eso se
+# acumula en un cache persistente (organizaciones.json) con Merge-OrganizacionCache.
+# IMPORTANTE: esto es SOLO informativo/aditivo. No reemplaza ni modifica Get-RedFromCode
+# (la agrupacion por red del visor sigue igual); sirve para mostrar "fuente confirmada" y
+# para ir validando, con datos reales acumulados, si la heuristica de codigos es correcta.
+function Get-OrganizacionesRaw {
+    $org = @{}
+    foreach ($mt in @(1, 2)) {
+        $ruta = "api/raw-measure/by-measure-type/$mt/last"
+        try {
+            $r = Invoke-WebRequest -Uri "https://vismet.cr2.cl/$ruta" `
+                -Headers @{ckey = (Sign $ruta)} -UseBasicParsing -TimeoutSec 60
+            if ($r.Content -match '<!DOCTYPE') { continue }
+            foreach ($d in ($r.Content | ConvertFrom-Json)) {
+                $id  = $d.station.id
+                $org2 = $d.station.organization.name
+                if ($id -and $org2) { $org["$id"] = $org2 }
+            }
+        } catch { Write-Warning "raw-measure (organizacion) type $mt no disponible: $_" }
+    }
+    return $org
+}
+
+function Merge-OrganizacionCache([string]$path, [hashtable]$nuevas) {
+    $cache = @{}
+    if (Test-Path $path) {
+        try {
+            $obj = Get-Content $path -Raw | ConvertFrom-Json
+            foreach ($p in $obj.PSObject.Properties) { $cache[$p.Name] = [string]$p.Value }
+        } catch { Write-Warning "Cache organizaciones ilegible, se reinicia: $_" }
+    }
+    foreach ($k in $nuevas.Keys) { $cache[$k] = $nuevas[$k] }
+    try {
+        $ordenado = [ordered]@{}
+        foreach ($k in ($cache.Keys | Sort-Object)) { $ordenado[$k] = $cache[$k] }
+        ($ordenado | ConvertTo-Json -Depth 3) | Set-Content -Path $path -Encoding UTF8
+    } catch { Write-Warning "No se pudo guardar cache organizaciones: $_" }
     return $cache
 }
 

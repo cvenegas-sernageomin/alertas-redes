@@ -198,7 +198,8 @@ function Build-PlacemarkRedes($e) {
                "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
                "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10</small></td>" +
                "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
+    $fuente = if ($e.OrgConfirmada) { " <small style='color:#8a94a3'>(fuente confirmada: $($e.OrgConfirmada))</small>" } else { '' }
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)$fuente<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
@@ -224,7 +225,8 @@ function Build-PlacemarkEmas($e) {
                "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 mm/h + iso&ge;3000 m&nbsp;</small></td>" +
                "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10 + iso&ge;3000</small></td>" +
                "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
+    $fuente = if ($e.OrgConfirmada) { " <small style='color:#8a94a3'>(fuente confirmada: $($e.OrgConfirmada))</small>" } else { '' }
+    $desc = "<![CDATA[<b>$($e.Nombre)</b>$fuente<br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
