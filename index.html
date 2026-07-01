@@ -114,12 +114,14 @@ function colorEstacion(styleUrl) {
   const s = styleUrl || "";
   if (/rojo/.test(s)) return "#ff2d2d";
   if (/amarillo/.test(s)) return "#e6b800";
+  if (/gris/.test(s)) return "#8a94a3";   // sin datos recientes (>3h)
   return "#27c93f";
 }
 function nivelEstacion(styleUrl) {
   const s = styleUrl || "";
   if (/rojo/.test(s)) return "rojo";
   if (/amarillo/.test(s)) return "amarillo";
+  if (/gris/.test(s)) return "inactiva";
   return "verde";
 }
 function estiloSismo(m) {
@@ -308,6 +310,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [onlyAlerts, setOnlyAlerts] = useState(false);
+  // Inactivas (sin dato real hace >3h) se muestran por defecto, en gris punteado
+  const [hideInactivas, setHideInactivas] = useState(false);
   const [show, setShow] = useState({ pron: false });
   // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
   const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
@@ -398,13 +402,15 @@ function App() {
 
     data.current.est.forEach(f => {
       const niv = nivelEstacion(f.styleUrl);
+      const inactiva = niv === "inactiva";
       const hasChart = /<img/.test(f.desc || "");
       const r = (niv === "rojo" ? 7 : niv === "amarillo" ? 6 : 4) + (hasChart ? 1 : 0);
       const marker = L.circleMarker([f.lat, f.lon], {
         radius: r,
-        color: hasChart ? "#22d3ee" : "#0a0a0a",
-        weight: hasChart ? 2 : 0.6,
-        fillColor: colorEstacion(f.styleUrl), fillOpacity: 0.9
+        color: hasChart ? "#22d3ee" : (inactiva ? "#8a94a3" : "#0a0a0a"),
+        weight: hasChart ? 2 : (inactiva ? 1.2 : 0.6),
+        dashArray: inactiva ? "2,2" : null,   // borde punteado = sin datos recientes
+        fillColor: colorEstacion(f.styleUrl), fillOpacity: inactiva ? 0.55 : 0.9
       }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS);
       built.current.est.push({ marker, group: f.group, niv });
     });
@@ -445,7 +451,8 @@ function App() {
     const g = groups.current;
     if (!g.est) return;
     built.current.est.forEach(({ marker, group, niv }) => {
-      const show = !(onlyAlerts && niv === "verde") && !(group && estGroups[group] === false);
+      const show = !(onlyAlerts && niv === "verde") && !(group && estGroups[group] === false)
+        && !(hideInactivas && niv === "inactiva");
       if (show) g.est.addLayer(marker); else g.est.removeLayer(marker);
     });
     built.current.sismos.forEach(({ marker, actual }) => {
@@ -480,6 +487,7 @@ function App() {
       const s = {
         estRojo: est.filter(f => nivelEstacion(f.styleUrl) === "rojo").length,
         estAmar: est.filter(f => nivelEstacion(f.styleUrl) === "amarillo").length,
+        estInactivas: est.filter(f => nivelEstacion(f.styleUrl) === "inactiva").length,
         estTot: est.length,
         estGraf: est.filter(f => /<img/.test(f.desc || "")).length,
         groupCounts,
@@ -508,7 +516,7 @@ function App() {
   // redibujar cuando llegan datos nuevos o cambian los filtros
   // datos nuevos → reconstruir marcadores; cambio de filtro → solo alternar visibilidad
   useEffect(() => { buildMarkers(); }, [updated]);
-  useEffect(() => { applyFilters(); }, [onlyAlerts, estGroups, sismoView]);
+  useEffect(() => { applyFilters(); }, [onlyAlerts, estGroups, sismoView, hideInactivas]);
 
   // activar/desactivar TODOS los sets de estaciones de un golpe
   const setAllSets = (val) => setEstGroups(prev => {
@@ -539,10 +547,19 @@ function App() {
           <span>Con gráficos 48h</span>
           <span className="num" style={{ marginLeft: "auto" }}>{stats.estGraf}</span>
         </div>
+        <div className="stat">
+          <span className="dot" style={{ background: "#8a94a3", opacity: 0.6, border: "1px dashed #555" }}></span>
+          <span>Inactivas (&gt;3h sin dato)</span>
+          <span className="num" style={{ marginLeft: "auto" }}>{stats.estInactivas}</span>
+        </div>
       </>}
       <label className="tg" style={{ marginTop: 6 }}>
         <input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} />
         <span>Solo estaciones con alerta</span>
+      </label>
+      <label className="tg">
+        <input type="checkbox" checked={hideInactivas} onChange={e => setHideInactivas(e.target.checked)} />
+        <span>Ocultar inactivas</span>
       </label>
 
       <div className="group">
