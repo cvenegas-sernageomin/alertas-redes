@@ -59,6 +59,21 @@
   .num { font-variant-numeric: tabular-nums; font-weight: 600; }
   .group { border-top: 1px solid #2a3a4a; margin-top: 8px; padding-top: 8px; }
   .gtitle { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #8aa0b4; margin-bottom: 4px; }
+  /* Encabezados de seccion con mas impacto: mas grandes, blancos, con acento de color */
+  .sec-head {
+    display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;
+    padding: 8px 10px; margin: 0 -2px 4px; border-radius: 8px;
+    background: rgba(255,255,255,0.04); border-left: 3px solid #2563eb;
+  }
+  .sec-head:active { background: rgba(255,255,255,0.09); }
+  .sec-head .sec-title { font-size: 13px; font-weight: 700; color: #eef3f8; letter-spacing: .2px; }
+  .sec-badge {
+    margin-left: auto; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px;
+    background: #1f2b3a; color: #9db1c4;
+  }
+  .sec-badge.alerta { background: #ff2d2d; color: #fff; }
+  .sec-badge.amarilla { background: #e6b800; color: #1a1200; }
+  .sec-chev { color: #6d8299; font-size: 13px; }
   label.tg { display: flex; align-items: center; gap: 7px; cursor: pointer; margin: 4px 0; user-select: none; }
   button { background: #2563eb; color: #fff; border: 0; border-radius: 7px; padding: 7px 10px; cursor: pointer; font-size: 12px; width: 100%; margin-top: 8px; }
   button:disabled { opacity: .6; cursor: default; }
@@ -297,6 +312,22 @@ function St({ color, square, label, value }) {
   );
 }
 
+// Encabezado de sección desplegable, homogéneo para Sets/Pronóstico/Sismos: toca para
+// abrir/cerrar; badge coloreado a la derecha resume el estado sin necesidad de abrir.
+function Section({ title, open, onToggle, badge, badgeKind, children }) {
+  return (
+    <div className="group">
+      <div className="sec-head" onClick={onToggle}>
+        <span className="sec-title">{title}</span>
+        {badge != null && badge !== "" &&
+          <span className={"sec-badge" + (badgeKind ? " " + badgeKind : "")}>{badge}</span>}
+        <span className="sec-chev">{open ? "▾" : "▸"}</span>
+      </div>
+      {open && children}
+    </div>
+  );
+}
+
 // ---------- App ----------
 function App() {
   const mapRef = useRef(null);
@@ -314,6 +345,9 @@ function App() {
   const [hideInactivas, setHideInactivas] = useState(false);
   // Sets de estaciones: plegado por defecto (la lista de 9 redes molestaba ocupando el panel)
   const [setsOpen, setSetsOpen] = useState(false);
+  // Pronóstico y Sismos siguen el mismo patrón desplegable que Sets, para un panel homogéneo
+  const [pronOpen, setPronOpen] = useState(false);
+  const [sismosOpen, setSismosOpen] = useState(false);
   const [show, setShow] = useState({ pron: false });
   // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
   const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
@@ -539,7 +573,14 @@ function App() {
       {collapsed && <div className="hint" onClick={() => setCollapsed(false)}>👆 Toca para ver capas y leyenda</div>}
 
       {!collapsed && <div className="pbody">
-      <div className="gtitle">Estaciones (precipitación)</div>
+      <div className="sec-head" style={{ cursor: "default" }}>
+        <span className="sec-title">Estaciones (precipitación)</span>
+        {stats && (stats.estRojo > 0
+          ? <span className="sec-badge alerta">{stats.estRojo} rojas</span>
+          : stats.estAmar > 0
+            ? <span className="sec-badge amarilla">{stats.estAmar} amar.</span>
+            : <span className="sec-badge">sin alerta</span>)}
+      </div>
       {stats && <>
         <St color="#ff2d2d" label="Rojo ≥10 mm/h" value={stats.estRojo} />
         <St color="#e6b800" label="Amarillo ≥5 mm/h" value={stats.estAmar} />
@@ -564,37 +605,28 @@ function App() {
         <span>Ocultar inactivas</span>
       </label>
 
-      <div className="group">
-        <div className="gtitle" style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
-          onClick={() => setSetsOpen(!setsOpen)}>
-          <span>Sets de estaciones</span>
-          <span style={{ marginLeft: "auto", color: "#8aa0b4" }}>
-            {Object.keys(estGroups).length > 0
-              ? `${Object.values(estGroups).filter(Boolean).length}/${Object.keys(estGroups).length}`
-              : ""}
-            {" "}{setsOpen ? "▾" : "▸"}
-          </span>
-        </div>
-        {setsOpen && <>
-          {Object.keys(estGroups).length > 0 &&
-            <div className="seg" style={{ marginBottom: 6 }}>
-              <button onClick={() => setAllSets(true)}>✓ Todas</button>
-              <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
-            </div>}
-          {Object.keys(estGroups).sort().map(gn => (
-            <label className="tg" key={gn}>
-              <input type="checkbox" checked={estGroups[gn]}
-                onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
-              <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
-              <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
-            </label>
-          ))}
-          {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
-        </>}
-      </div>
+      <Section title="Sets de estaciones" open={setsOpen} onToggle={() => setSetsOpen(!setsOpen)}
+        badge={Object.keys(estGroups).length > 0
+          ? `${Object.values(estGroups).filter(Boolean).length}/${Object.keys(estGroups).length}` : ""}>
+        {Object.keys(estGroups).length > 0 &&
+          <div className="seg" style={{ marginBottom: 6 }}>
+            <button onClick={() => setAllSets(true)}>✓ Todas</button>
+            <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
+          </div>}
+        {Object.keys(estGroups).sort().map(gn => (
+          <label className="tg" key={gn}>
+            <input type="checkbox" checked={estGroups[gn]}
+              onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
+            <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
+            <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
+          </label>
+        ))}
+        {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+      </Section>
 
-      <div className="group">
-        <div className="gtitle">Pronóstico 48h</div>
+      <Section title="Pronóstico 48h" open={pronOpen} onToggle={() => setPronOpen(!pronOpen)}
+        badge={stats ? (stats.pronRojo > 0 ? `${stats.pronRojo} rojas` : stats.pronAmar > 0 ? `${stats.pronAmar} amar.` : "sin alerta") : ""}
+        badgeKind={stats && stats.pronRojo > 0 ? "alerta" : stats && stats.pronAmar > 0 ? "amarilla" : ""}>
         <label className="tg">
           <input type="checkbox" checked={show.pron} onChange={e => setShow({ ...show, pron: e.target.checked })} />
           <span>Mostrar en el mapa</span>
@@ -603,10 +635,11 @@ function App() {
           <St color="#ff2d2d" square label="Celdas rojas" value={stats.pronRojo} />
           <St color="#e6b800" square label="Celdas amarillas" value={stats.pronAmar} />
         </>}
-      </div>
+      </Section>
 
-      <div className="group">
-        <div className="gtitle">Sismos</div>
+      <Section title="Sismos" open={sismosOpen} onToggle={() => setSismosOpen(!sismosOpen)}
+        badge={stats ? (stats.sismoFuerte > 0 ? `${stats.sismoFuerte} M≥6` : `${stats.sismoActuales} actuales`) : ""}
+        badgeKind={stats && stats.sismoFuerte > 0 ? "alerta" : ""}>
         <label className="tg">
           <input type="checkbox" checked={sismoView.actuales}
             onChange={e => setSismoView({ ...sismoView, actuales: e.target.checked })} />
@@ -620,7 +653,7 @@ function App() {
           <span className="num" style={{ marginLeft: "auto" }}>{stats ? stats.sismoHistoricos : ""}</span>
         </label>
         {stats && <div className="row"><span style={{ color: "#93a4b5" }}>M ≥ 6</span><span className="num">{stats.sismoFuerte}</span></div>}
-      </div>
+      </Section>
 
       <div className="group">
         <div className="gtitle">Fondo</div>
