@@ -217,7 +217,7 @@ function parseKml(text){
 }
 self.onmessage=function(e){
   var d=e.data;
-  fetch(d.url+"/"+d.file+"?t="+Date.now()).then(function(r){ if(!r.ok) throw new Error(d.file+": HTTP "+r.status); return r.text(); })
+  fetch(d.url+"/"+d.file, {cache:"no-cache"}).then(function(r){ if(!r.ok) throw new Error(d.file+": HTTP "+r.status); return r.text(); })
     .then(function(t){ self.postMessage({id:d.id, ok:true, out:parseKml(t)}); })
     .catch(function(err){ self.postMessage({id:d.id, ok:false, error:String((err&&err.message)||err)}); });
 };
@@ -248,7 +248,7 @@ function getKmlWorker() {
 
 // Fallback en el hilo principal (DOMParser) si no hay Worker
 async function fetchKmlMain(file) {
-  const r = await fetch(`${RAW}/${file}?t=${Date.now()}`);
+  const r = await fetch(`${RAW}/${file}`, { cache: "no-cache" });
   if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
   return parseKml(await r.text());
 }
@@ -300,6 +300,8 @@ function App() {
   const mapRef = useRef(null);
   const groups = useRef({});
   const data = useRef({ est: [], pron: [], sismos: [] });
+  // marcadores YA construidos (con su metadata) para no recrearlos en cada filtro
+  const built = useRef({ est: [], sismos: [], pron: [] });
 
   const [stats, setStats] = useState(null);
   const [updated, setUpdated] = useState(null);
@@ -378,45 +380,48 @@ function App() {
     }
   }, [base]);
 
-  // mostrar/ocultar pronóstico (estaciones y sismos van siempre en el mapa; se filtran en redraw)
+  // mostrar/ocultar pronóstico (estaciones y sismos van siempre en el mapa; se filtran en applyFilters)
   useEffect(() => {
     const g = groups.current, map = mapRef.current;
     if (!map || !g.est) return;
     if (show.pron) g.pron.addTo(map); else map.removeLayer(g.pron);
   }, [show]);
 
-  function redraw() {
+  // Construye TODOS los marcadores una sola vez (al cambiar los datos), guardando su
+  // metadata. Los filtros luego solo alternan visibilidad (applyFilters), sin recrear
+  // 1300 marcadores ni re-sanitizar 1300 popups en cada clic.
+  function buildMarkers() {
     const g = groups.current;
     if (!g.est) return;
     g.est.clearLayers(); g.pron.clearLayers(); g.sismos.clearLayers();
+    built.current = { est: [], sismos: [], pron: [] };
 
     data.current.est.forEach(f => {
       const niv = nivelEstacion(f.styleUrl);
-      if (onlyAlerts && niv === "verde") return;
-      if (f.group && estGroups[f.group] === false) return;
       const hasChart = /<img/.test(f.desc || "");
       const r = (niv === "rojo" ? 7 : niv === "amarillo" ? 6 : 4) + (hasChart ? 1 : 0);
-      L.circleMarker([f.lat, f.lon], {
+      const marker = L.circleMarker([f.lat, f.lon], {
         radius: r,
         color: hasChart ? "#22d3ee" : "#0a0a0a",
         weight: hasChart ? 2 : 0.6,
         fillColor: colorEstacion(f.styleUrl), fillOpacity: 0.9
-      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS).addTo(g.est);
+      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS);
+      built.current.est.push({ marker, group: f.group, niv });
     });
 
     data.current.pron.forEach(f => {
       const col = colorEstacion(f.styleUrl);
       const html = `<div style="width:11px;height:11px;background:${col};border:1px solid #111"></div>`;
-      L.marker([f.lat, f.lon], {
+      const marker = L.marker([f.lat, f.lon], {
         icon: L.divIcon({ className: "", html, iconSize: [11, 11], iconAnchor: [6, 6] })
-      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS).addTo(g.pron);
+      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS);
+      built.current.pron.push({ marker });
+      g.pron.addLayer(marker);   // el pronóstico no se filtra por item; su capa la controla show.pron
     });
 
     const refSis = refTimeSismos(data.current.sismos);
     data.current.sismos.forEach(f => {
       const actual = esSismoActual(f, refSis);
-      if (actual && !sismoView.actuales) return;
-      if (!actual && !sismoView.historicos) return;
       const m = parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0");
       const e = estiloSismo(m);
       // Sismos = TRIÁNGULO (distinto de los círculos de estaciones)
@@ -426,9 +431,26 @@ function App() {
         `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display:block">` +
         `<polygon points="12,2.5 22,21 2,21" fill="${e.c}" fill-opacity="${op}" ` +
         `stroke="#000" stroke-width="1.6" stroke-opacity="0.85" stroke-linejoin="round"/></svg>`;
-      L.marker([f.lat, f.lon], {
+      const marker = L.marker([f.lat, f.lon], {
         icon: L.divIcon({ className: "", html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
-      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS).addTo(g.sismos);
+      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS);
+      built.current.sismos.push({ marker, actual });
+    });
+
+    applyFilters();
+  }
+
+  // Solo muestra/oculta los marcadores ya construidos según los filtros (barato).
+  function applyFilters() {
+    const g = groups.current;
+    if (!g.est) return;
+    built.current.est.forEach(({ marker, group, niv }) => {
+      const show = !(onlyAlerts && niv === "verde") && !(group && estGroups[group] === false);
+      if (show) g.est.addLayer(marker); else g.est.removeLayer(marker);
+    });
+    built.current.sismos.forEach(({ marker, actual }) => {
+      const show = (actual && sismoView.actuales) || (!actual && sismoView.historicos);
+      if (show) g.sismos.addLayer(marker); else g.sismos.removeLayer(marker);
     });
   }
 
@@ -484,7 +506,9 @@ function App() {
   }, []);
 
   // redibujar cuando llegan datos nuevos o cambian los filtros
-  useEffect(() => { redraw(); }, [updated, onlyAlerts, estGroups, sismoView]);
+  // datos nuevos → reconstruir marcadores; cambio de filtro → solo alternar visibilidad
+  useEffect(() => { buildMarkers(); }, [updated]);
+  useEffect(() => { applyFilters(); }, [onlyAlerts, estGroups, sismoView]);
 
   // activar/desactivar TODOS los sets de estaciones de un golpe
   const setAllSets = (val) => setEstGroups(prev => {
