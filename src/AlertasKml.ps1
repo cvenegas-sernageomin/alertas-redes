@@ -323,38 +323,41 @@ function Build-PlacemarkPuntoPronostico([array]$vs) {
     }
     $estilo = Get-EstiloPronostico $peor $peorN
 
-    # Una fila por ventana con precip acumulada de los 3 modelos + isoterma minima
-    $filas = ''
+    # Una TARJETA por ventana (no tabla ancha): usa flex-wrap, nunca necesita scroll
+    # horizontal sin importar el ancho de pantalla -- clave para que se vea bien en movil.
+    $tarjetas = ''
     foreach ($nombre in $secuencia) {
         $v = $vs | Where-Object { $_.Nombre -eq $nombre } | Select-Object -First 1
         if (-not $v) { continue }
-        $bg   = switch ($v.ColorFinal) { 'rojo' { '#ff0000' } 'amarillo' { '#cc9900' } default { '#00cc00' } }
+        $bg = switch ($v.ColorFinal) { 'rojo' { '#ff2d2d' } 'amarillo' { '#e6b800' } default { '#27c93f' } }
+        $etiqueta = switch ($v.ColorFinal) { 'rojo' { 'ALERTA ROJA' } 'amarillo' { 'Alerta amarilla' } default { 'Sin alerta' } }
         $isos = @($v.IsoEcmwf, $v.IsoGfs, $v.IsoIcon) | Where-Object { $null -ne $_ }
-        $isoMin = if ($isos.Count -gt 0) { "$(($isos | Measure-Object -Minimum).Minimum) m" } else { 's/d' }
-        # Compacto: sin unidades sueltas por celda (van en el encabezado) para que quepan las 8 columnas.
-        $isoNum = if ($isos.Count -gt 0) { "$(($isos | Measure-Object -Minimum).Minimum)" } else { 's/d' }
-        $tempStr = if ($null -ne $v.TempMinC -and $null -ne $v.TempMaxC) { "$($v.TempMinC)/$($v.TempMaxC)" } else { 's/d' }
-        $vientoStr = if ($null -ne $v.VientoMaxKmh) { "$($v.VientoMaxKmh)" } else { 's/d' }
-        $filas += "<tr><td><b>$($v.Nombre)</b></td>" +
-                  "<td align='right'>$($v.PrecipEcmwf)</td>" +
-                  "<td align='right'>$($v.PrecipGfs)</td>" +
-                  "<td align='right'>$($v.PrecipIcon)</td>" +
-                  "<td align='right'>$isoNum</td>" +
-                  "<td align='right'>$tempStr</td>" +
-                  "<td align='right'>$vientoStr</td>" +
-                  "<td bgcolor='$bg'>&nbsp;&nbsp;</td></tr>"
+        $isoStr = if ($isos.Count -gt 0) { "$(($isos | Measure-Object -Minimum).Minimum) m" } else { 's/d' }
+        $tempStr = if ($null -ne $v.TempMinC -and $null -ne $v.TempMaxC) { "$($v.TempMinC)&deg; a $($v.TempMaxC)&deg;C" } else { 's/d' }
+        $vientoStr = if ($null -ne $v.VientoMaxKmh) { "$($v.VientoMaxKmh) km/h" } else { 's/d' }
+        $chip = "<span style='display:inline-block;min-width:52px;text-align:center;padding:3px 6px;border-radius:5px;font-size:10px;background:#f5f5f5;margin:2px 4px 2px 0;'>"
+        $tarjetas +=
+            "<div style='border-left:5px solid $bg;background:#f7f7f7;border-radius:6px;padding:8px 10px;margin-bottom:6px;'>" +
+              "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;'>" +
+                "<b style='font-size:13px;'>$($v.Nombre)</b>" +
+                "<span style='background:$bg;color:#000;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:10px;'>$etiqueta</span>" +
+              "</div>" +
+              "<div style='display:flex;flex-wrap:wrap;gap:4px;font-size:11px;'>" +
+                "$chip ECMWF<br/><b>$($v.PrecipEcmwf) mm</b></span>" +
+                "$chip GFS<br/><b>$($v.PrecipGfs) mm</b></span>" +
+                "$chip ICON<br/><b>$($v.PrecipIcon) mm</b></span>" +
+                "$chip Isoterma<br/><b>$isoStr</b></span>" +
+                "$chip Temp<br/><b>$tempStr</b></span>" +
+                "$chip Viento<br/><b>$vientoStr</b></span>" +
+              "</div>" +
+            "</div>"
     }
 
-    # La tabla va en un div con scroll horizontal PROPIO: si no cabe en el ancho del popup,
-    # se desliza solo ella (no todo el popup), sin depender de agrandar el popup global.
-    $desc = "<![CDATA[<b>Pronostico 48h</b><br/>$lat, $lon<br/><br/>" +
-            "<div style='overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%;'>" +
-            "<table border='1' cellspacing='0' cellpadding='2' style='font-size:11px; white-space:nowrap;'>" +
-            "<tr><th>Ventana</th><th>ECMWF<br/>mm</th><th>GFS<br/>mm</th><th>ICON<br/>mm</th><th>Iso<br/>m</th><th>Temp<br/>&deg;C</th><th>Viento<br/>km/h</th><th>Alerta</th></tr>" +
-            "$filas</table></div>" +
-            "<small>Precip acumulada por ventana (mm), por modelo. Iso = isoterma 0&deg;C mas baja (m). " +
-            "Temp = min/max &deg;C (prom. 3 modelos). Viento = rafaga maxima km/h (peor caso, 10m). " +
-            "Desliza la tabla hacia los lados si no se ve completa.</small><br/><br/>" +
+    $desc = "<![CDATA[<b style='font-size:14px;'>&#9729; Pronostico 48h</b><br/>" +
+            "<small style='color:#888;'>$lat, $lon</small><br/><br/>" +
+            "$tarjetas" +
+            "<small style='color:#888;'>Precip = acumulada por ventana, por modelo. Iso = isoterma 0&deg;C mas baja. " +
+            "Temp = min/max (prom. 3 modelos). Viento = rafaga maxima (peor caso, 10m).</small><br/><br/>" +
             "<hr/><small><b>Umbrales:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
             "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5 o iso&lt;2500&nbsp;</small></td>" +
             "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5 + iso&ge;2500&nbsp;</small></td>" +
