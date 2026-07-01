@@ -16,6 +16,9 @@ function Get-RedFromCode([string]$code) {
     if ($code -match '^AG')   { return 'Agromet' }
     if ($code -match '^CE')   { return 'CEAZA' }
     if ($code -match '^(yy|zx):') { return 'RedMeteo' }
+    if ($code -match '^UFRO')     { return 'UFRO' }
+    # Estaciones privadas Davis/WeatherLink: prefijo 'wl:' o código tipo MAC (hex con ':')
+    if ($code -match '^wl:' -or $code -match '^[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}$') { return 'Davis' }
     # DGA usa código BNA con dígito verificador (p. ej. 01000005-K);
     # DMC usa un código numérico puro (p. ej. 330020). Así se separan las dos redes.
     if ($code -match '^\d+-[0-9A-Za-z]$') { return 'DGA' }
