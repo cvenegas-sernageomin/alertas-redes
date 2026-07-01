@@ -191,10 +191,76 @@ function parseKml(text) {
   return out;
 }
 
-async function fetchKml(file) {
+// ---------- Parseo de KML en un Web Worker (fuera del hilo principal) ----------
+// El worker NO tiene DOMParser, así que usa un parser por texto/regex verificado como
+// IDÉNTICO al de DOMParser contra los datos reales (alertas/pronóstico/sismos, 0 diffs).
+// Así la descarga (~1,8 MB) y el parseo no congelan la UI cada 15 min.
+const KML_WORKER_SRC = `
+function dec(s){return s.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&apos;/g,"'");}
+function parseKml(text){
+  var out=[], folderMarks=[];
+  var fRe=/<Folder>\\s*<name>([\\s\\S]*?)<\\/name>/g, fm;
+  while((fm=fRe.exec(text))){var nm=dec(fm[1]).replace(/\\s*\\(\\d+\\s*est\\.?\\)\\s*$/i,"").trim();if(/^EMAs/i.test(nm))nm="EMAs DMC";folderMarks.push({pos:fm.index,name:nm});}
+  var pmRe=/<Placemark>([\\s\\S]*?)<\\/Placemark>/g, pm;
+  while((pm=pmRe.exec(text))){
+    var block=pm[1], pos=pm.index;
+    var cM=block.match(/<coordinates>([\\s\\S]*?)<\\/coordinates>/); if(!cM)continue;
+    var p=cM[1].trim().split(/\\s|,/).filter(function(x){return x!=="";}); var lon=parseFloat(p[0]),lat=parseFloat(p[1]);
+    if(isNaN(lat)||isNaN(lon))continue;
+    var group=""; for(var i=folderMarks.length-1;i>=0;i--){if(folderMarks[i].pos<pos){group=folderMarks[i].name;break;}}
+    var nM=block.match(/<name>([\\s\\S]*?)<\\/name>/), sM=block.match(/<styleUrl>([\\s\\S]*?)<\\/styleUrl>/), dM=block.match(/<description>([\\s\\S]*?)<\\/description>/);
+    var desc=dM?dM[1]:""; desc=desc.replace(/^\\s*<!\\[CDATA\\[/,"").replace(/\\]\\]>\\s*$/,"");
+    var fd=desc.match(/(\\d{4})-(\\d{2})-(\\d{2})[ T](\\d{2}):(\\d{2}):(\\d{2})/);
+    out.push({lat:lat,lon:lon,name:nM?dec(nM[1]):"",desc:desc,styleUrl:sM?dec(sM[1]).trim():"",group:group,date:fd?Date.UTC(+fd[1],+fd[2]-1,+fd[3],+fd[4],+fd[5],+fd[6]):null});
+  }
+  return out;
+}
+self.onmessage=function(e){
+  var d=e.data;
+  fetch(d.url+"/"+d.file+"?t="+Date.now()).then(function(r){ if(!r.ok) throw new Error(d.file+": HTTP "+r.status); return r.text(); })
+    .then(function(t){ self.postMessage({id:d.id, ok:true, out:parseKml(t)}); })
+    .catch(function(err){ self.postMessage({id:d.id, ok:false, error:String((err&&err.message)||err)}); });
+};
+`;
+
+let _kmlWorker = null, _kmlSeq = 0;
+const _kmlPending = new Map();
+function getKmlWorker() {
+  if (_kmlWorker === false) return null;          // ya falló antes → usar fallback
+  if (_kmlWorker) return _kmlWorker;
+  try {
+    const blob = new Blob([KML_WORKER_SRC], { type: "application/javascript" });
+    _kmlWorker = new Worker(URL.createObjectURL(blob));
+    _kmlWorker.onmessage = (e) => {
+      const { id, ok, out, error } = e.data;
+      const p = _kmlPending.get(id); if (!p) return;
+      _kmlPending.delete(id);
+      ok ? p.resolve(out) : p.reject(new Error(error));
+    };
+    _kmlWorker.onerror = () => {
+      _kmlWorker = false;                          // desactivar worker y caer a fallback
+      _kmlPending.forEach(p => p.reject(new Error("KML worker no disponible")));
+      _kmlPending.clear();
+    };
+    return _kmlWorker;
+  } catch (e) { _kmlWorker = false; return null; }
+}
+
+// Fallback en el hilo principal (DOMParser) si no hay Worker
+async function fetchKmlMain(file) {
   const r = await fetch(`${RAW}/${file}?t=${Date.now()}`);
   if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
   return parseKml(await r.text());
+}
+
+function fetchKml(file) {
+  const w = getKmlWorker();
+  if (!w) return fetchKmlMain(file);
+  return new Promise((resolve, reject) => {
+    const id = ++_kmlSeq;
+    _kmlPending.set(id, { resolve, reject });
+    w.postMessage({ id, url: RAW, file });
+  });
 }
 
 // Sanitiza el HTML del <description> del KML antes de inyectarlo en el popup.
