@@ -197,6 +197,26 @@ async function fetchKml(file) {
   return parseKml(await r.text());
 }
 
+// Sanitiza el HTML del <description> del KML antes de inyectarlo en el popup.
+// Conserva el contenido legítimo (tablas, <img> de los gráficos 24h/48h) pero elimina
+// vectores de XSS: <script>/<iframe>/<object>/<embed>, atributos on* y URLs javascript:.
+// El <template> parsea de forma INERTE (no ejecuta scripts ni carga recursos).
+function sanitizePopup(html) {
+  if (!html) return "";
+  const t = document.createElement("template");
+  t.innerHTML = html;
+  t.content.querySelectorAll("script, iframe, object, embed, link, meta, style, base").forEach(n => n.remove());
+  t.content.querySelectorAll("*").forEach(el => {
+    for (const a of [...el.attributes]) {
+      const v = (a.value || "").replace(/\s+/g, "").toLowerCase();
+      if (/^on/i.test(a.name) || v.startsWith("javascript:") || v.startsWith("data:text/html")) {
+        el.removeAttribute(a.name);
+      }
+    }
+  });
+  return t.innerHTML;
+}
+
 // Fila de estadística (definida a nivel de módulo: si vive dentro de App, React
 // la trata como un tipo nuevo en cada render y remonta el subárbol innecesariamente).
 function St({ color, square, label, value }) {
@@ -315,7 +335,7 @@ function App() {
         color: hasChart ? "#22d3ee" : "#0a0a0a",
         weight: hasChart ? 2 : 0.6,
         fillColor: colorEstacion(f.styleUrl), fillOpacity: 0.9
-      }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.est);
+      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS).addTo(g.est);
     });
 
     data.current.pron.forEach(f => {
@@ -323,7 +343,7 @@ function App() {
       const html = `<div style="width:11px;height:11px;background:${col};border:1px solid #111"></div>`;
       L.marker([f.lat, f.lon], {
         icon: L.divIcon({ className: "", html, iconSize: [11, 11], iconAnchor: [6, 6] })
-      }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.pron);
+      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS).addTo(g.pron);
     });
 
     const refSis = refTimeSismos(data.current.sismos);
@@ -342,7 +362,7 @@ function App() {
         `stroke="#000" stroke-width="1.6" stroke-opacity="0.85" stroke-linejoin="round"/></svg>`;
       L.marker([f.lat, f.lon], {
         icon: L.divIcon({ className: "", html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
-      }).bindPopup(f.desc || f.name, POPUP_OPTS).addTo(g.sismos);
+      }).bindPopup(sanitizePopup(f.desc) || f.name, POPUP_OPTS).addTo(g.sismos);
     });
   }
 
