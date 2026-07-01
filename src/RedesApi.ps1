@@ -16,7 +16,10 @@ function Get-RedFromCode([string]$code) {
     if ($code -match '^AG')   { return 'Agromet' }
     if ($code -match '^CE')   { return 'CEAZA' }
     if ($code -match '^(yy|zx):') { return 'RedMeteo' }
-    if ($code -match '^\d{2}') { return 'DGA/DMC' }
+    # DGA usa código BNA con dígito verificador (p. ej. 01000005-K);
+    # DMC usa un código numérico puro (p. ej. 330020). Así se separan las dos redes.
+    if ($code -match '^\d+-[0-9A-Za-z]$') { return 'DGA' }
+    if ($code -match '^\d+$')             { return 'DMC' }
     return 'Otras'
 }
 
