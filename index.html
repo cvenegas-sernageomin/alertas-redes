@@ -102,7 +102,7 @@ const RAW = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-rede
 // Opciones de popup: auto-desplaza el mapa para que el popup NO quede detrás del panel.
 // El popup vive dentro de .leaflet-map-pane (con transform => contexto de apilado propio),
 // así que no se puede subir con z-index; en su lugar reservamos espacio arriba (140px).
-const POPUP_OPTS = { maxWidth: 360, autoPanPaddingTopLeft: [16, 124], autoPanPaddingBottomRight: [16, 20] };
+const POPUP_OPTS = { maxWidth: 400, autoPanPaddingTopLeft: [16, 124], autoPanPaddingBottomRight: [16, 20] };
 
 // Referencia al mapa a nivel de módulo: sobrevive al doble montaje de React 18 para poder
 // DESTRUIR el mapa anterior por completo (y sus escuchas de eventos) antes de crear el nuevo.
