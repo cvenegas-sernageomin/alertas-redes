@@ -58,6 +58,10 @@
   .sq  { width: 12px; height: 12px; display: inline-block; flex: none; }
   .num { font-variant-numeric: tabular-nums; font-weight: 600; }
   .group { border-top: 1px solid #2a3a4a; margin-top: 8px; padding-top: 8px; }
+  /* Subseccion anidada (ej. "Sets de estaciones" dentro de "Estaciones"): indentada y con
+     borde izquierdo para que se note que pertenece a la seccion padre, no es un hermano. */
+  .subsection { margin-left: 8px; padding-left: 8px; border-left: 2px solid #2a3a4a; }
+  .subsection .group { border-top: 1px dashed #2a3a4a; }
   .gtitle { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #8aa0b4; margin-bottom: 4px; }
   /* Encabezados de seccion con mas impacto: mas grandes, blancos, con acento de color */
   .sec-head {
@@ -343,9 +347,8 @@ function App() {
   const [onlyAlerts, setOnlyAlerts] = useState(false);
   // Inactivas (sin dato real hace >3h) se muestran por defecto, en gris punteado
   const [hideInactivas, setHideInactivas] = useState(false);
-  // Estaciones: abierta por defecto (es la capa principal); Sets/Pronóstico/Sismos
-  // usan el mismo componente Section pero arrancan cerradas (detalle secundario).
-  const [estOpen, setEstOpen] = useState(true);
+  // Todas las secciones arrancan cerradas (panel compacto al abrir el visor)
+  const [estOpen, setEstOpen] = useState(false);
   // Sets de estaciones: plegado por defecto (la lista de 9 redes molestaba ocupando el panel)
   const [setsOpen, setSetsOpen] = useState(false);
   // Pronóstico y Sismos siguen el mismo patrón desplegable que Sets, para un panel homogéneo
@@ -602,25 +605,27 @@ function App() {
           <input type="checkbox" checked={hideInactivas} onChange={e => setHideInactivas(e.target.checked)} />
           <span>Ocultar inactivas</span>
         </label>
-      </Section>
 
-      <Section title="Sets de estaciones" open={setsOpen} onToggle={() => setSetsOpen(!setsOpen)}
-        badge={Object.keys(estGroups).length > 0
-          ? `${Object.values(estGroups).filter(Boolean).length}/${Object.keys(estGroups).length}` : ""}>
-        {Object.keys(estGroups).length > 0 &&
-          <div className="seg" style={{ marginBottom: 6 }}>
-            <button onClick={() => setAllSets(true)}>✓ Todas</button>
-            <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
-          </div>}
-        {Object.keys(estGroups).sort().map(gn => (
-          <label className="tg" key={gn}>
-            <input type="checkbox" checked={estGroups[gn]}
-              onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
-            <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
-            <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
-          </label>
-        ))}
-        {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+        <div className="subsection">
+          <Section title="Sets de estaciones" open={setsOpen} onToggle={() => setSetsOpen(!setsOpen)}
+            badge={Object.keys(estGroups).length > 0
+              ? `${Object.values(estGroups).filter(Boolean).length}/${Object.keys(estGroups).length}` : ""}>
+            {Object.keys(estGroups).length > 0 &&
+              <div className="seg" style={{ marginBottom: 6 }}>
+                <button onClick={() => setAllSets(true)}>✓ Todas</button>
+                <button onClick={() => setAllSets(false)}>✗ Ninguna</button>
+              </div>}
+            {Object.keys(estGroups).sort().map(gn => (
+              <label className="tg" key={gn}>
+                <input type="checkbox" checked={estGroups[gn]}
+                  onChange={e => setEstGroups({ ...estGroups, [gn]: e.target.checked })} />
+                <span>{gn}{stats && stats.groupGraf && stats.groupGraf[gn] ? <span style={{ color: "#22d3ee" }}> (gráficos)</span> : ""}</span>
+                <span className="num" style={{ marginLeft: "auto" }}>{stats && stats.groupCounts ? (stats.groupCounts[gn] || 0) : ""}</span>
+              </label>
+            ))}
+            {Object.keys(estGroups).length === 0 && <div style={{ color: "#93a4b5", fontSize: 11 }}>Cargando sets…</div>}
+          </Section>
+        </div>
       </Section>
 
       <Section title="Pronóstico 48h" open={pronOpen} onToggle={() => setPronOpen(!pronOpen)}
