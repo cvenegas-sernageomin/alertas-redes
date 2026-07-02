@@ -343,6 +343,9 @@ function App() {
   const [onlyAlerts, setOnlyAlerts] = useState(false);
   // Inactivas (sin dato real hace >3h) se muestran por defecto, en gris punteado
   const [hideInactivas, setHideInactivas] = useState(false);
+  // Estaciones: abierta por defecto (es la capa principal); Sets/Pronóstico/Sismos
+  // usan el mismo componente Section pero arrancan cerradas (detalle secundario).
+  const [estOpen, setEstOpen] = useState(true);
   // Sets de estaciones: plegado por defecto (la lista de 9 redes molestaba ocupando el panel)
   const [setsOpen, setSetsOpen] = useState(false);
   // Pronóstico y Sismos siguen el mismo patrón desplegable que Sets, para un panel homogéneo
@@ -573,37 +576,33 @@ function App() {
       {collapsed && <div className="hint" onClick={() => setCollapsed(false)}>👆 Toca para ver capas y leyenda</div>}
 
       {!collapsed && <div className="pbody">
-      <div className="sec-head" style={{ cursor: "default" }}>
-        <span className="sec-title">Estaciones (precipitación)</span>
-        {stats && (stats.estRojo > 0
-          ? <span className="sec-badge alerta">{stats.estRojo} rojas</span>
-          : stats.estAmar > 0
-            ? <span className="sec-badge amarilla">{stats.estAmar} amar.</span>
-            : <span className="sec-badge">sin alerta</span>)}
-      </div>
-      {stats && <>
-        <St color="#ff2d2d" label="Rojo ≥10 mm/h" value={stats.estRojo} />
-        <St color="#e6b800" label="Amarillo ≥5 mm/h" value={stats.estAmar} />
-        <div className="row"><span style={{ color: "#93a4b5" }}>Total estaciones</span><span className="num">{stats.estTot}</span></div>
-        <div className="stat" style={{ marginTop: 4 }}>
-          <span className="dot" style={{ background: "transparent", border: "2px solid #22d3ee" }}></span>
-          <span>Con gráficos 48h</span>
-          <span className="num" style={{ marginLeft: "auto" }}>{stats.estGraf}</span>
-        </div>
-        <div className="stat">
-          <span className="dot" style={{ background: "#8a94a3", opacity: 0.6, border: "1px dashed #555" }}></span>
-          <span>Inactivas (&gt;3h sin dato)</span>
-          <span className="num" style={{ marginLeft: "auto" }}>{stats.estInactivas}</span>
-        </div>
-      </>}
-      <label className="tg" style={{ marginTop: 6 }}>
-        <input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} />
-        <span>Solo estaciones con alerta</span>
-      </label>
-      <label className="tg">
-        <input type="checkbox" checked={hideInactivas} onChange={e => setHideInactivas(e.target.checked)} />
-        <span>Ocultar inactivas</span>
-      </label>
+      <Section title="Estaciones (precipitación)" open={estOpen} onToggle={() => setEstOpen(!estOpen)}
+        badge={stats ? (stats.estRojo > 0 ? `${stats.estRojo} rojas` : stats.estAmar > 0 ? `${stats.estAmar} amar.` : "sin alerta") : ""}
+        badgeKind={stats && stats.estRojo > 0 ? "alerta" : stats && stats.estAmar > 0 ? "amarilla" : ""}>
+        {stats && <>
+          <St color="#ff2d2d" label="Rojo ≥10 mm/h" value={stats.estRojo} />
+          <St color="#e6b800" label="Amarillo ≥5 mm/h" value={stats.estAmar} />
+          <div className="row"><span style={{ color: "#93a4b5" }}>Total estaciones</span><span className="num">{stats.estTot}</span></div>
+          <div className="stat" style={{ marginTop: 4 }}>
+            <span className="dot" style={{ background: "transparent", border: "2px solid #22d3ee" }}></span>
+            <span>Con gráficos 48h</span>
+            <span className="num" style={{ marginLeft: "auto" }}>{stats.estGraf}</span>
+          </div>
+          <div className="stat">
+            <span className="dot" style={{ background: "#8a94a3", opacity: 0.6, border: "1px dashed #555" }}></span>
+            <span>Inactivas (&gt;3h sin dato)</span>
+            <span className="num" style={{ marginLeft: "auto" }}>{stats.estInactivas}</span>
+          </div>
+        </>}
+        <label className="tg" style={{ marginTop: 6 }}>
+          <input type="checkbox" checked={onlyAlerts} onChange={e => setOnlyAlerts(e.target.checked)} />
+          <span>Solo estaciones con alerta</span>
+        </label>
+        <label className="tg">
+          <input type="checkbox" checked={hideInactivas} onChange={e => setHideInactivas(e.target.checked)} />
+          <span>Ocultar inactivas</span>
+        </label>
+      </Section>
 
       <Section title="Sets de estaciones" open={setsOpen} onToggle={() => setSetsOpen(!setsOpen)}
         badge={Object.keys(estGroups).length > 0
