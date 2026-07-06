@@ -164,6 +164,41 @@ function esSismoActual(s, ref) {
   return ref > 0 && s.date != null && (ref - s.date) <= SISMO_VENTANA_MS;
 }
 
+// ---------- Refresco de sismos en vivo directo a USGS (sin pasar por el KML) ----------
+// El workflow que genera red_sismos.kml (CSN+USGS) corre por cron cada hora, pero
+// GitHub Actions es "best-effort": en la practica se atrasa (a veces 2-5h). USGS SI
+// tiene CORS habilitado (confirmado), asi que este boton trae eventos frescos directo
+// desde el navegador, sin esperar la proxima corrida. CSN (sismologia.cl) no tiene CORS,
+// asi que el catalogo combinado CSN+USGS del KML sigue dependiendo del cron para esa parte.
+const USGS_URL_VIVO = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson" +
+  "&minlatitude=-56&maxlatitude=-17&minlongitude=-76&maxlongitude=-66" +
+  "&minmagnitude=3.0&orderby=time&limit=200";
+
+async function fetchUsgsSismosVivo() {
+  const r = await fetch(USGS_URL_VIVO);
+  if (!r.ok) throw new Error(`USGS: HTTP ${r.status}`);
+  const geo = await r.json();
+  return (geo.features || []).map(f => {
+    const p = f.properties, c = f.geometry.coordinates;
+    const mag = p.mag;
+    const prof = (c[2] != null) ? `${Math.round(c[2])} km` : "sin dato";
+    // "sv-SE" da formato yyyy-MM-dd HH:mm:ss (solo para mostrar; el filtro actual/historico
+    // usa el epoch "date" de abajo, no este texto).
+    const fechaLocal = new Date(p.time).toLocaleString("sv-SE", { timeZone: "America/Santiago" });
+    const lugar = p.place || "";
+    const desc =
+      `<b>M ${mag} — USGS</b><br/><table cellpadding="2">` +
+      `<tr><td><b>Fecha</b></td><td>${fechaLocal}</td></tr>` +
+      `<tr><td><b>Magnitud</b></td><td>${mag}</td></tr>` +
+      `<tr><td><b>Profundidad</b></td><td>${prof}</td></tr>` +
+      (lugar ? `<tr><td><b>Lugar</b></td><td>${lugar}</td></tr>` : "") +
+      `<tr><td><b>Lat, Lon</b></td><td>${c[1]}, ${c[0]}</td></tr>` +
+      `<tr><td><b>Fuente</b></td><td><a href="${p.url}" target="_blank" rel="noopener">USGS (en vivo)</a></td></tr>` +
+      `</table>`;
+    return { lat: c[1], lon: c[0], name: `M ${mag} USGS`, desc, styleUrl: "", group: "USGS", date: p.time };
+  });
+}
+
 // ---------- parseo KML en el navegador ----------
 // nombre de la carpeta (red/set) que contiene al placemark, sin el sufijo "(N est.)"
 function folderName(pm) {
@@ -357,6 +392,10 @@ function App() {
   const [show, setShow] = useState({ pron: false });
   // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
   const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
+  // Refresco manual de sismos directo a USGS (independiente del cron, que se atrasa)
+  const [sismoRefreshing, setSismoRefreshing] = useState(false);
+  const [sismoRefreshError, setSismoRefreshError] = useState("");
+  const [sismoRefreshedAt, setSismoRefreshedAt] = useState(null);
   const [estGroups, setEstGroups] = useState({});
   const [base, setBase] = useState("sat");
   // En teléfonos arranca plegado para ver primero el mapa
@@ -555,6 +594,35 @@ function App() {
     setLoading(false);
   }, []);
 
+  // Trae sismos frescos SOLO de USGS, directo desde el navegador (sin esperar el cron).
+  // Reemplaza unicamente las entradas con group === "USGS"; las de CSN (que solo vienen
+  // por el KML) se conservan tal cual estaban.
+  const refrescarSismosUSGS = useCallback(async () => {
+    setSismoRefreshing(true); setSismoRefreshError("");
+    try {
+      const nuevosUsgs = await fetchUsgsSismosVivo();
+      const otros = data.current.sismos.filter(f => f.group !== "USGS");
+      const combinados = [...otros, ...nuevosUsgs];
+      data.current = { ...data.current, sismos: combinados };
+      buildMarkers();
+      setStats(prev => {
+        if (!prev) return prev;
+        const r = refTimeSismos(combinados);
+        return {
+          ...prev,
+          sismoFuerte: combinados.filter(f => parseFloat((f.name.match(/M\s*([\d.]+)/) || [])[1] || "0") >= 6).length,
+          sismoTot: combinados.length,
+          sismoActuales: combinados.filter(f => esSismoActual(f, r)).length,
+          sismoHistoricos: combinados.filter(f => !esSismoActual(f, r)).length
+        };
+      });
+      setSismoRefreshedAt(new Date());
+    } catch (e) {
+      setSismoRefreshError(String(e.message || e));
+    }
+    setSismoRefreshing(false);
+  }, []);
+
   // redibujar cuando llegan datos nuevos o cambian los filtros
   // datos nuevos → reconstruir marcadores; cambio de filtro → solo alternar visibilidad
   useEffect(() => { buildMarkers(); }, [updated]);
@@ -657,6 +725,18 @@ function App() {
           <span className="num" style={{ marginLeft: "auto" }}>{stats ? stats.sismoHistoricos : ""}</span>
         </label>
         {stats && <div className="row"><span style={{ color: "#93a4b5" }}>M ≥ 6</span><span className="num">{stats.sismoFuerte}</span></div>}
+
+        <button onClick={refrescarSismosUSGS} disabled={sismoRefreshing} style={{ marginTop: 8 }}>
+          {sismoRefreshing ? "Actualizando…" : "↻ Actualizar sismos ahora (USGS)"}
+        </button>
+        <div style={{ color: "#93a4b5", fontSize: 11, marginTop: 4 }}>
+          Trae eventos USGS en vivo, sin esperar la corrida horaria. CSN se actualiza junto
+          con el resto (esa corrida a veces se atrasa 1-2h).
+        </div>
+        {sismoRefreshedAt && <div style={{ color: "#93a4b5", fontSize: 11, marginTop: 2 }}>
+          USGS actualizado {sismoRefreshedAt.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}
+        </div>}
+        {sismoRefreshError && <div style={{ color: "#ff8d7a", fontSize: 11, marginTop: 2 }}>⚠ {sismoRefreshError}</div>}
       </Section>
 
       <div className="group">
