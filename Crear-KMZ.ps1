@@ -11,6 +11,7 @@ if ($Online) {
     $pronosticoUrl  = "$rawBase/live/red_pronostico.kml"
     $sismosUrl      = "$rawBase/live/red_sismos.kml"
     $cuencasUrl     = "$rawBase/main/red_cuencas.kml"
+    $glaciaresUrl   = "$rawBase/main/red_glaciares.kml"
     $kmzPath        = "$here\alertas-redes-online.kmz"
 } else {
     $base           = $here -replace '\\', '/'
@@ -18,6 +19,7 @@ if ($Online) {
     $pronosticoUrl  = "file:///$base/red_pronostico.kml"
     $sismosUrl      = "file:///$base/red_sismos.kml"
     $cuencasUrl     = "file:///$base/red_cuencas.kml"
+    $glaciaresUrl   = "file:///$base/red_glaciares.kml"
     $kmzPath        = "$here\alertas-redes.kmz"
 }
 
@@ -60,6 +62,13 @@ $kmlContenido = @"
       <href>$cuencasUrl</href>
     </Link>
   </NetworkLink>
+  <NetworkLink>
+    <name>Glaciares (IPG 2022, DGA)</name>
+    <open>0</open>
+    <Link>
+      <href>$glaciaresUrl</href>
+    </Link>
+  </NetworkLink>
 </Document>
 </kml>
 "@
@@ -79,3 +88,4 @@ Write-Host "  Alertas:    $kmlUrl"        -ForegroundColor Gray
 Write-Host "  Pronostico: $pronosticoUrl" -ForegroundColor Gray
 Write-Host "  Sismos:     $sismosUrl"    -ForegroundColor Gray
 Write-Host "  Cuencas:    $cuencasUrl"   -ForegroundColor Gray
+Write-Host "  Glaciares:  $glaciaresUrl" -ForegroundColor Gray

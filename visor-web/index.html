@@ -450,9 +450,9 @@ function Section({ title, open, onToggle, badge, badgeKind, children }) {
 function App() {
   const mapRef = useRef(null);
   const groups = useRef({});
-  const data = useRef({ est: [], pron: [], sismos: [], cuencas: [] });
+  const data = useRef({ est: [], pron: [], sismos: [], cuencas: [], glaciares: [] });
   // marcadores YA construidos (con su metadata) para no recrearlos en cada filtro
-  const built = useRef({ est: [], sismos: [], pron: [], cuencas: [] });
+  const built = useRef({ est: [], sismos: [], pron: [], cuencas: [], glaciares: [] });
 
   const [stats, setStats] = useState(null);
   const [updated, setUpdated] = useState(null);
@@ -475,6 +475,12 @@ function App() {
   const [cuencasStats, setCuencasStats] = useState(null);
   const [cuencasLoading, setCuencasLoading] = useState(false);
   const [cuencasError, setCuencasError] = useState("");
+  // Glaciares (IPG 2022, DGA): misma lógica que cuencas — capa estática, carga única.
+  const [glaciaresOpen, setGlaciaresOpen] = useState(false);
+  const [showGlaciares, setShowGlaciares] = useState(false);
+  const [glaciaresStats, setGlaciaresStats] = useState(null);
+  const [glaciaresLoading, setGlaciaresLoading] = useState(false);
+  const [glaciaresError, setGlaciaresError] = useState("");
   // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
   const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
   // Refresco manual de sismos directo a USGS (independiente del cron, que se atrasa)
@@ -525,12 +531,14 @@ function App() {
       pron: L.layerGroup(),
       sismos: L.layerGroup().addTo(map),
       cuencas: L.layerGroup(),
+      glaciares: L.layerGroup(),
       _sat: sat, _labels: labels, _osm: osm
     };
     sat.addTo(map); labels.addTo(map);
 
     fetchAll();
     fetchCuencas();
+    fetchGlaciares();
     const id = setInterval(fetchAll, 15 * 60 * 1000);
     return () => {
       clearInterval(id);
@@ -565,6 +573,13 @@ function App() {
     if (!map || !g.cuencas) return;
     if (showCuencas) g.cuencas.addTo(map); else map.removeLayer(g.cuencas);
   }, [showCuencas]);
+
+  // mostrar/ocultar glaciares (capa estática, independiente del ciclo de 15 min)
+  useEffect(() => {
+    const g = groups.current, map = mapRef.current;
+    if (!map || !g.glaciares) return;
+    if (showGlaciares) g.glaciares.addTo(map); else map.removeLayer(g.glaciares);
+  }, [showGlaciares]);
 
   // Construye TODOS los marcadores una sola vez (al cambiar los datos), guardando su
   // metadata. Los filtros luego solo alternan visibilidad (applyFilters), sin recrear
@@ -709,6 +724,44 @@ function App() {
       setCuencasError(String(e.message || e));
     }
     setCuencasLoading(false);
+  }, []);
+
+  // Color (asignado por generar_kmz_glaciares.py, uno por CLASIFICA) -> etiqueta de leyenda.
+  const GLACIAR_TIPOS = {
+    "#a6d8f0": "Glaciarete",
+    "#3388ff": "Glaciar de montaña",
+    "#1c3fa8": "Glaciar de valle",
+    "#a1734d": "Glaciar rocoso",
+    "#8b5cf6": "Glaciar efluente"
+  };
+
+  // Carga los ~26.180 glaciares del Inventario Público de Glaciares 2022 (DGA) UNA sola
+  // vez: capa estática, no entra en el ciclo de refresco de 15 min de fetchAll. Geometría
+  // ya viene simplificada (generar_kmz_glaciares.py) para que el fetch/parseo no sea excesivo.
+  const fetchGlaciares = useCallback(async () => {
+    setGlaciaresLoading(true); setGlaciaresError("");
+    try {
+      const gl = await fetchKml("red_glaciares.kml", "polygons", RAW_MAIN);
+      data.current.glaciares = gl;
+      const g = groups.current;
+      if (g.glaciares) {
+        g.glaciares.clearLayers();
+        built.current.glaciares = gl.map(f => L.polygon(f.coords, {
+          color: f.color, weight: 0.6, opacity: 0.85,
+          fillColor: f.color, fillOpacity: f.opacity != null ? f.opacity : 0.55
+        }).bindPopup(sanitizePopup(`<b>${f.name}</b><br>${f.desc}`), POPUP_OPTS));
+        built.current.glaciares.forEach(p => g.glaciares.addLayer(p));
+      }
+      const porTipo = {};
+      gl.forEach(f => {
+        const label = GLACIAR_TIPOS[f.color] || "Otro";
+        porTipo[label] = (porTipo[label] || 0) + 1;
+      });
+      setGlaciaresStats({ total: gl.length, porTipo });
+    } catch (e) {
+      setGlaciaresError(String(e.message || e));
+    }
+    setGlaciaresLoading(false);
   }, []);
 
   // Trae sismos frescos SOLO de USGS, directo desde el navegador (sin esperar el cron).
@@ -864,6 +917,23 @@ function App() {
         </label>
         {cuencasStats && <div className="row"><span style={{ color: "#93a4b5" }}>Cuencas principales (DGA/BNA)</span><span className="num">{cuencasStats.total}</span></div>}
         {cuencasError && <div style={{ color: "#ff8d7a", fontSize: 11, marginTop: 4 }}>⚠ {cuencasError}</div>}
+      </Section>
+
+      <Section title="Glaciares (IPG 2022)" open={glaciaresOpen} onToggle={() => setGlaciaresOpen(!glaciaresOpen)}
+        badge={glaciaresStats ? `${glaciaresStats.total}` : (glaciaresLoading ? "…" : "")}>
+        <label className="tg">
+          <input type="checkbox" checked={showGlaciares} onChange={e => setShowGlaciares(e.target.checked)} />
+          <span>Mostrar en el mapa</span>
+        </label>
+        {glaciaresStats && <>
+          <div className="row"><span style={{ color: "#93a4b5" }}>Total (DGA, Inv. Público Glaciares)</span><span className="num">{glaciaresStats.total}</span></div>
+          {Object.keys(GLACIAR_TIPOS).map(color => (
+            glaciaresStats.porTipo[GLACIAR_TIPOS[color]] ? (
+              <St key={color} color={color} square label={GLACIAR_TIPOS[color]} value={glaciaresStats.porTipo[GLACIAR_TIPOS[color]]} />
+            ) : null
+          ))}
+        </>}
+        {glaciaresError && <div style={{ color: "#ff8d7a", fontSize: 11, marginTop: 4 }}>⚠ {glaciaresError}</div>}
       </Section>
 
       <div className="group">
