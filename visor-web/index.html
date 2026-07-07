@@ -117,6 +117,8 @@
 const { useState, useEffect, useRef, useCallback } = React;
 
 const RAW = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-redes/live";
+// Cuencas hidrograficas: capa estatica (no la regenera el cron), vive en la rama main.
+const RAW_MAIN = "https://raw.githubusercontent.com/cvenegas-sernageomin/alertas-redes/main";
 
 // Opciones de popup: auto-desplaza el mapa para que el popup NO quede detrás del panel.
 // El popup vive dentro de .leaflet-map-pane (con transform => contexto de apilado propio),
@@ -247,6 +249,53 @@ function parseKml(text) {
   return out;
 }
 
+// KML color = AABBGGRR (no RRGGBB). Convierte a {color:"#rrggbb", opacity:0-1} para Leaflet.
+function kmlColorToCss(abgr) {
+  const a = parseInt(abgr.substr(0, 2), 16), b = parseInt(abgr.substr(2, 2), 16),
+        g = parseInt(abgr.substr(4, 2), 16), r = parseInt(abgr.substr(6, 2), 16);
+  const h = n => n.toString(16).padStart(2, "0");
+  return { color: "#" + h(r) + h(g) + h(b), opacity: a / 255 };
+}
+
+// Parseo (main thread, fallback si el Worker no está disponible) de polígonos estáticos
+// como las cuencas hidrográficas: catálogo de <Style> + Placemark > Polygon > coordinates.
+function parsePolygonsMain(text) {
+  const doc = new DOMParser().parseFromString(text, "text/xml");
+  const styles = {};
+  const styEls = doc.getElementsByTagName("Style");
+  for (let i = 0; i < styEls.length; i++) {
+    const s = styEls[i];
+    const id = s.getAttribute("id");
+    const polyColorEl = s.getElementsByTagName("PolyStyle")[0];
+    const c = polyColorEl ? polyColorEl.getElementsByTagName("color")[0] : null;
+    if (id && c) styles[id] = c.textContent.trim();
+  }
+  const pms = doc.getElementsByTagName("Placemark");
+  const out = [];
+  for (let i = 0; i < pms.length; i++) {
+    const pm = pms[i];
+    const coordEl = pm.getElementsByTagName("coordinates")[0];
+    if (!coordEl) continue;
+    const coords = coordEl.textContent.trim().split(/\s+/).filter(x => x !== "").map(pair => {
+      const p = pair.split(",");
+      return [parseFloat(p[1]), parseFloat(p[0])];
+    });
+    const nameEl = pm.getElementsByTagName("name")[0];
+    const descEl = pm.getElementsByTagName("description")[0];
+    const styEl  = pm.getElementsByTagName("styleUrl")[0];
+    const styKey = styEl ? styEl.textContent.replace(/^#/, "") : null;
+    const css = styKey && styles[styKey] ? kmlColorToCss(styles[styKey]) : { color: "#3388ff", opacity: 0.5 };
+    out.push({
+      name: nameEl ? nameEl.textContent : "",
+      desc: descEl ? descEl.textContent : "",
+      coords,
+      color: css.color,
+      opacity: css.opacity
+    });
+  }
+  return out;
+}
+
 // ---------- Parseo de KML en un Web Worker (fuera del hilo principal) ----------
 // El worker NO tiene DOMParser, así que usa un parser por texto/regex verificado como
 // IDÉNTICO al de DOMParser contra los datos reales (alertas/pronóstico/sismos, 0 diffs).
@@ -271,10 +320,36 @@ function parseKml(text){
   }
   return out;
 }
+function kmlColorToCss(abgr){
+  var a=parseInt(abgr.substr(0,2),16),b=parseInt(abgr.substr(2,2),16),g=parseInt(abgr.substr(4,2),16),r=parseInt(abgr.substr(6,2),16);
+  function h(n){var s=n.toString(16);return s.length<2?"0"+s:s;}
+  return {color:"#"+h(r)+h(g)+h(b), opacity:a/255};
+}
+function parsePolygons(text){
+  var styles={};
+  var sRe=/<Style id="([^"]+)">([\\s\\S]*?)<\\/Style>/g, sm;
+  while((sm=sRe.exec(text))){
+    var pM=sm[2].match(/<PolyStyle>[\\s\\S]*?<color>([0-9a-fA-F]{8})<\\/color>/);
+    if(pM) styles[sm[1]]=pM[1];
+  }
+  var out=[];
+  var pmRe=/<Placemark[^>]*>([\\s\\S]*?)<\\/Placemark>/g, pm;
+  while((pm=pmRe.exec(text))){
+    var block=pm[1];
+    var cM=block.match(/<coordinates>([\\s\\S]*?)<\\/coordinates>/); if(!cM)continue;
+    var coords=cM[1].trim().split(/\\s+/).filter(function(x){return x!=="";}).map(function(pair){
+      var p=pair.split(","); return [parseFloat(p[1]),parseFloat(p[0])];
+    });
+    var nM=block.match(/<name>([\\s\\S]*?)<\\/name>/), dM=block.match(/<description>([\\s\\S]*?)<\\/description>/), sM=block.match(/<styleUrl>#([^<]+)<\\/styleUrl>/);
+    var css = sM && styles[sM[1]] ? kmlColorToCss(styles[sM[1]]) : {color:"#3388ff", opacity:0.5};
+    out.push({name:nM?dec(nM[1]):"",desc:dM?dec(dM[1]):"",coords:coords,color:css.color,opacity:css.opacity});
+  }
+  return out;
+}
 self.onmessage=function(e){
   var d=e.data;
   fetch(d.url+"/"+d.file, {cache:"no-cache"}).then(function(r){ if(!r.ok) throw new Error(d.file+": HTTP "+r.status); return r.text(); })
-    .then(function(t){ self.postMessage({id:d.id, ok:true, out:parseKml(t)}); })
+    .then(function(t){ var out = d.kind==="polygons" ? parsePolygons(t) : parseKml(t); self.postMessage({id:d.id, ok:true, out:out}); })
     .catch(function(err){ self.postMessage({id:d.id, ok:false, error:String((err&&err.message)||err)}); });
 };
 `;
@@ -303,19 +378,23 @@ function getKmlWorker() {
 }
 
 // Fallback en el hilo principal (DOMParser) si no hay Worker
-async function fetchKmlMain(file) {
-  const r = await fetch(`${RAW}/${file}`, { cache: "no-cache" });
+async function fetchKmlMain(file, kind, base) {
+  const r = await fetch(`${base || RAW}/${file}`, { cache: "no-cache" });
   if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
-  return parseKml(await r.text());
+  const text = await r.text();
+  return kind === "polygons" ? parsePolygonsMain(text) : parseKml(text);
 }
 
-function fetchKml(file) {
+// kind: "polygons" para capas estáticas de área (cuencas); default = puntos (estaciones/sismos).
+// base: rama raw.githubusercontent de origen (RAW="live" para datos generados; RAW_MAIN="main" para capas estáticas).
+function fetchKml(file, kind, base) {
+  const b = base || RAW;
   const w = getKmlWorker();
-  if (!w) return fetchKmlMain(file);
+  if (!w) return fetchKmlMain(file, kind, b);
   return new Promise((resolve, reject) => {
     const id = ++_kmlSeq;
     _kmlPending.set(id, { resolve, reject });
-    w.postMessage({ id, url: RAW, file });
+    w.postMessage({ id, url: b, file, kind });
   });
 }
 
@@ -371,9 +450,9 @@ function Section({ title, open, onToggle, badge, badgeKind, children }) {
 function App() {
   const mapRef = useRef(null);
   const groups = useRef({});
-  const data = useRef({ est: [], pron: [], sismos: [] });
+  const data = useRef({ est: [], pron: [], sismos: [], cuencas: [] });
   // marcadores YA construidos (con su metadata) para no recrearlos en cada filtro
-  const built = useRef({ est: [], sismos: [], pron: [] });
+  const built = useRef({ est: [], sismos: [], pron: [], cuencas: [] });
 
   const [stats, setStats] = useState(null);
   const [updated, setUpdated] = useState(null);
@@ -390,6 +469,12 @@ function App() {
   const [pronOpen, setPronOpen] = useState(false);
   const [sismosOpen, setSismosOpen] = useState(false);
   const [show, setShow] = useState({ pron: false });
+  // Cuencas hidrográficas: capa estática (no se refresca cada 15 min como las otras)
+  const [cuencasOpen, setCuencasOpen] = useState(false);
+  const [showCuencas, setShowCuencas] = useState(false);
+  const [cuencasStats, setCuencasStats] = useState(null);
+  const [cuencasLoading, setCuencasLoading] = useState(false);
+  const [cuencasError, setCuencasError] = useState("");
   // sismos en dos capas independientes: actuales (≤24h) e históricos (resto)
   const [sismoView, setSismoView] = useState({ actuales: true, historicos: false });
   // Refresco manual de sismos directo a USGS (independiente del cron, que se atrasa)
@@ -439,11 +524,13 @@ function App() {
       est: L.layerGroup().addTo(map),
       pron: L.layerGroup(),
       sismos: L.layerGroup().addTo(map),
+      cuencas: L.layerGroup(),
       _sat: sat, _labels: labels, _osm: osm
     };
     sat.addTo(map); labels.addTo(map);
 
     fetchAll();
+    fetchCuencas();
     const id = setInterval(fetchAll, 15 * 60 * 1000);
     return () => {
       clearInterval(id);
@@ -471,6 +558,13 @@ function App() {
     if (!map || !g.est) return;
     if (show.pron) g.pron.addTo(map); else map.removeLayer(g.pron);
   }, [show]);
+
+  // mostrar/ocultar cuencas hidrográficas (capa estática, independiente del ciclo de 15 min)
+  useEffect(() => {
+    const g = groups.current, map = mapRef.current;
+    if (!map || !g.cuencas) return;
+    if (showCuencas) g.cuencas.addTo(map); else map.removeLayer(g.cuencas);
+  }, [showCuencas]);
 
   // Construye TODOS los marcadores una sola vez (al cambiar los datos), guardando su
   // metadata. Los filtros luego solo alternan visibilidad (applyFilters), sin recrear
@@ -592,6 +686,29 @@ function App() {
       setError(String(e.message || e));
     }
     setLoading(false);
+  }, []);
+
+  // Carga las 139 cuencas hidrográficas (DGA/BNA) UNA sola vez: es una capa estática que no
+  // cambia, así que no entra en el ciclo de refresco de 15 min de fetchAll.
+  const fetchCuencas = useCallback(async () => {
+    setCuencasLoading(true); setCuencasError("");
+    try {
+      const cu = await fetchKml("red_cuencas.kml", "polygons", RAW_MAIN);
+      data.current.cuencas = cu;
+      const g = groups.current;
+      if (g.cuencas) {
+        g.cuencas.clearLayers();
+        built.current.cuencas = cu.map(f => L.polygon(f.coords, {
+          color: f.color, weight: 1.2, opacity: 0.9,
+          fillColor: f.color, fillOpacity: f.opacity != null ? f.opacity : 0.5
+        }).bindPopup(sanitizePopup(`<b>${f.name}</b><br>${f.desc}`), POPUP_OPTS));
+        built.current.cuencas.forEach(p => g.cuencas.addLayer(p));
+      }
+      setCuencasStats({ total: cu.length });
+    } catch (e) {
+      setCuencasError(String(e.message || e));
+    }
+    setCuencasLoading(false);
   }, []);
 
   // Trae sismos frescos SOLO de USGS, directo desde el navegador (sin esperar el cron).
@@ -737,6 +854,16 @@ function App() {
           USGS actualizado {sismoRefreshedAt.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}
         </div>}
         {sismoRefreshError && <div style={{ color: "#ff8d7a", fontSize: 11, marginTop: 2 }}>⚠ {sismoRefreshError}</div>}
+      </Section>
+
+      <Section title="Cuencas hidrográficas" open={cuencasOpen} onToggle={() => setCuencasOpen(!cuencasOpen)}
+        badge={cuencasStats ? `${cuencasStats.total}` : (cuencasLoading ? "…" : "")}>
+        <label className="tg">
+          <input type="checkbox" checked={showCuencas} onChange={e => setShowCuencas(e.target.checked)} />
+          <span>Mostrar en el mapa</span>
+        </label>
+        {cuencasStats && <div className="row"><span style={{ color: "#93a4b5" }}>Cuencas principales (DGA/BNA)</span><span className="num">{cuencasStats.total}</span></div>}
+        {cuencasError && <div style={{ color: "#ff8d7a", fontSize: 11, marginTop: 4 }}>⚠ {cuencasError}</div>}
       </Section>
 
       <div className="group">

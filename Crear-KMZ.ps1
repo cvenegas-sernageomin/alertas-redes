@@ -10,12 +10,14 @@ if ($Online) {
     $kmlUrl         = "$rawBase/live/red_alertas.kml"
     $pronosticoUrl  = "$rawBase/live/red_pronostico.kml"
     $sismosUrl      = "$rawBase/live/red_sismos.kml"
+    $cuencasUrl     = "$rawBase/main/red_cuencas.kml"
     $kmzPath        = "$here\alertas-redes-online.kmz"
 } else {
     $base           = $here -replace '\\', '/'
     $kmlUrl         = "file:///$base/red_alertas.kml"
     $pronosticoUrl  = "file:///$base/red_pronostico.kml"
     $sismosUrl      = "file:///$base/red_sismos.kml"
+    $cuencasUrl     = "file:///$base/red_cuencas.kml"
     $kmzPath        = "$here\alertas-redes.kmz"
 }
 
@@ -51,6 +53,13 @@ $kmlContenido = @"
       <refreshInterval>3600</refreshInterval>
     </Link>
   </NetworkLink>
+  <NetworkLink>
+    <name>Cuencas hidrograficas Chile</name>
+    <open>0</open>
+    <Link>
+      <href>$cuencasUrl</href>
+    </Link>
+  </NetworkLink>
 </Document>
 </kml>
 "@
@@ -69,3 +78,4 @@ Write-Host "KMZ generado: $kmzPath" -ForegroundColor Green
 Write-Host "  Alertas:    $kmlUrl"        -ForegroundColor Gray
 Write-Host "  Pronostico: $pronosticoUrl" -ForegroundColor Gray
 Write-Host "  Sismos:     $sismosUrl"    -ForegroundColor Gray
+Write-Host "  Cuencas:    $cuencasUrl"   -ForegroundColor Gray
