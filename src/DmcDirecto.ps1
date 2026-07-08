@@ -30,7 +30,7 @@ function Get-CodigosEmaDmc {
     $codigos = [regex]::Matches($r.Content, '(?:visorDeDatosEma|fichaDeEstacion)/(\d+)') |
         ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique | Sort-Object { [int]$_ }
     if ($codigos.Count -lt 1) { throw "No se encontraron codigos DMC en el grupo $Grupo" }
-    return @($codigos)
+    return ,@($codigos)
 }
 
 function Get-EmaInfoDirecto {
@@ -121,6 +121,39 @@ function Get-PrecipRateDirecto {
     return [math]::Round($delta / $horas, 2)
 }
 
+# La DMC no publica una serie horaria, solo el acumulado del dia actual. Para poder
+# graficar (igual que las demas redes) se guarda una MINI-HISTORIA de muestras
+# {epoch;precip} tomadas en cada corrida del cron (irregulares, cada ~2-5h reales) y se
+# reconstruye una serie de "mm caidos entre lecturas consecutivas" a partir de ellas.
+# No es tan prolijo como una serie horaria real, pero es información real (no inventada)
+# y hace que el grafico de acumulado funcione para DMC igual que para las demas redes.
+function Get-SerieDesdeHistoria {
+    param([array]$Historia)
+    $ordenada = @($Historia | Sort-Object { [int64]$_.epoch })
+    if ($ordenada.Count -lt 2) { return @{ Tiempos = @(); Valores = @() } }
+    $tiempos = [System.Collections.Generic.List[long]]::new()
+    $valores = [System.Collections.Generic.List[double]]::new()
+    for ($i = 1; $i -lt $ordenada.Count; $i++) {
+        $delta = [double]$ordenada[$i].precip - [double]$ordenada[$i - 1].precip
+        if ($delta -lt 0) { $delta = [double]$ordenada[$i].precip }   # reset de medianoche
+        $tiempos.Add([int64]$ordenada[$i].epoch)
+        $valores.Add([math]::Round($delta, 2))
+    }
+    return @{ Tiempos = $tiempos.ToArray(); Valores = $valores.ToArray() }
+}
+
+# Agrega una muestra nueva a la historia y descarta las mas viejas que $VentanaHoras
+# (margen sobre 48h para que el grafico de 48h siempre tenga cobertura completa).
+function Add-MuestraHistoria {
+    param([array]$Historia, [long]$Epoch, $Precip, [long]$AhoraEpoch, [double]$VentanaHoras = 50.0)
+    $nueva = @($Historia | Where-Object { ($AhoraEpoch - [int64]$_.epoch) -le ($VentanaHoras * 3600) })
+    if ($null -ne $Precip) { $nueva += @{ epoch = $Epoch; precip = $Precip } }
+    # operador coma: sin esto, PowerShell desenvuelve un array de 1 elemento al salir de
+    # la funcion y el llamador recibe el hashtable suelto en vez de un array de 1 hashtable
+    # (mismo patron del gotcha #11 ya documentado, pero en un "return" en vez de un pipeline)
+    return ,$nueva
+}
+
 function Read-EstadoDmc {
     param([string]$Path)
     $estado = @{}
@@ -128,7 +161,13 @@ function Read-EstadoDmc {
         try {
             $obj = Get-Content $Path -Raw | ConvertFrom-Json
             foreach ($p in $obj.PSObject.Properties) {
-                $estado[$p.Name] = @{ precip = [double]$p.Value.precip; epoch = [int64]$p.Value.epoch }
+                $historia = @()
+                if ($p.Value.PSObject.Properties['historia']) {
+                    $historia = @($p.Value.historia | ForEach-Object {
+                        @{ epoch = [int64]$_.epoch; precip = [double]$_.precip }
+                    })
+                }
+                $estado[$p.Name] = @{ precip = [double]$p.Value.precip; epoch = [int64]$p.Value.epoch; historia = $historia }
             }
         } catch { Write-Warning "Cache estado DMC ilegible, se reinicia: $_" }
     }
@@ -141,7 +180,7 @@ function Save-EstadoDmc {
         $ordenado = [ordered]@{}
         foreach ($k in ($Estado.Keys | Sort-Object)) { $ordenado[$k] = $Estado[$k] }
         $tmp = "$Path.tmp"
-        ($ordenado | ConvertTo-Json -Depth 4) | Set-Content -Path $tmp -Encoding UTF8
+        ($ordenado | ConvertTo-Json -Depth 6) | Set-Content -Path $tmp -Encoding UTF8
         Move-Item -Path $tmp -Destination $Path -Force
     } catch { Write-Warning "No se pudo guardar estado DMC: $_" }
 }
@@ -192,13 +231,17 @@ function Get-EstacionesDmcDirecto {
 
             $acumuladoHoy = if ($null -ne $precH) { $precH } else { 0.0 }
 
+            $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
+            $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $precH -AhoraEpoch $ahoraEpoch
+            $serie = Get-SerieDesdeHistoria $historiaNueva
+
             $redes.Add([PSCustomObject]@{
                 Id = $null; Nombre = $info.Nombre; Codigo = $codStr
                 Lat = $info.Lat; Lon = $info.Lon
                 TasaMmH = $tasaFinal; Epoch = $ultimoEpoch; UltimoDatoEpoch = $ultimoEpoch
                 OrgConfirmada = 'DMC directo'; Red = 'DMC'
                 AcumuladoHoy = $acumuladoHoy
-                ValoresSerie = @(); TiemposSerie = @()
+                ValoresSerie = $serie.Valores; TiemposSerie = $serie.Tiempos
             })
 
             $emas.Add([PSCustomObject]@{
@@ -208,11 +251,11 @@ function Get-EstacionesDmcDirecto {
                 Epoch = $ultimoEpoch; UltimoDatoEpoch = $ultimoEpoch
                 OrgConfirmada = 'DMC directo'
                 AcumuladoHoy = $acumuladoHoy
-                ValoresPrecip = @(); ValoresTemp = @(); ValoresIso = @(); TiemposSerie = @()
+                ValoresPrecip = $serie.Valores; ValoresTemp = @(); ValoresIso = @(); TiemposSerie = $serie.Tiempos
             })
 
             if ($null -ne $precH) {
-                $estadoNuevo[$codStr] = @{ precip = $precH; epoch = $ultimoEpoch }
+                $estadoNuevo[$codStr] = @{ precip = $precH; epoch = $ultimoEpoch; historia = $historiaNueva }
             } elseif ($prevEntry) {
                 $estadoNuevo[$codStr] = $prevEntry
             }

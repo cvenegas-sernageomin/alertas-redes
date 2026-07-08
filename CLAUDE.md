@@ -78,10 +78,24 @@ por el usuario (PDF de referencia sin trackear en el repo,
   antes de la ventana de 48h). NO cambia el icono del placemark.
 - **Grafico de estaciones:** `Build-ChartAcumulado`/`Build-GraficosAcumulado` aceptan un
   `$umbralRojo` opcional (el umbral "alerta" de la region) y dibujan una linea roja
-  horizontal punteada en el eje "Acum mm". Limitacion conocida: las estaciones DMC directo
-  no tienen serie horaria historica (solo el acumulado del dia), asi que NUNCA muestran
-  grafico (ni la linea) — solo texto con los numeros. Si se quiere grafico para DMC habria
-  que empezar a persistir una mini-serie por ciclo en `dmc_estado.json`, no implementado.
+  horizontal punteada en el eje "Acum mm".
+- **Grafico para DMC directo (desde 2026-07-08):** la DMC no publica serie horaria, solo
+  el acumulado del dia actual — se reconstruye una serie a partir de una MINI-HISTORIA de
+  muestras `{epoch;precip}` guardadas en `dmc_estado.json` en cada corrida del cron
+  (`Add-MuestraHistoria`, ventana de 50h, se poda solo). `Get-SerieDesdeHistoria` calcula
+  el delta entre muestras consecutivas (maneja reset de medianoche igual que
+  `Get-PrecipRateDirecto`) y esas series alimentan `TiemposSerie`/`ValoresSerie` (Redes) y
+  `ValoresPrecip`/`TiemposSerie` (EMAs) como si fueran de vismet — Build-GraficosAcumulado
+  no necesito ningun cambio. Como el cron es irregular (~2-5h), el grafico tiene menos
+  puntos y mas ruido que el de las redes con serie horaria real, pero es dato real (no
+  inventado). Necesita al menos 3 corridas exitosas seguidas (2 deltas) para que aparezca
+  el grafico (Build-GraficosAcumulado exige >=2 puntos).
+  - **Bug real encontrado y corregido en el camino:** `Add-MuestraHistoria` devolvia el
+    hashtable SUELTO en vez de un array de 1 elemento cuando la historia previa estaba
+    vacia — PowerShell desenvuelve un array de 1 elemento al hacer `return` (mismo patron
+    del gotcha #11, pero en el `return` de una funcion, no en un pipeline de
+    `Where-Object`). Fix: `return ,$nueva` (operador coma unario). Mismo fix aplicado
+    preventivamente en `Get-CodigosEmaDmc`.
 - `AcumuladoHoy` en cada estacion: DMC directo ya trae el "Hoy" nativo de la DMC; vismet
   se calcula sumando `ValoresSerie` cuyas `TiemposSerie` caen en el dia calendario Chile
   actual (`Get-AcumuladoCalendario`, TZ `Pacific SA Standard Time`).

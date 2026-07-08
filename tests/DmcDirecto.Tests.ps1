@@ -77,6 +77,67 @@ Describe "Get-PrecipRateDirecto" {
     }
 }
 
+Describe "Get-SerieDesdeHistoria" {
+    It "con menos de 2 muestras no hay serie" {
+        $s = Get-SerieDesdeHistoria @(@{ epoch=1000; precip=0.0 })
+        $s.Tiempos.Count | Should Be 0
+    }
+    It "calcula el delta entre muestras consecutivas" {
+        $h = @(
+            @{ epoch=1000; precip=0.0 }
+            @{ epoch=4600; precip=2.0 }
+            @{ epoch=8200; precip=5.0 }
+        )
+        $s = Get-SerieDesdeHistoria $h
+        $s.Tiempos.Count | Should Be 2
+        $s.Valores[0] | Should Be 2.0
+        $s.Valores[1] | Should Be 3.0
+    }
+    It "ordena la historia por epoch antes de calcular (por si llega desordenada)" {
+        $h = @(
+            @{ epoch=8200; precip=5.0 }
+            @{ epoch=1000; precip=0.0 }
+            @{ epoch=4600; precip=2.0 }
+        )
+        $s = Get-SerieDesdeHistoria $h
+        $s.Valores[0] | Should Be 2.0
+        $s.Valores[1] | Should Be 3.0
+    }
+    It "maneja el reset de medianoche (delta negativo -> usa el acumulado actual)" {
+        $h = @(
+            @{ epoch=1000; precip=8.0 }
+            @{ epoch=4600; precip=0.5 }
+        )
+        $s = Get-SerieDesdeHistoria $h
+        $s.Valores[0] | Should Be 0.5
+    }
+}
+
+Describe "Add-MuestraHistoria" {
+    It "agrega la muestra nueva" {
+        $h = Add-MuestraHistoria -Historia @() -Epoch 1000 -Precip 2.0 -AhoraEpoch 1000
+        $h.Count | Should Be 1
+        $h[0].precip | Should Be 2.0
+    }
+    It "descarta muestras mas viejas que la ventana (50h por defecto)" {
+        $vieja = @{ epoch = 1000; precip = 1.0 }
+        $ahora = 1000 + (51 * 3600)
+        $h = Add-MuestraHistoria -Historia @($vieja) -Epoch $ahora -Precip 3.0 -AhoraEpoch $ahora
+        $h.Count | Should Be 1
+        $h[0].precip | Should Be 3.0
+    }
+    It "conserva muestras dentro de la ventana" {
+        $reciente = @{ epoch = 1000; precip = 1.0 }
+        $ahora = 1000 + (10 * 3600)
+        $h = Add-MuestraHistoria -Historia @($reciente) -Epoch $ahora -Precip 3.0 -AhoraEpoch $ahora
+        $h.Count | Should Be 2
+    }
+    It "no agrega nada si Precip es null (corrida fallida)" {
+        $h = Add-MuestraHistoria -Historia @() -Epoch 1000 -Precip $null -AhoraEpoch 1000
+        $h.Count | Should Be 0
+    }
+}
+
 Describe "Read-EstadoDmc / Save-EstadoDmc" {
     It "guarda y relee el estado" {
         $tmp = [System.IO.Path]::GetTempFileName()
@@ -85,6 +146,15 @@ Describe "Read-EstadoDmc / Save-EstadoDmc" {
             $r = Read-EstadoDmc $tmp
             $r['390015'].precip | Should Be 0.7
             $r['390015'].epoch  | Should Be 1000000
+        } finally { Remove-Item $tmp -ErrorAction SilentlyContinue }
+    }
+    It "guarda y relee la historia" {
+        $tmp = [System.IO.Path]::GetTempFileName()
+        try {
+            Save-EstadoDmc $tmp @{ '390015' = @{ precip = 0.7; epoch = 1000000; historia = @(@{epoch=900000;precip=0.2},@{epoch=1000000;precip=0.7}) } }
+            $r = Read-EstadoDmc $tmp
+            $r['390015'].historia.Count | Should Be 2
+            $r['390015'].historia[1].precip | Should Be 0.7
         } finally { Remove-Item $tmp -ErrorAction SilentlyContinue }
     }
     It "devuelve hashtable vacio si el archivo no existe" {
@@ -117,11 +187,26 @@ Describe "Get-EstacionesDmcDirecto (contra fixture, sin red)" {
         $r.Redes[0].AcumuladoHoy | Should Be 0.7
         $r.Emas[0].AcumuladoHoy  | Should Be 0.7
     }
+    It "primera corrida: sin historia previa, todavia no hay serie (1 sola muestra)" {
+        $r.Redes[0].TiemposSerie.Count | Should Be 0
+    }
+    It "EstadoNuevo guarda la historia con la muestra de esta corrida" {
+        $r.EstadoNuevo['390015'].historia.Count | Should Be 1
+    }
 
-    # Segunda corrida con estado previo -> ahora si calcula tasa
-    $estadoPrev = @{ '390015' = @{ precip = 0.0; epoch = $r.Redes[0].Epoch - 3600 } }
+    # Segunda corrida con estado previo (incluye historia de la 1ra) -> calcula tasa Y serie
+    $estadoPrev = @{ '390015' = @{ precip = 0.0; epoch = $r.Redes[0].Epoch - 3600
+        historia = @(@{ epoch = $r.Redes[0].Epoch - 3600; precip = 0.0 }) } }
     $r2 = Get-EstacionesDmcDirecto -Codigos @('390015') -EstadoPrev $estadoPrev -ThrottleMs 0
     It "segunda corrida: calcula tasa mm/h contra el estado previo" {
         $r2.Redes[0].TasaMmH | Should Be 0.7
+    }
+    It "segunda corrida: la serie ya tiene 1 punto (delta entre las 2 muestras)" {
+        $r2.Redes[0].TiemposSerie.Count | Should Be 1
+        $r2.Redes[0].ValoresSerie[0] | Should Be 0.7
+        $r2.Emas[0].ValoresPrecip[0] | Should Be 0.7
+    }
+    It "EstadoNuevo acumula la historia (2 muestras)" {
+        $r2.EstadoNuevo['390015'].historia.Count | Should Be 2
     }
 }
