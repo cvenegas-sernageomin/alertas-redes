@@ -211,6 +211,12 @@ function Build-PlacemarkRedes($e) {
         $ultStr = if ($e.UltimoDatoEpoch) { Format-Epoch $e.UltimoDatoEpoch } else { 'sin registro' }
         "<br/><b style='color:#888'>&#9888; Sin datos recientes</b> (ultimo dato: $ultStr)"
     } else { '' }
+    # "Precip: X mm/h" es una tasa ESTIMADA entre dos corridas del cron (que ahora es cada
+    # 2-5h reales, no cada hora - ver gotcha del cron poco confiable), asi que casi siempre
+    # da 0 aunque haya llovido. El dato confiable es el acumulado del dia calendario -
+    # se muestra SIEMPRE que exista (no solo cuando hay region con tabla de umbrales),
+    # para no dar la impresion de "no llovio" cuando el unico numero visible sea 0 mm/h.
+    $tieneAcumulado = $e.PSObject.Properties['AcumuladoHoy']
     if ($tieneRegion -and $e.UmbralesRegion) {
         $u = $e.UmbralesRegion
         $regionInfo = "<br/>Region: $($e.Region) | Dia de lluvia continua: $($e.DiaRacha)" +
@@ -222,7 +228,7 @@ function Build-PlacemarkRedes($e) {
                    "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;$($u.alerta) (alerta/alarma)</small></td>" +
                    "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
     } else {
-        $regionInfo = ''
+        $regionInfo = if ($tieneAcumulado) { "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm" } else { '' }
         $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                    "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
                    "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
@@ -257,7 +263,11 @@ function Build-PlacemarkEmas($e) {
                "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10 + iso&ge;3000</small></td>" +
                "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
     $fuente = if ($e.OrgConfirmada) { " <small style='color:#8a94a3'>(fuente confirmada: $($e.OrgConfirmada))</small>" } else { '' }
-    $desc = "<![CDATA[<b>$($e.Nombre)</b>$fuente<br/>Precip: $($e.TasaMmH) mm/h<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
+    # Igual que en Build-PlacemarkRedes: "Precip: X mm/h" es una tasa estimada entre
+    # corridas del cron y casi siempre da 0 aunque haya llovido - se muestra tambien el
+    # acumulado del dia (no cambia el color/alerta EMA, que sigue igual, solo lo hace visible).
+    $acumInfo = if ($e.PSObject.Properties['AcumuladoHoy']) { "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm" } else { '' }
+    $desc = "<![CDATA[<b>$($e.Nombre)</b>$fuente<br/>Precip: $($e.TasaMmH) mm/h$acumInfo<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>

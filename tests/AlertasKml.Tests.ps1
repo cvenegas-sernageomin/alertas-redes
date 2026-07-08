@@ -165,6 +165,25 @@ Describe "Build-PlacemarkRedes con region" {
     }
 }
 
+Describe "Build-PlacemarkRedes sin region pero con AcumuladoHoy (fuera de las 8 regiones)" {
+    $ahora = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $e = [PSCustomObject]@{
+        Nombre='Estacion Norte'; Codigo='Y'; Lat=-18.5; Lon=-69.5
+        TasaMmH=0.0; Epoch=$ahora; UltimoDatoEpoch=$ahora; Red='DMC'
+        ValoresSerie=@(); TiemposSerie=@()
+        Region=$null; DiaRacha=0; AcumuladoHoy=3.2
+        UmbralesRegion=$null; ColorPrecipRegional=$null
+    }
+    $pm = Build-PlacemarkRedes $e
+
+    It "muestra Acumulado hoy aunque no tenga region (para no esconder lluvia real detras de un 0 mm/h)" {
+        $pm | Should Match 'Acumulado hoy: 3.2 mm'
+    }
+    It "no muestra la tabla de umbrales regionales (usa la de mm/h simple)" {
+        $pm | Should Match 'Umbrales mm/h'
+    }
+}
+
 Describe "Build-ChartAcumulado con umbral" {
     $tiempos = @(0..23 | ForEach-Object { 1781600000 + ($_ * 3600) })
     $precip  = @(0..23 | ForEach-Object { 5.0 })
@@ -190,6 +209,14 @@ Describe "Build-PlacemarkEmas con serie" {
             TiemposSerie=@(1781794800,1781798400,1781802000)
         }
         Build-PlacemarkEmas $e | Should Match '<img'
+    }
+    It "muestra Acumulado hoy cuando existe (aunque TasaMmH sea 0, no esconde la lluvia real)" {
+        $e = [PSCustomObject]@{
+            Nombre='Juan Fernandez'; Codigo='390099'; Lat=-33.6; Lon=-78.8
+            Altitud=5.0; TasaMmH=0.0; TempC=12.0; Isoterma=1847; Epoch=1781807400
+            AcumuladoHoy=1.5
+        }
+        Build-PlacemarkEmas $e | Should Match 'Acumulado hoy: 1.5 mm'
     }
 }
 
