@@ -1,4 +1,5 @@
 ﻿$here = $PSScriptRoot
+. "$here\..\src\UmbralesRegionales.ps1"
 . "$here\..\src\AlertasKml.ps1"
 
 Describe "Get-ColorRedes" {
@@ -119,6 +120,63 @@ Describe "Build-PlacemarkRedes con serie" {
             ValoresSerie=$precip; TiemposSerie=$tiempos
         }
         ([regex]::Matches((Build-PlacemarkRedes $e), '<img')).Count | Should Be 2
+    }
+}
+
+Describe "Get-ColorRedesFinal" {
+    It "usa ColorPrecipRegional cuando existe" {
+        $e = [PSCustomObject]@{ TasaMmH=2.0; ColorPrecipRegional='rojo' }
+        Get-ColorRedesFinal $e | Should Be 'rojo'
+    }
+    It "cae al umbral simple si no hay region (fuera de tabla)" {
+        $e = [PSCustomObject]@{ TasaMmH=7.0; ColorPrecipRegional=$null }
+        Get-ColorRedesFinal $e | Should Be 'amarillo'
+    }
+    It "cae al umbral simple si el objeto no tiene la propiedad (compatibilidad hacia atras)" {
+        $e = [PSCustomObject]@{ TasaMmH=12.0 }
+        Get-ColorRedesFinal $e | Should Be 'rojo'
+    }
+}
+
+Describe "Build-PlacemarkRedes con region" {
+    $ahora = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $e = [PSCustomObject]@{
+        Nombre='Estacion RM'; Codigo='X'; Lat=-33.45; Lon=-70.6
+        TasaMmH=1.0; Epoch=$ahora; UltimoDatoEpoch=$ahora; Red='DMC'
+        ValoresSerie=@(); TiemposSerie=@()
+        Region='Metropolitana'; DiaRacha=2; AcumuladoHoy=45.0
+        UmbralesRegion=@{ aviso=30; alerta=60; alarma=82 }
+        ColorPrecipRegional='amarillo'
+    }
+    $pm = Build-PlacemarkRedes $e
+
+    It "usa el color regional en el styleUrl (amarillo), no el flat de TasaMmH (que daria verde)" {
+        $pm | Should Match '#amarillo'
+    }
+    It "muestra la region y el dia de racha en el popup" {
+        $pm | Should Match 'Metropolitana'
+        $pm | Should Match 'Dia de lluvia continua: 2'
+    }
+    It "muestra el acumulado del dia y los 3 umbrales" {
+        $pm | Should Match 'Acumulado hoy: 45'
+        $pm | Should Match 'aviso'
+        $pm | Should Match 'alerta'
+        $pm | Should Match 'alarma'
+    }
+}
+
+Describe "Build-ChartAcumulado con umbral" {
+    $tiempos = @(0..23 | ForEach-Object { 1781600000 + ($_ * 3600) })
+    $precip  = @(0..23 | ForEach-Object { 5.0 })
+
+    It "sin umbral no agrega la linea roja" {
+        $url = Build-ChartAcumulado $tiempos $precip 24
+        $url | Should Not Match 'Umbral%20alerta'
+    }
+    It "con umbral agrega el dataset de linea roja" {
+        $url = Build-ChartAcumulado $tiempos $precip 24 60
+        [Uri]::UnescapeDataString($url) | Should Match 'Umbral alerta \(60 mm\)'
+        [Uri]::UnescapeDataString($url) | Should Match '#cc0000'
     }
 }
 

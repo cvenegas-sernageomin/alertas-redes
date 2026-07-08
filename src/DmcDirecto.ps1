@@ -1,0 +1,231 @@
+﻿# Fuente alternativa DIRECTA de estaciones DMC (EMAs), sin pasar por vismet.cr2.cl.
+# Motivo: se verifico 2026-07-08 que vismet devuelve 0.0 fijo para TODAS las estaciones
+# DGA y DMC (686 estaciones, 48h, cero excepciones) mientras el portal publico de la DMC
+# (climatologia.meteochile.gob.cl) muestra lluvia real y actual para las mismas estaciones
+# codificadas. El feed DGA/DMC de vismet esta roto en origen; el de DMC directo funciona.
+# Reutiliza el patron ya validado en el proyecto hermano emas-kmz (ver
+# reference-dmc-visor-publico-sin-token en memoria).
+
+function Get-DmcHtmlGzip {
+    param(
+        [string]$Url,
+        [int]$TimeoutSeg = 30,
+        [string]$UserAgent = 'alertas-redes/1.0 (uso institucional SERNAGEOMIN; geologia)'
+    )
+    $req = [System.Net.HttpWebRequest]::Create($Url)
+    $req.UserAgent = $UserAgent
+    $req.Timeout = $TimeoutSeg * 1000
+    $req.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
+    $resp = $req.GetResponse()
+    try {
+        $sr = New-Object System.IO.StreamReader($resp.GetResponseStream())
+        try { return $sr.ReadToEnd() } finally { $sr.Close() }
+    } finally { $resp.Close() }
+}
+
+function Get-CodigosEmaDmc {
+    param([string]$Grupo = 'EMAPublicadas')
+    $url = "https://climatologia.meteochile.gob.cl/application/informacion/estacionesEnGrupo/$Grupo"
+    $r = Invoke-WebRequest -UseBasicParsing -Uri $url -TimeoutSec 60
+    $codigos = [regex]::Matches($r.Content, '(?:visorDeDatosEma|fichaDeEstacion)/(\d+)') |
+        ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique | Sort-Object { [int]$_ }
+    if ($codigos.Count -lt 1) { throw "No se encontraron codigos DMC en el grupo $Grupo" }
+    return @($codigos)
+}
+
+function Get-EmaInfoDirecto {
+    param([string]$Html)
+    $opt = [System.Text.RegularExpressions.RegexOptions]::Singleline
+
+    $nombre = $null
+    $mN = [regex]::Match($Html, '<h1>\s*([^<]+?)\s*</h1>\s*<h4>\s*<small>\s*Altura', $opt)
+    if ($mN.Success) { $nombre = $mN.Groups[1].Value.Trim() }
+
+    $alt = $null
+    $mA = [regex]::Match($Html, 'Altura\s*:\s*([\d.]+)\s*mts')
+    if ($mA.Success) { $alt = [double]$mA.Groups[1].Value }
+
+    $lat = $null; $lon = $null
+    $mC = [regex]::Match($Html, 'Coordenadas\s*:\s*(-?[\d.]+)[^,\d-]*,\s*(-?[\d.]+)')
+    if ($mC.Success) { $lat = [double]$mC.Groups[1].Value; $lon = [double]$mC.Groups[2].Value }
+
+    $ultimo = $null
+    $mU = [regex]::Match($Html, '<h1>\s*(\d{1,2}:\d{2})\s*<small>\s*([^<]+?)\s*</small>\s*</h1>')
+    if ($mU.Success) { $ultimo = ($mU.Groups[1].Value + ' ' + $mU.Groups[2].Value).Trim() }
+
+    return [pscustomobject]@{
+        Nombre = $nombre; Altitud = $alt; Lat = $lat; Lon = $lon; UltimoDato = $ultimo
+    }
+}
+
+function Get-EmaTempActualDirecto {
+    param([string]$Html)
+    $opt = [System.Text.RegularExpressions.RegexOptions]::Singleline
+    $m = [regex]::Match($Html, "chart\('temperatura'.*?series:\s*\[\{\s*name:\s*'[^']*',\s*data:\s*\[([^\]]*)\]", $opt)
+    if (-not $m.Success) { return $null }
+    $valores = $m.Groups[1].Value -split ','
+    for ($i = $valores.Count - 1; $i -ge 0; $i--) {
+        $v = $valores[$i].Trim()
+        if ($v -and $v -ne 'null') { return [double]$v }
+    }
+    return $null
+}
+
+function Get-EmaPrecipHoyDirecto {
+    param([string]$Html)
+    $opt = [System.Text.RegularExpressions.RegexOptions]::Singleline
+    $m = [regex]::Match($Html, '<h4>\s*Hoy\s*</h4>\s*</td>\s*<td[^>]*>\s*<h4>\s*([^<]+?)\s*</h4>', $opt)
+    if (-not $m.Success) { return $null }
+    $txt = $m.Groups[1].Value.Trim()
+    if ($txt -match '(?i)^s/?p') { return 0.0 }
+    $n = [regex]::Match($txt, '-?\d+([.,]\d+)?')
+    if (-not $n.Success) { return $null }
+    return [double]($n.Value -replace ',', '.')
+}
+
+# "UltimoDato" viene como "HH:mm dd MMM yyyy" en hora local de Chile (ej "08:30 08 Jul 2026").
+# El mes puede venir en ingles o espanol abreviado segun el render del sitio -> mapa propio,
+# no se confia en CultureInfo (ver gotchas PowerShell/Windows de este workspace).
+function ConvertTo-EpochChile {
+    param([string]$TextoFecha)
+    if (-not $TextoFecha) { return $null }
+    $meses = @{
+        'ene'=1;'feb'=2;'mar'=3;'abr'=4;'may'=5;'jun'=6;'jul'=7;'ago'=8;'sep'=9;'oct'=10;'nov'=11;'dic'=12
+        'jan'=1;'apr'=4;'aug'=8;'dec'=12
+    }
+    $m = [regex]::Match($TextoFecha, '^(\d{1,2}):(\d{2})\s+(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})$')
+    if (-not $m.Success) { return $null }
+    $mesTxt = $m.Groups[4].Value.ToLowerInvariant()
+    if (-not $meses.ContainsKey($mesTxt)) { return $null }
+    try {
+        $localDt = [datetime]::new(
+            [int]$m.Groups[5].Value, $meses[$mesTxt], [int]$m.Groups[3].Value,
+            [int]$m.Groups[1].Value, [int]$m.Groups[2].Value, 0, [DateTimeKind]::Unspecified)
+        $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time')
+        $utcDt = [System.TimeZoneInfo]::ConvertTimeToUtc($localDt, $tzChile)
+        return [int64]([DateTimeOffset]::new($utcDt, [TimeSpan]::Zero)).ToUnixTimeSeconds()
+    } catch { return $null }
+}
+
+# La DMC solo publica el acumulado del dia (se resetea a medianoche), no una serie horaria.
+# La tasa mm/h se estima diferenciando contra la corrida anterior (EstadoPrev), igual que
+# en emas-kmz. Mejora sobre el original: si hay reset de medianoche (delta negativo), se
+# usa el propio PrecipActual como "caido desde el reset" en vez de descartarlo a 0 mm/h.
+function Get-PrecipRateDirecto {
+    param($PrecipActual, [long]$EpochActual, $PrecipPrev, $EpochPrev)
+    if ($null -eq $PrecipActual -or $null -eq $PrecipPrev -or $null -eq $EpochPrev) { return $null }
+    $horas = ($EpochActual - $EpochPrev) / 3600.0
+    if ($horas -le 0) { return $null }
+    $delta = [double]$PrecipActual - [double]$PrecipPrev
+    if ($delta -lt 0) { $delta = [double]$PrecipActual }
+    return [math]::Round($delta / $horas, 2)
+}
+
+function Read-EstadoDmc {
+    param([string]$Path)
+    $estado = @{}
+    if (Test-Path $Path) {
+        try {
+            $obj = Get-Content $Path -Raw | ConvertFrom-Json
+            foreach ($p in $obj.PSObject.Properties) {
+                $estado[$p.Name] = @{ precip = [double]$p.Value.precip; epoch = [int64]$p.Value.epoch }
+            }
+        } catch { Write-Warning "Cache estado DMC ilegible, se reinicia: $_" }
+    }
+    return $estado
+}
+
+function Save-EstadoDmc {
+    param([string]$Path, [hashtable]$Estado)
+    try {
+        $ordenado = [ordered]@{}
+        foreach ($k in ($Estado.Keys | Sort-Object)) { $ordenado[$k] = $Estado[$k] }
+        $tmp = "$Path.tmp"
+        ($ordenado | ConvertTo-Json -Depth 4) | Set-Content -Path $tmp -Encoding UTF8
+        Move-Item -Path $tmp -Destination $Path -Force
+    } catch { Write-Warning "No se pudo guardar estado DMC: $_" }
+}
+
+# Orquesta el scraping de todas las EMAs DMC y arma ambas formas de salida que el resto
+# del pipeline ya entiende: .Redes (esquema de Parse-RedesJson, Capa 1) y .Emas (esquema
+# de Parse-EmasDmcJson, Capa 2) - asi Build-Kml no necesita cambios.
+function Get-EstacionesDmcDirecto {
+    param(
+        [array]$Codigos,
+        [hashtable]$EstadoPrev = @{},
+        [int]$ThrottleMs = 400,
+        [int]$TimeoutSeg = 30,
+        [string]$UserAgent = 'alertas-redes/1.0 (uso institucional SERNAGEOMIN; geologia)'
+    )
+    $redes = [System.Collections.Generic.List[object]]::new()
+    $emas  = [System.Collections.Generic.List[object]]::new()
+    $estadoNuevo = @{}
+    $ok = 0; $fallidas = 0
+    $ahoraEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+
+    foreach ($cod in $Codigos) {
+        $codStr = [string]$cod
+        try {
+            $url  = "https://climatologia.meteochile.gob.cl/application/diariob/visorDeDatosEma/$codStr"
+            $html = Get-DmcHtmlGzip -Url $url -TimeoutSeg $TimeoutSeg -UserAgent $UserAgent
+
+            $info  = Get-EmaInfoDirecto -Html $html
+            $temp  = Get-EmaTempActualDirecto -Html $html
+            $precH = Get-EmaPrecipHoyDirecto -Html $html
+
+            if ($null -eq $info.Lat -or $null -eq $info.Lon) { $fallidas++; continue }
+
+            $ultimoEpoch = ConvertTo-EpochChile $info.UltimoDato
+            if ($null -eq $ultimoEpoch) { $ultimoEpoch = $ahoraEpoch }
+
+            $prevEntry = $EstadoPrev[$codStr]
+            $tasa = $null
+            if ($prevEntry -and $null -ne $precH) {
+                $tasa = Get-PrecipRateDirecto -PrecipActual $precH -EpochActual $ultimoEpoch `
+                    -PrecipPrev $prevEntry.precip -EpochPrev $prevEntry.epoch
+            }
+            $tasaFinal = if ($null -ne $tasa) { $tasa } else { 0.0 }
+
+            $iso = if ($null -ne $temp -and $null -ne $info.Altitud) {
+                [int][math]::Floor($info.Altitud + ($temp / 6.5) * 1000)
+            } else { $null }
+
+            $acumuladoHoy = if ($null -ne $precH) { $precH } else { 0.0 }
+
+            $redes.Add([PSCustomObject]@{
+                Id = $null; Nombre = $info.Nombre; Codigo = $codStr
+                Lat = $info.Lat; Lon = $info.Lon
+                TasaMmH = $tasaFinal; Epoch = $ultimoEpoch; UltimoDatoEpoch = $ultimoEpoch
+                OrgConfirmada = 'DMC directo'; Red = 'DMC'
+                AcumuladoHoy = $acumuladoHoy
+                ValoresSerie = @(); TiemposSerie = @()
+            })
+
+            $emas.Add([PSCustomObject]@{
+                Id = $null; Nombre = $info.Nombre; Codigo = $codStr
+                Lat = $info.Lat; Lon = $info.Lon; Altitud = $info.Altitud
+                TasaMmH = $tasaFinal; TempC = $temp; Isoterma = $iso
+                Epoch = $ultimoEpoch; UltimoDatoEpoch = $ultimoEpoch
+                OrgConfirmada = 'DMC directo'
+                AcumuladoHoy = $acumuladoHoy
+                ValoresPrecip = @(); ValoresTemp = @(); ValoresIso = @(); TiemposSerie = @()
+            })
+
+            if ($null -ne $precH) {
+                $estadoNuevo[$codStr] = @{ precip = $precH; epoch = $ultimoEpoch }
+            } elseif ($prevEntry) {
+                $estadoNuevo[$codStr] = $prevEntry
+            }
+            $ok++
+        } catch {
+            $fallidas++
+            Write-Warning "DMC directo, estacion $codStr : $_"
+        }
+        Start-Sleep -Milliseconds $ThrottleMs
+    }
+
+    return [PSCustomObject]@{
+        Redes = $redes.ToArray(); Emas = $emas.ToArray()
+        EstadoNuevo = $estadoNuevo; Ok = $ok; Fallidas = $fallidas
+    }
+}

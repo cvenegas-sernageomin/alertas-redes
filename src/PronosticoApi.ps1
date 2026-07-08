@@ -102,6 +102,48 @@ function Get-EstiloPronostico([string]$colorPeor, [int]$nModelos) {
     return "${colorPeor}_${nModelos}"
 }
 
+function Get-ColorPeorYN([array]$colores) {
+    $orden = @{ verde=0; amarillo=1; rojo=2 }
+    $peor  = $colores | Sort-Object { $orden[$_] } -Descending | Select-Object -First 1
+    $n     = @($colores | Where-Object { $_ -eq $peor }).Count
+    return [PSCustomObject]@{ Color=$peor; N=$n }
+}
+
+# Alerta ADICIONAL de solo precipitacion con los umbrales regionales aviso/alerta/alarma
+# (RM a Los Lagos). NO reemplaza ColorFinal/EstiloKml (esos siguen siendo el combo
+# precip+iso de siempre, sin cambios) -- esto es un dato extra para mostrar en el popup.
+# Dia 1 = acumulado +0 a 24h del pronostico, Dia 2 = +24 a 48h (simplificacion: el
+# pronostico no conoce la racha de lluvia real antes de su ventana, asi que asume que
+# el propio dia 2 del pronostico es "el segundo dia de lluvia" si el dia 1 ya moja).
+function Get-AlertaPrecipRegionalPunto($punto) {
+    $region = Get-RegionPorLat $punto.Lat
+    if (-not $region) { return $null }
+
+    $sD1 = @(
+        (Get-SumaVentana $punto.HourlyPrecipEcmwf 0 23),
+        (Get-SumaVentana $punto.HourlyPrecipGfs   0 23),
+        (Get-SumaVentana $punto.HourlyPrecipIcon  0 23)
+    )
+    $sD2 = @(
+        (Get-SumaVentana $punto.HourlyPrecipEcmwf 24 47),
+        (Get-SumaVentana $punto.HourlyPrecipGfs   24 47),
+        (Get-SumaVentana $punto.HourlyPrecipIcon  24 47)
+    )
+    $uD1 = Get-UmbralesRegion $region 1
+    $uD2 = Get-UmbralesRegion $region 2
+    $cD1 = @($sD1 | ForEach-Object { Get-ColorPrecipRegional $_ $uD1 })
+    $cD2 = @($sD2 | ForEach-Object { Get-ColorPrecipRegional $_ $uD2 })
+    $pD1 = Get-ColorPeorYN $cD1
+    $pD2 = Get-ColorPeorYN $cD2
+
+    return [PSCustomObject]@{
+        Region       = $region
+        Dia1Color    = $pD1.Color; Dia1N = $pD1.N; Dia1Mm = ($sD1 | Measure-Object -Maximum).Maximum
+        Dia2Color    = $pD2.Color; Dia2N = $pD2.N; Dia2Mm = ($sD2 | Measure-Object -Maximum).Maximum
+        UmbralesDia1 = $uD1; UmbralesDia2 = $uD2
+    }
+}
+
 function Build-VentanasPunto($punto) {
     $config = @(
         @{ Nombre='+0 a 6h';   Desde=0;  Hasta=5  }
@@ -111,6 +153,7 @@ function Build-VentanasPunto($punto) {
     )
     $orden    = @{ verde=0; amarillo=1; rojo=2 }
     $ventanas = [System.Collections.ArrayList]::new()
+    $alertaRegional = Get-AlertaPrecipRegionalPunto $punto
     foreach ($cfg in $config) {
         $pE = Get-SumaVentana $punto.HourlyPrecipEcmwf $cfg.Desde $cfg.Hasta
         $pG = Get-SumaVentana $punto.HourlyPrecipGfs   $cfg.Desde $cfg.Hasta
@@ -146,7 +189,7 @@ function Build-VentanasPunto($punto) {
 
         $colores = @($cE, $cG, $cI)
         $peor = $colores | Sort-Object { $orden[$_] } -Descending | Select-Object -First 1
-        $n    = ($colores | Where-Object { $_ -eq $peor }).Count
+        $n    = @($colores | Where-Object { $_ -eq $peor }).Count
 
         [void]$ventanas.Add([PSCustomObject]@{
             Nombre      = $cfg.Nombre
@@ -167,6 +210,7 @@ function Build-VentanasPunto($punto) {
             ColorFinal  = $peor
             NModelos    = $n
             EstiloKml   = Get-EstiloPronostico $peor $n
+            AlertaRegional = $alertaRegional
         })
     }
     return $ventanas.ToArray()

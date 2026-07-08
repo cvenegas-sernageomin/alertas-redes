@@ -1,4 +1,5 @@
-$here = $PSScriptRoot
+﻿$here = $PSScriptRoot
+. "$here\..\src\UmbralesRegionales.ps1"
 . "$here\..\src\PronosticoApi.ps1"
 
 Describe "Get-GrillaChile" {
@@ -103,6 +104,50 @@ Describe "Get-ColorPronostico" {
     It "amarillo cuando precip=19 e iso=3000"      { Get-ColorPronostico 19.0 3000 | Should Be 'amarillo' }
     It "rojo cuando precip=20 e iso=3000"          { Get-ColorPronostico 20.0 3000 | Should Be 'rojo'     }
     It "rojo cuando precip=30 e iso=3500"          { Get-ColorPronostico 30.0 3500 | Should Be 'rojo'     }
+}
+
+Describe "Get-ColorPeorYN" {
+    It "verde cuando todos son verde" {
+        $r = Get-ColorPeorYN @('verde','verde','verde')
+        $r.Color | Should Be 'verde'; $r.N | Should Be 3
+    }
+    It "peor color y cuenta cuantos modelos coinciden en el peor" {
+        $r = Get-ColorPeorYN @('verde','amarillo','amarillo')
+        $r.Color | Should Be 'amarillo'; $r.N | Should Be 2
+    }
+    It "rojo gana aunque sea 1 solo modelo" {
+        $r = Get-ColorPeorYN @('verde','amarillo','rojo')
+        $r.Color | Should Be 'rojo'; $r.N | Should Be 1
+    }
+}
+
+Describe "Get-AlertaPrecipRegionalPunto" {
+    $fixture = Get-Content "$here\fixtures\openmeteo_2pts.json" -Raw | ConvertFrom-Json
+    $puntoRM  = Parse-OpenMeteoPoint $fixture[0]   # lat -33.5 -> Metropolitana
+    $puntoSur = Parse-OpenMeteoPoint $fixture[1]   # lat -45.0 -> fuera de tabla
+
+    It "asigna la region cuando el punto cae dentro de la tabla" {
+        (Get-AlertaPrecipRegionalPunto $puntoRM).Region | Should Be 'Metropolitana'
+    }
+    It "devuelve null cuando el punto esta fuera de la tabla" {
+        Get-AlertaPrecipRegionalPunto $puntoSur | Should Be $null
+    }
+    It "usa los umbrales de dia 1 y dia 2 de la region" {
+        $a = Get-AlertaPrecipRegionalPunto $puntoRM
+        $a.UmbralesDia1.aviso | Should Be (Get-UmbralesRegion 'Metropolitana' 1).aviso
+        $a.UmbralesDia2.aviso | Should Be (Get-UmbralesRegion 'Metropolitana' 2).aviso
+    }
+}
+
+Describe "Build-VentanasPunto incluye AlertaRegional" {
+    $fixture = Get-Content "$here\fixtures\openmeteo_2pts.json" -Raw | ConvertFrom-Json
+    $puntoRM = Parse-OpenMeteoPoint $fixture[0]
+    $v = Build-VentanasPunto $puntoRM
+
+    It "todas las ventanas del punto comparten la misma AlertaRegional" {
+        $v[0].AlertaRegional.Region | Should Be 'Metropolitana'
+        $v[3].AlertaRegional.Region | Should Be 'Metropolitana'
+    }
 }
 
 Describe "Get-EstiloPronostico" {

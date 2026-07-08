@@ -71,7 +71,7 @@ function Build-AcumuladoSerie([array]$precip) {
     return $out.ToArray()
 }
 
-function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas) {
+function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas, $umbralRojo = $null) {
     if ($tiempos.Count -lt 2) { return '' }
     # Tomar las ultimas $horas muestras (paso horario)
     $n     = $tiempos.Count
@@ -96,6 +96,12 @@ function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas) {
         borderColor='#1f7a1f'; backgroundColor='rgba(31,122,31,0.15)'; fill=$true
         borderWidth=2; pointRadius=0; tension=0.2; yAxisID='yA'; order=1
     })
+    if ($null -ne $umbralRojo) {
+        $ds.Add(@{
+            type='line'; label="Umbral alerta ($umbralRojo mm)"; data=@($t | ForEach-Object { $umbralRojo })
+            borderColor='#cc0000'; borderWidth=2; borderDash=@(6,4); pointRadius=0; yAxisID='yA'; order=0
+        })
+    }
 
     $escalas = @{
         x  = @{ ticks=@{ font=@{ size=9 }; maxTicksLimit=8 } }
@@ -119,15 +125,15 @@ function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas) {
     return "https://quickchart.io/chart?v=4&w=330&h=180&c=$encoded"
 }
 
-function Build-GraficosAcumulado([array]$tiempos, [array]$precip) {
+function Build-GraficosAcumulado([array]$tiempos, [array]$precip, $umbralRojo = $null) {
     if (-not $tiempos -or $tiempos.Count -lt 2) { return '' }
     # Sin lluvia en la ventana -> sin graficos (estacion seca = linea plana en 0, no aporta y abulta el KML)
     $total = 0.0
     foreach ($v in $precip) { if ($null -ne $v) { $total += [double]$v } }
     if ($total -lt 0.1) { return '' }
     $img = ''
-    $c24 = Build-ChartAcumulado $tiempos $precip 24
-    $c48 = Build-ChartAcumulado $tiempos $precip 48
+    $c24 = Build-ChartAcumulado $tiempos $precip 24 $umbralRojo
+    $c48 = Build-ChartAcumulado $tiempos $precip 48 $umbralRojo
     # Escapar & -> &amp; para que Google Earth no corte la URL al parsear el HTML del globo
     if ($c24) { $img += "<br/><b>Ultimas 24 h</b><br/><img src='$($c24 -replace '&','&amp;')' width='330'/>" }
     if ($c48) { $img += "<br/><b>Ultimas 48 h</b><br/><img src='$($c48 -replace '&','&amp;')' width='330'/>" }
@@ -138,6 +144,16 @@ function Get-ColorRedes([double]$mmH) {
     if ($mmH -ge 10) { return 'rojo' }
     if ($mmH -ge 5)  { return 'amarillo' }
     return 'verde'
+}
+
+# Color final de una estacion de Capa 1: usa el umbral regional (aviso/alerta/alarma,
+# solo precipitacion acumulada del dia) cuando la estacion cayo dentro de las 8 regiones
+# cubiertas (RM a Los Lagos); si no, cae al umbral simple de tasa horaria (5/10 mm/h).
+function Get-ColorRedesFinal($e) {
+    if ($e.PSObject.Properties['ColorPrecipRegional'] -and $e.ColorPrecipRegional) {
+        return $e.ColorPrecipRegional
+    }
+    return Get-ColorRedes $e.TasaMmH
 }
 
 function Get-ColorEmas([double]$mmH, $iso) {
@@ -186,20 +202,35 @@ function Build-Styles {
 
 function Build-PlacemarkRedes($e) {
     $inactiva = Test-EstacionInactiva $e.UltimoDatoEpoch
-    $color = if ($inactiva) { 'gris' } else { Get-ColorRedes $e.TasaMmH }
+    $color = if ($inactiva) { 'gris' } else { Get-ColorRedesFinal $e }
     $hora  = Format-Epoch $e.Epoch
-    $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresSerie
+    $tieneRegion = $e.PSObject.Properties['Region'] -and $e.Region
+    $umbralRojo = if ($tieneRegion -and $e.UmbralesRegion) { $e.UmbralesRegion.alerta } else { $null }
+    $chartImg = Build-GraficosAcumulado $e.TiemposSerie $e.ValoresSerie $umbralRojo
     $aviso = if ($inactiva) {
         $ultStr = if ($e.UltimoDatoEpoch) { Format-Epoch $e.UltimoDatoEpoch } else { 'sin registro' }
         "<br/><b style='color:#888'>&#9888; Sin datos recientes</b> (ultimo dato: $ultStr)"
     } else { '' }
-    $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
-               "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
-               "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
-               "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10</small></td>" +
-               "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
+    if ($tieneRegion -and $e.UmbralesRegion) {
+        $u = $e.UmbralesRegion
+        $regionInfo = "<br/>Region: $($e.Region) | Dia de lluvia continua: $($e.DiaRacha)" +
+                      "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm " +
+                      "(aviso&ge;$($u.aviso) / alerta&ge;$($u.alerta) / alarma&ge;$($u.alarma) mm)"
+        $leyenda = "<hr/><small><b>Umbral regional (solo precipitacion, dia $($e.DiaRacha)):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
+                   "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;$($u.aviso) mm/dia&nbsp;</small></td>" +
+                   "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;$($u.aviso) (aviso)&nbsp;</small></td>" +
+                   "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;$($u.alerta) (alerta/alarma)</small></td>" +
+                   "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
+    } else {
+        $regionInfo = ''
+        $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
+                   "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
+                   "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
+                   "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;10</small></td>" +
+                   "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
+    }
     $fuente = if ($e.OrgConfirmada) { " <small style='color:#8a94a3'>(fuente confirmada: $($e.OrgConfirmada))</small>" } else { '' }
-    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)$fuente<br/>Precip: $($e.TasaMmH) mm/h<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
+    $desc = "<![CDATA[<b>$($e.Nombre)</b><br/>Red: $($e.Red)$fuente<br/>Precip: $($e.TasaMmH) mm/h$regionInfo<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>
       <name>$($e.Nombre) - $($e.TasaMmH) mm/h</name>
@@ -353,8 +384,28 @@ function Build-PlacemarkPuntoPronostico([array]$vs) {
             "</div>"
     }
 
+    # Alerta ADICIONAL de solo precipitacion (umbrales regionales aviso/alerta/alarma,
+    # RM a Los Lagos) - no cambia el icono del placemark, que sigue siendo el combo precip+iso.
+    $ar = $vs[0].AlertaRegional
+    $badgeRegional = ''
+    if ($ar) {
+        $bgD1 = switch ($ar.Dia1Color) { 'rojo' { '#ff2d2d' } 'amarillo' { '#e6b800' } default { '#27c93f' } }
+        $bgD2 = switch ($ar.Dia2Color) { 'rojo' { '#ff2d2d' } 'amarillo' { '#e6b800' } default { '#27c93f' } }
+        $badgeRegional =
+            "<div style='background:#eef2f7;border-radius:6px;padding:8px 10px;margin-bottom:8px;'>" +
+              "<b style='font-size:12px;'>Alerta pura por precipitacion ($($ar.Region))</b><br/>" +
+              "<span style='display:inline-block;margin-top:4px;margin-right:10px;padding:2px 8px;border-radius:10px;background:$bgD1;color:#000;font-size:11px;'>" +
+                "Dia 1 (0-24h): $($ar.Dia1Mm) mm</span>" +
+              "<span style='display:inline-block;margin-top:4px;padding:2px 8px;border-radius:10px;background:$bgD2;color:#000;font-size:11px;'>" +
+                "Dia 2 (24-48h): $($ar.Dia2Mm) mm</span><br/>" +
+              "<small style='color:#666;'>Umbrales dia1: aviso&ge;$($ar.UmbralesDia1.aviso) / alerta&ge;$($ar.UmbralesDia1.alerta) mm &mdash; " +
+              "dia2: aviso&ge;$($ar.UmbralesDia2.aviso) / alerta&ge;$($ar.UmbralesDia2.alerta) mm</small>" +
+            "</div>"
+    }
+
     $desc = "<![CDATA[<b style='font-size:14px;'>&#9729; Pronostico 48h</b><br/>" +
             "<small style='color:#888;'>$lat, $lon</small><br/><br/>" +
+            "$badgeRegional" +
             "$tarjetas" +
             "<small style='color:#888;'>Precip = acumulada por ventana, por modelo. Iso = isoterma 0&deg;C mas baja. " +
             "Temp = min/max (prom. 3 modelos). Viento = rafaga maxima (peor caso, 10m).</small><br/><br/>" +

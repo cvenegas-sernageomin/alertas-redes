@@ -1,5 +1,7 @@
 ﻿$here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyCommand.Path -Parent }
 . "$here\src\RedesApi.ps1"
+. "$here\src\DmcDirecto.ps1"
+. "$here\src\UmbralesRegionales.ps1"
 . "$here\src\AlertasKml.ps1"
 . "$here\src\PronosticoApi.ps1"
 . "$here\src\SismosApi.ps1"
@@ -8,26 +10,57 @@
 $kmlPath         = "$here\red_alertas.kml"
 $kmlPronostico   = "$here\red_pronostico.kml"
 $kmlSismos       = "$here\red_sismos.kml"
+$estadoDmcPath   = "$here\dmc_estado.json"
+$estadoRachaPath = "$here\racha_lluvia.json"
 
-Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DMC/DGA/Agromet (todas las redes)..." -ForegroundColor Cyan
+# vismet.cr2.cl (DGA/Agromet/CEAZA/RedMeteo/UFRO/Davis) -- se excluye DMC de aqui: se
+# verifico 2026-07-08 que vismet devuelve 0.0 fijo para TODA la red DMC (y tambien DGA)
+# mientras el portal publico de la DMC muestra lluvia real para las mismas estaciones.
+# DGA sigue viniendo de vismet (no tiene fuente directa sin CAPTCHA, ver DGASAT en memoria);
+# DMC se reemplaza integramente por scraping directo mas abajo.
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DGA/Agromet/CEAZA (vismet, sin DMC)..." -ForegroundColor Cyan
+$fechaHoy = Get-FechaChile
 try {
-    $redes = Get-AllRedes
-    Write-Host "  -> $($redes.Count) estaciones" -ForegroundColor Gray
+    $redesVismet = @(Get-AllRedes | Where-Object { $_.Red -ne 'DMC' })
+    foreach ($e in $redesVismet) {
+        $acum = Get-AcumuladoCalendario $e.TiemposSerie $e.ValoresSerie $fechaHoy
+        Add-Member -InputObject $e -NotePropertyName AcumuladoHoy -NotePropertyValue $acum -Force
+    }
+    Write-Host "  -> $($redesVismet.Count) estaciones" -ForegroundColor Gray
 } catch {
-    Write-Warning "Error en DMC/DGA/Agromet: $_"
-    $redes = @()
+    Write-Warning "Error en vismet (DGA/Agromet/CEAZA): $_"
+    $redesVismet = @()
 }
 
-Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando EMAs DMC..." -ForegroundColor Cyan
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DMC directo (climatologia.meteochile.gob.cl)..." -ForegroundColor Cyan
+$redesDmc = @(); $emas = @()
 try {
-    $nuevasAlt = Get-AltitudesRaw
-    $altMap    = Merge-AltitudCache "$here\altitudes.json" $nuevasAlt
-    Write-Host "  altitudes: $($altMap.Keys.Count) en cache (nuevas este ciclo: $($nuevasAlt.Keys.Count))" -ForegroundColor Gray
-    $emas = Get-EmasDmc $redes $altMap
-    Write-Host "  -> $($emas.Count) EMAs (altitud + temperatura)" -ForegroundColor Gray
+    $codigosDmc    = Get-CodigosEmaDmc
+    $estadoPrevDmc = Read-EstadoDmc $estadoDmcPath
+    $resultDmc     = Get-EstacionesDmcDirecto -Codigos $codigosDmc -EstadoPrev $estadoPrevDmc
+    Save-EstadoDmc $estadoDmcPath $resultDmc.EstadoNuevo
+    $redesDmc = $resultDmc.Redes
+    $emas     = $resultDmc.Emas
+    Write-Host "  -> $($resultDmc.Ok) EMAs DMC ok, $($resultDmc.Fallidas) fallidas" -ForegroundColor Gray
 } catch {
-    Write-Warning "Error en EMAs DMC: $_"
-    $emas = @()
+    Write-Warning "Error en DMC directo: $_"
+}
+
+$redes = @($redesVismet) + @($redesDmc)
+
+# --- Umbrales regionales aviso/alerta/alarma (solo precipitacion, RM a Los Lagos) ---
+# Reemplaza el color de Capa 1 (Get-ColorRedes 5/10 mm/h) para estaciones dentro de esas
+# 8 regiones; fuera de tabla se mantiene el umbral simple sin cambios. NO toca las alertas
+# EMA (precip+iso, Capa 2) ni el pronostico, que siguen igual que antes.
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Aplicando umbrales regionales (aviso/alerta/alarma)..." -ForegroundColor Cyan
+try {
+    $estadoRachaPrev  = Read-EstadoRacha $estadoRachaPath
+    $estadoRachaNuevo = Add-InfoRegional -Estaciones $redes -EstadoPrev $estadoRachaPrev -FechaHoy $fechaHoy
+    Save-EstadoRacha $estadoRachaPath $estadoRachaNuevo
+    $conRegion = @($redes | Where-Object { $_.Region }).Count
+    Write-Host "  -> $conRegion/$($redes.Count) estaciones con region asignada" -ForegroundColor Gray
+} catch {
+    Write-Warning "Error aplicando umbrales regionales (no bloqueante, cae al umbral simple): $_"
 }
 
 # --- Fuente/organizacion CONFIRMADA por vismet/CR2 (solo informativa, no reemplaza Get-RedFromCode) ---
@@ -63,8 +96,8 @@ if ($redes.Count -eq 0 -and $emas.Count -eq 0) {
 $kml = Build-Kml $redes $emas
 [System.IO.File]::WriteAllText($kmlPath, $kml, [System.Text.Encoding]::UTF8)
 
-$alertasRedes = ($redes | Where-Object { $_.TasaMmH -ge 5 }).Count
-$alertasEmas  = ($emas  | Where-Object { (Get-ColorEmas $_.TasaMmH $_.Isoterma) -ne 'verde' }).Count
+$alertasRedes = @($redes | Where-Object { (Get-ColorRedesFinal $_) -ne 'verde' }).Count
+$alertasEmas  = @($emas  | Where-Object { (Get-ColorEmas $_.TasaMmH $_.Isoterma) -ne 'verde' }).Count
 
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] KML escrito: $kmlPath" -ForegroundColor Green
 $redes | Group-Object Red | Sort-Object Count -Desc | ForEach-Object {
@@ -80,7 +113,7 @@ try {
     $kmlPron      = Build-PronosticoKml $allVentanas
     [System.IO.File]::WriteAllText($kmlPronostico, $kmlPron, [System.Text.Encoding]::UTF8)
 
-    $alertasPron = ($allVentanas | Where-Object { $_.EstiloKml -ne 'verde' }).Count
+    $alertasPron = @($allVentanas | Where-Object { $_.EstiloKml -ne 'verde' }).Count
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] KML pronostico escrito: $kmlPronostico" -ForegroundColor Green
     Write-Host "  Grilla: $($grilla.Count) pts | $alertasPron ventanas con alerta" -ForegroundColor Yellow
 } catch {

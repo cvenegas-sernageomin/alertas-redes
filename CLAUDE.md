@@ -19,6 +19,73 @@ Sistema de alertas hidrometeorológicas y sísmicas para Chile: descarga datos d
 
 Babel Standalone **auto-ejecuta** scripts `type="text/jsx"`. Como el HTML también tiene un bootstrap manual que evalúa el mismo script, el código corría dos veces → dos `L.map()` → mapa huérfano cuyo `_onDown` crasheaba al iniciar un arrastre → **bloqueaba el pan con un dedo en móvil** (zoom de 2 dedos sí funcionaba). Fix: `type="text/plain"` en el script (Babel no lo auto-ejecuta, solo el bootstrap lo corre una vez).
 
+## Fuente de datos DMC: directa, NO vismet (desde 2026-07-08)
+
+Se verificó que **vismet.cr2.cl devuelve 0.0 fijo para TODA la red DMC (y también DGA)** —
+686 estaciones, 48h, cero excepciones — mientras el portal público de la DMC
+(`climatologia.meteochile.gob.cl`) muestra lluvia real y actual para las mismas estaciones
+en el mismo momento (comparación directa confirmada, ej. estación 390015 Isla Teja: vismet
+0.0mm vs DMC directo 0.7mm). El feed DGA/DMC de vismet está roto en origen (problema de
+CR2, no nuestro); DGA no tiene alternativa sin CAPTCHA (ver DGASAT abajo) así que se
+mantiene vía vismet, pero **DMC se reemplaza íntegramente por scraping directo**:
+
+- `src/DmcDirecto.ps1` — scrapea `climatologia.meteochile.gob.cl/application/diariob/visorDeDatosEma/<codigo>`
+  para las ~149 EMAs del grupo `EMAPublicadas` (mismo patrón validado en el proyecto hermano
+  `emas-kmz`, ver `reference-dmc-visor-publico-sin-token` en memoria). Cada fetch trae nombre,
+  altitud, lat/lon, temperatura actual (serie por minuto) y precipitación **acumulada del día**
+  (se resetea a medianoche) — no hay serie horaria de lluvia en este endpoint.
+- La tasa mm/h se estima **diferenciando contra la corrida anterior** (`dmc_estado.json`,
+  cacheado en la rama `live` igual que `organizaciones.json`): `Get-PrecipRateDirecto`.
+  Primera corrida tras un reinicio de caché: TasaMmH=0.0 en todas (sin base para diferenciar,
+  se autocorrige en el siguiente ciclo).
+- Reemplaza también la vieja mecánica de `Get-EmasDmc`/`Get-AltitudesRaw`/`altitudes.json`
+  (cache de altitud vía `raw-measure/last` de vismet, tardaba 24-48h en calentarse) — ya no
+  se llama desde `Actualizar.ps1`, porque el scrape directo trae la altitud en el mismo fetch,
+  sin caché. Las funciones siguen en `RedesApi.ps1` con tests, pero quedaron sin uso activo.
+- Tasa de éxito real: ~132/149 (17 fallidas, códigos que devuelven pagina sin lat/lon).
+- Costo: ~150 requests gzip por ciclo, throttle 400ms → ~1.5 min. Con el cron real de
+  ~2-5h (ver [[reference-github-actions-cron-poco-confiable]] o sección de abajo) esto es
+  bajo tráfico total para el servidor de la DMC.
+
+## Umbrales regionales aviso/alerta/alarma (solo precipitacion, desde 2026-07-08)
+
+Sistema ADICIONAL de alerta verde/amarillo/rojo basado SOLO en precipitacion acumulada
+del dia, con umbrales oficiales tipo SENAPRED que varian por region y por dia de lluvia
+continua (el umbral baja con cada dia porque el suelo se satura). Fuente: tabla entregada
+por el usuario (PDF de referencia sin trackear en el repo,
+`Determinacion-de-umbrales-criticos-de-precipitacion-...pdf`).
+
+- `src/UmbralesRegionales.ps1` — tabla hardcodeada (8 regiones: Metropolitana a Los Lagos,
+  4 filas de dia de racha cada una con aviso/alerta/alarma en mm), `Get-RegionPorLat`
+  (asigna region por la capital regional mas cercana en latitud — metodo APROXIMADO,
+  aceptado explicitamente porque ninguna fuente de datos trae "region" como campo),
+  `Get-AcumuladoCalendario` (suma una serie horaria por dia calendario Chile),
+  `Update-RachaEstacion` (dia de lluvia continua: cualquier mm>0 cuenta, un dia en 0mm
+  corta la racha, igual que un salto de cron >1 dia sin corridas).
+- **Mapeo de color:** verde=bajo aviso, amarillo=[aviso,alerta), rojo=>=alerta. "alarma"
+  es solo informativo en el popup (no agrega un 4to color) — decision tomada con el usuario.
+- **Capa 1 (estaciones, `red_alertas.kml`):** REEMPLAZA el color de `Get-ColorRedes`
+  (5/10 mm/h flat) por el sistema regional cuando la estacion cae en las 8 regiones
+  cubiertas (`Get-ColorRedesFinal` en `AlertasKml.ps1`); fuera de tabla se mantiene el
+  umbral simple sin cambios. Estado persistido en `racha_lluvia.json` (nuevo cache en
+  rama `live`, mismo patron que `dmc_estado.json`/`organizaciones.json`).
+- **Capa 2 (EMAs) y pronostico (`Get-ColorPronostico`, combo precip+iso):** SIN CAMBIOS,
+  decision explicita del usuario. El pronostico SI gana un badge adicional
+  ("Alerta pura por precipitacion") en el popup de cada punto con region conocida
+  (`Get-AlertaPrecipRegionalPunto` en `PronosticoApi.ps1`) — dia 1 = acumulado +0 a 24h
+  del pronostico contra umbrales dia 1, dia 2 = +24 a 48h contra umbrales dia 2 (asume
+  que el propio dia 2 del pronostico es el "segundo dia de lluvia"; no conoce racha real
+  antes de la ventana de 48h). NO cambia el icono del placemark.
+- **Grafico de estaciones:** `Build-ChartAcumulado`/`Build-GraficosAcumulado` aceptan un
+  `$umbralRojo` opcional (el umbral "alerta" de la region) y dibujan una linea roja
+  horizontal punteada en el eje "Acum mm". Limitacion conocida: las estaciones DMC directo
+  no tienen serie horaria historica (solo el acumulado del dia), asi que NUNCA muestran
+  grafico (ni la linea) — solo texto con los numeros. Si se quiere grafico para DMC habria
+  que empezar a persistir una mini-serie por ciclo en `dmc_estado.json`, no implementado.
+- `AcumuladoHoy` en cada estacion: DMC directo ya trae el "Hoy" nativo de la DMC; vismet
+  se calcula sumando `ValoresSerie` cuyas `TiemposSerie` caen en el dia calendario Chile
+  actual (`Get-AcumuladoCalendario`, TZ `Pacific SA Standard Time`).
+
 ## API de vismet.cr2.cl (no documentada)
 
 - Auth: header `ckey` = hash rolling sobre la ruta `h=(h*31+char)&0xFFFFFFFF` en hex. Ver `Sign()` en `src/RedesApi.ps1`.
