@@ -1,6 +1,7 @@
 ﻿$here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path $MyInvocation.MyCommand.Path -Parent }
 . "$here\src\RedesApi.ps1"
 . "$here\src\DmcDirecto.ps1"
+. "$here\src\RedesRegionalesDmc.ps1"
 . "$here\src\UmbralesRegionales.ps1"
 . "$here\src\AlertasKml.ps1"
 . "$here\src\PronosticoApi.ps1"
@@ -12,6 +13,7 @@ $kmlPronostico   = "$here\red_pronostico.kml"
 $kmlSismos       = "$here\red_sismos.kml"
 $estadoDmcPath   = "$here\dmc_estado.json"
 $estadoRachaPath = "$here\racha_lluvia.json"
+$estadoRegPath   = "$here\redes_regionales_estado.json"
 
 # vismet.cr2.cl (DGA/Agromet/CEAZA/RedMeteo/UFRO/Davis) -- se excluye DMC de aqui: se
 # verifico 2026-07-08 que vismet devuelve 0.0 fijo para TODA la red DMC (y tambien DGA)
@@ -46,7 +48,21 @@ try {
     Write-Warning "Error en DMC directo: $_"
 }
 
-$redes = @($redesVismet) + @($redesDmc)
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando INIA/FDF/ESO/INACH (boletin regional DMC, 16 regiones)..." -ForegroundColor Cyan
+$redesRegionales = @()
+try {
+    $codigosRegionales = Get-CodigosRedesRegionales -FechaChile $fechaHoy
+    Write-Host "  -> $($codigosRegionales.Count) estaciones no-DMC encontradas en los boletines" -ForegroundColor Gray
+    $estadoPrevReg = Read-EstadoDmc $estadoRegPath
+    $resultReg     = Get-EstacionesRegionalesDirecto -Estaciones $codigosRegionales -EstadoPrev $estadoPrevReg
+    Save-EstadoDmc $estadoRegPath $resultReg.EstadoNuevo
+    $redesRegionales = $resultReg.Redes
+    Write-Host "  -> $($resultReg.Ok) ok, $($resultReg.Fallidas) fallidas" -ForegroundColor Gray
+} catch {
+    Write-Warning "Error en redes regionales (INIA/FDF/ESO/INACH): $_"
+}
+
+$redes = @($redesVismet) + @($redesDmc) + @($redesRegionales)
 
 # --- Umbrales regionales aviso/alerta/alarma (solo precipitacion, RM a Los Lagos) ---
 # Reemplaza el color de Capa 1 (Get-ColorRedes 5/10 mm/h) para estaciones dentro de esas

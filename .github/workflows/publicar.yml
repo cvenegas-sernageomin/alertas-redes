@@ -33,6 +33,7 @@ jobs:
             git checkout origin/live -- organizaciones.json 2>$null
             git checkout origin/live -- dmc_estado.json     2>$null
             git checkout origin/live -- racha_lluvia.json   2>$null
+            git checkout origin/live -- redes_regionales_estado.json 2>$null
           }
           exit 0
 
@@ -61,5 +62,6 @@ jobs:
           if (Test-Path organizaciones.json) { git add organizaciones.json }
           if (Test-Path dmc_estado.json)    { git add dmc_estado.json }
           if (Test-Path racha_lluvia.json)  { git add racha_lluvia.json }
+          if (Test-Path redes_regionales_estado.json) { git add redes_regionales_estado.json }
           git commit -m "data: actualizar KMLs $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC"
           git push origin HEAD:live --force

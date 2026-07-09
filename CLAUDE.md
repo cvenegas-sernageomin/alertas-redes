@@ -100,6 +100,41 @@ por el usuario (PDF de referencia sin trackear en el repo,
   se calcula sumando `ValoresSerie` cuyas `TiemposSerie` caen en el dia calendario Chile
   actual (`Get-AcumuladoCalendario`, TZ `Pacific SA Standard Time`).
 
+## Redes adicionales INIA/FDF/ESO/INACH (desde 2026-07-09)
+
+Investigando si se podia sacar DGA de otro lado (`menuTematicoEmas` de la DMC), se encontro
+que el "Boletin Pluviometrico Regional DGA-DMC-INIA" (producto RE5015) **NO trae DGA en
+absoluto** (verificado en las 16 regiones, 0 estaciones con propietario "DGA") pero SI trae
+INIA/FDF/ESO/INACH con codigo nacional igual al de las EMAs DMC -> se puede reusar el mismo
+`visorDeDatosEma/{codigo}` para sacarles datos reales.
+
+- **Boletin regional, publico y sin auth** (confirmado con curl real, sin cookie ni CSRF):
+  `https://climatologia.meteochile.gob.cl/application/diario/boletinPluviometricoAutomaticoRegional/{region}/{yyyy}/{mm}/{dd}`
+  con `{region}` en `15,01,02,03,04,05,13,06,07,16,08,09,14,10,11,12` (todas las regiones
+  de Chile continental+insular, excepto Aysen=11 y Magallanes=12 que SI estan en la lista).
+  Tabla HTML con codigo/nombre/provincia/comuna/**propietario**/agua-caida-diaria. Solo se
+  usa para DESCUBRIR que codigos existen y su dueño — los datos reales (temp/precip/lat/lon)
+  se sacan del mismo scrape por estacion que ya usa DMC directo.
+- `src/RedesRegionalesDmc.ps1`: `Get-EstacionesBoletinRegion` (parsea la tabla — ojo, el HTML
+  real cierra la celda "Propietario" con `</th>` en vez de `</td>`, typo del sitio no
+  nuestro), `Get-CodigosRedesRegionales` (recorre las 16 regiones, excluye propietario=DMC,
+  dedupe por codigo), `Get-EstacionesRegionalesDirecto` (reusa TAL CUAL las funciones de
+  `DmcDirecto.ps1`: Get-DmcHtmlGzip/Get-EmaInfoDirecto/Get-EmaPrecipHoyDirecto/
+  ConvertTo-EpochChile/Get-PrecipRateDirecto/Add-MuestraHistoria/Get-SerieDesdeHistoria/
+  Read-EstadoDmc/Save-EstadoDmc — debe cargarse DESPUES de DmcDirecto.ps1).
+- **Solo van a Capa 1 (Redes), NO a Capa 2 (EMAs):** estas estaciones no tienen temperatura
+  confiable (son red climatologica/agricola, no EMA automatica completa), asi que no aportan
+  isoterma. `Red = Propietario` (INIA/FDF/ESO/INACH) -> `Build-SubfoldersRedes` las agrupa en
+  su propia carpeta sin ningun cambio (ya agrupaba por Red).
+- Estado propio persistido en `redes_regionales_estado.json` (mismo esquema y mismo patron
+  de historia/grafico que `dmc_estado.json`, archivo separado para no mezclar).
+- **Escala real (verificado 2026-07-09):** 377 estaciones descubiertas (INIA 180, FDF 179,
+  INACH 15, ESO 3). Tasa de exito: INIA 147/180 (82%), FDF 136/179 (76%), ESO 3/3 (100%),
+  **INACH 0/15 (0%)** — las estaciones INACH (Antartica, codigo `95xxxx`) aparecen en el
+  boletin pero su pagina `visorDeDatosEma` no tiene contenido real (probable estaciones
+  manuales/descontinuadas sin ficha digital) — fallo estructural, no transitorio, no vale
+  la pena seguir insistiendo. Tiempo total del paso: ~2.5-3 min con throttle 400ms.
+
 ## API de vismet.cr2.cl (no documentada)
 
 - Auth: header `ckey` = hash rolling sobre la ruta `h=(h*31+char)&0xFFFFFFFF` en hex. Ver `Sign()` en `src/RedesApi.ps1`.
