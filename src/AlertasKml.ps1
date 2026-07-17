@@ -1,4 +1,16 @@
-﻿# Una estacion se considera INACTIVA si su ultimo dato real tiene mas de $umbralHoras.
+﻿# Epoch -> hora de Chile continental para MOSTRAR al usuario. El runner de GitHub Actions
+# corre en UTC, asi que .ToLocalTime() alli devuelve UTC y las horas del KML salian corridas
+# (+4 h en invierno). Toda hora visible en popups/graficos debe pasar por aqui.
+$script:TzChile = $null
+function ConvertTo-HoraChile([long]$epoch) {
+    if ($null -eq $script:TzChile) {
+        try   { $script:TzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time') }
+        catch { $script:TzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('America/Santiago') }
+    }
+    return [System.TimeZoneInfo]::ConvertTime([DateTimeOffset]::FromUnixTimeSeconds($epoch), $script:TzChile)
+}
+
+# Una estacion se considera INACTIVA si su ultimo dato real tiene mas de $umbralHoras.
 # UltimoDatoEpoch es null si la estacion nunca reporto un valor en la ventana consultada.
 function Test-EstacionInactiva($ultimoDatoEpoch, [double]$umbralHoras = 3.0) {
     if ($null -eq $ultimoDatoEpoch) { return $true }
@@ -10,7 +22,7 @@ function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [ar
     if ($tiempos.Count -lt 2) { return '' }
 
     $labels = @($tiempos | ForEach-Object {
-        [DateTimeOffset]::FromUnixTimeSeconds([long]$_).ToLocalTime().ToString('HH:mm')
+        (ConvertTo-HoraChile ([long]$_)).ToString('HH:mm')
     })
 
     $ds = [System.Collections.Generic.List[hashtable]]::new()
@@ -81,7 +93,7 @@ function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas, $umb
     if ($t.Count -lt 2) { return '' }
 
     $labels = @($t | ForEach-Object {
-        [DateTimeOffset]::FromUnixTimeSeconds([long]$_).ToLocalTime().ToString('dd HH:mm')
+        (ConvertTo-HoraChile ([long]$_)).ToString('dd HH:mm')
     })
     $acum    = Build-AcumuladoSerie $p
     $totalMm = if ($acum.Count -gt 0) { $acum[-1] } else { 0 }
@@ -164,7 +176,7 @@ function Get-ColorEmas([double]$mmH, $iso) {
 }
 
 function Format-Epoch([long]$epoch) {
-    [DateTimeOffset]::FromUnixTimeSeconds($epoch).ToLocalTime().ToString('HH:mm dd-MMM-yyyy')
+    (ConvertTo-HoraChile $epoch).ToString('HH:mm dd-MMM-yyyy') + ' hora Chile'
 }
 
 function Build-Styles {

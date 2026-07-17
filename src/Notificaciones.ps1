@@ -150,7 +150,11 @@ function Get-SismosFuertes([array]$sismos, [double]$minMag = 6.0, [int]$ventanaM
 }
 
 function Build-ResumenAlertas([array]$redes, [array]$emas, [array]$allVentanas, [array]$sismos = @()) {
-    $ts = (Get-Date).ToUniversalTime().ToString('HH:mm') + ' UTC — ' + (Get-Date).ToLocalTime().ToString('dd-MMM-yyyy')
+    # Hora de Chile (el runner corre en UTC; .ToLocalTime() alli es UTC)
+    try   { $tzCl = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time') }
+    catch { $tzCl = [System.TimeZoneInfo]::FindSystemTimeZoneById('America/Santiago') }
+    $nowCl = [System.TimeZoneInfo]::ConvertTimeFromUtc([datetime]::UtcNow, $tzCl)
+    $ts = $nowCl.ToString('HH:mm') + ' hora Chile — ' + $nowCl.ToString('dd-MMM-yyyy')
 
     # --- Condiciones actuales ---
     $rojasRedes     = @($redes | Where-Object { (Get-ColorRedes $_.TasaMmH) -eq 'rojo' })
