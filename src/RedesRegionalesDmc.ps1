@@ -80,6 +80,7 @@ function Get-EstacionesRegionalesDirecto {
     $estadoNuevo = @{}
     $ok = 0; $fallidas = 0
     $ahoraEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $fechaChileHoy = Get-FechaChileDeEpoch $ahoraEpoch
 
     foreach ($est in $Estaciones) {
         $codStr = [string]$est.Codigo
@@ -89,6 +90,14 @@ function Get-EstacionesRegionalesDirecto {
 
             $info  = Get-EmaInfoDirecto -Html $html
             $precH = Get-EmaPrecipHoyDirecto -Html $html
+            if ($null -eq $precH) {
+                # Mismo reintento que en DMC directo: la celda "Hoy" a veces viene vacia
+                # durante la ventana de rollover matinal del sitio
+                Start-Sleep -Milliseconds 1200
+                $html2 = Get-DmcHtmlGzip -Url $url -TimeoutSeg $TimeoutSeg -UserAgent $UserAgent
+                $p2 = Get-EmaPrecipHoyDirecto -Html $html2
+                if ($null -ne $p2) { $html = $html2; $precH = $p2; $info = Get-EmaInfoDirecto -Html $html2 }
+            }
 
             if ($null -eq $info.Lat -or $null -eq $info.Lon) { $fallidas++; continue }
 
@@ -102,7 +111,7 @@ function Get-EstacionesRegionalesDirecto {
                     -PrecipPrev $prevEntry.precip -EpochPrev $prevEntry.epoch
             }
             $tasaFinal = if ($null -ne $tasa) { $tasa } else { 0.0 }
-            $acumuladoHoy = if ($null -ne $precH) { $precH } else { 0.0 }
+            $acumuladoHoy = Get-AcumuladoHonesto -PrecipHoy $precH -PrevEntry $prevEntry -FechaChileHoy $fechaChileHoy
 
             $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
             $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $precH -AhoraEpoch $ahoraEpoch

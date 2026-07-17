@@ -179,6 +179,13 @@ function Format-Epoch([long]$epoch) {
     (ConvertTo-HoraChile $epoch).ToString('HH:mm dd-MMM-yyyy') + ' hora Chile'
 }
 
+# Acumulado del dia para popup: null = la fuente no entrego el dato -> "s/d", NUNCA "0 mm"
+# (un 0 falso en pleno temporal induce decisiones erradas; gotcha DMC 2026-07-17).
+function Format-AcumHoy($mm) {
+    if ($null -ne $mm) { return "$mm mm" }
+    return 's/d'
+}
+
 function Build-Styles {
     return @"
   <Style id="verde">
@@ -232,7 +239,7 @@ function Build-PlacemarkRedes($e) {
     if ($tieneRegion -and $e.UmbralesRegion) {
         $u = $e.UmbralesRegion
         $regionInfo = "<br/>Region: $($e.Region) | Dia de lluvia continua: $($e.DiaRacha)" +
-                      "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm " +
+                      "<br/>Acumulado hoy: $(Format-AcumHoy $e.AcumuladoHoy) " +
                       "(aviso&ge;$($u.aviso) / alerta&ge;$($u.alerta) / alarma&ge;$($u.alarma) mm)"
         $leyenda = "<hr/><small><b>Umbral regional (solo precipitacion, dia $($e.DiaRacha)):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                    "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;$($u.aviso) mm/dia&nbsp;</small></td>" +
@@ -240,7 +247,7 @@ function Build-PlacemarkRedes($e) {
                    "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;$($u.alerta) (alerta/alarma)</small></td>" +
                    "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
     } else {
-        $regionInfo = if ($tieneAcumulado) { "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm" } else { '' }
+        $regionInfo = if ($tieneAcumulado) { "<br/>Acumulado hoy: $(Format-AcumHoy $e.AcumuladoHoy)" } else { '' }
         $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                    "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
                    "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
@@ -278,7 +285,7 @@ function Build-PlacemarkEmas($e) {
     # Igual que en Build-PlacemarkRedes: "Precip: X mm/h" es una tasa estimada entre
     # corridas del cron y casi siempre da 0 aunque haya llovido - se muestra tambien el
     # acumulado del dia (no cambia el color/alerta EMA, que sigue igual, solo lo hace visible).
-    $acumInfo = if ($e.PSObject.Properties['AcumuladoHoy']) { "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm" } else { '' }
+    $acumInfo = if ($e.PSObject.Properties['AcumuladoHoy']) { "<br/>Acumulado hoy: $(Format-AcumHoy $e.AcumuladoHoy)" } else { '' }
     $desc = "<![CDATA[<b>$($e.Nombre)</b>$fuente<br/>Precip: $($e.TasaMmH) mm/h$acumInfo<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>

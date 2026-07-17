@@ -210,3 +210,26 @@ Describe "Get-EstacionesDmcDirecto (contra fixture, sin red)" {
         $r2.EstadoNuevo['390015'].historia.Count | Should Be 2
     }
 }
+
+Describe "Get-AcumuladoHonesto" {
+    # 12:00 UTC del 17-jul = 08:00 Chile del 17 (invierno UTC-4)
+    $epochHoy  = 1784289600
+    $epochAyer = 1784257200   # 23:00 Chile del 16
+    It "con dato de la fuente, lo devuelve tal cual" {
+        Get-AcumuladoHonesto -PrecipHoy 12.5 -PrevEntry $null -FechaChileHoy '2026-07-17' | Should Be 12.5
+    }
+    It "sin dato pero con estado previo DEL MISMO dia Chile: arrastra el ultimo acumulado" {
+        $prev = @{ precip = 7.0; epoch = $epochHoy }
+        Get-AcumuladoHonesto -PrecipHoy $null -PrevEntry $prev -FechaChileHoy '2026-07-17' | Should Be 7.0
+    }
+    It "sin dato y estado previo de AYER: null (s/d), no un 0 falso ni el total de ayer" {
+        $prev = @{ precip = 44.0; epoch = $epochAyer }
+        Get-AcumuladoHonesto -PrecipHoy $null -PrevEntry $prev -FechaChileHoy '2026-07-17' | Should Be $null
+    }
+    It "sin dato y sin estado previo: null" {
+        Get-AcumuladoHonesto -PrecipHoy $null -PrevEntry $null -FechaChileHoy '2026-07-17' | Should Be $null
+    }
+    It "un 0.0 real de la fuente SI es 0 (s/p), no null" {
+        Get-AcumuladoHonesto -PrecipHoy 0.0 -PrevEntry $null -FechaChileHoy '2026-07-17' | Should Be 0.0
+    }
+}

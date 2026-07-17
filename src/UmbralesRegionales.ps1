@@ -186,7 +186,28 @@ function Add-InfoRegional {
     $estadoNuevo = @{}
     foreach ($e in $Estaciones) {
         $region = Get-RegionPorLat $e.Lat
-        $mmHoy  = if ($null -ne $e.AcumuladoHoy) { [double]$e.AcumuladoHoy } else { 0.0 }
+
+        if ($null -eq $e.AcumuladoHoy) {
+            # SIN DATO de acumulado (la fuente no lo entrego en esta corrida): no fingir
+            # 0 mm — un 0 falso corta la racha de lluvia continua y pinta verde en pleno
+            # temporal (gotcha DMC 2026-07-17). Se conserva el estado de racha previo tal
+            # cual y la estacion queda sin color regional (cae al umbral simple de tasa).
+            $prevRacha = $null
+            if ($EstadoPrev.ContainsKey($e.Codigo)) {
+                $prevRacha = $EstadoPrev[$e.Codigo]
+                $estadoNuevo[$e.Codigo] = $prevRacha
+            }
+            $rachaPrev = if ($prevRacha) { [int]$prevRacha.racha } else { 0 }
+            $umbrales  = if ($region) { Get-UmbralesRegion $region $rachaPrev } else { $null }
+            Add-Member -InputObject $e -NotePropertyName Region              -NotePropertyValue $region     -Force
+            Add-Member -InputObject $e -NotePropertyName DiaRacha            -NotePropertyValue $rachaPrev  -Force
+            Add-Member -InputObject $e -NotePropertyName AcumuladoHoy        -NotePropertyValue $null       -Force
+            Add-Member -InputObject $e -NotePropertyName UmbralesRegion      -NotePropertyValue $umbrales   -Force
+            Add-Member -InputObject $e -NotePropertyName ColorPrecipRegional -NotePropertyValue $null       -Force
+            continue
+        }
+
+        $mmHoy = [double]$e.AcumuladoHoy
         $r = Update-RachaEstacion -EstadoPrev $EstadoPrev -Codigo $e.Codigo -FechaHoy $FechaHoy -MmHoy $mmHoy
         $estadoNuevo[$e.Codigo] = $r
         $umbrales = if ($region) { Get-UmbralesRegion $region $r.racha } else { $null }

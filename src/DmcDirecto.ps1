@@ -107,6 +107,35 @@ function ConvertTo-EpochChile {
     } catch { return $null }
 }
 
+# Fecha calendario Chile (yyyy-MM-dd) de un epoch. Compartida por DMC directo, redes
+# regionales y RedMeteo directo (todas las fuentes con "acumulado del dia" que se resetea
+# a medianoche Chile).
+function Get-FechaChileDeEpoch {
+    param([long]$Epoch)
+    $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time')
+    $utcDt = [DateTimeOffset]::FromUnixTimeSeconds($Epoch).UtcDateTime
+    return ([System.TimeZoneInfo]::ConvertTimeFromUtc($utcDt, $tzChile)).ToString('yyyy-MM-dd')
+}
+
+# "Acumulado hoy" HONESTO cuando la fuente no entrego el dato ($PrecipHoy null).
+# Gotcha real (2026-07-17 07:20): en la ventana de rollover matinal del sitio DMC la celda
+# "Hoy" vino vacia para TODA la pasada (122 estaciones) y el codigo viejo lo convertia en
+# "Acumulado hoy: 0 mm" -> 122 falsos ceros EN PLENO TEMPORAL (ademas cortaba la racha de
+# lluvia continua de los umbrales regionales). Regla: null NO es 0.
+#  1) si hay dato -> el dato;
+#  2) si no, y el estado previo es DEL MISMO dia Chile -> se arrastra el ultimo acumulado
+#     conocido del dia (cota inferior real);
+#  3) si no -> $null (el KML lo muestra "s/d" y no se toca la racha).
+function Get-AcumuladoHonesto {
+    param($PrecipHoy, $PrevEntry, [string]$FechaChileHoy)
+    if ($null -ne $PrecipHoy) { return [double]$PrecipHoy }
+    if ($PrevEntry -and $null -ne $PrevEntry.precip -and
+        (Get-FechaChileDeEpoch ([int64]$PrevEntry.epoch)) -eq $FechaChileHoy) {
+        return [double]$PrevEntry.precip
+    }
+    return $null
+}
+
 # La DMC solo publica el acumulado del dia (se resetea a medianoche), no una serie horaria.
 # La tasa mm/h se estima diferenciando contra la corrida anterior (EstadoPrev), igual que
 # en emas-kmz. Mejora sobre el original: si hay reset de medianoche (delta negativo), se
@@ -201,6 +230,7 @@ function Get-EstacionesDmcDirecto {
     $estadoNuevo = @{}
     $ok = 0; $fallidas = 0
     $ahoraEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $fechaChileHoy = Get-FechaChileDeEpoch $ahoraEpoch
 
     foreach ($cod in $Codigos) {
         $codStr = [string]$cod
@@ -211,6 +241,18 @@ function Get-EstacionesDmcDirecto {
             $info  = Get-EmaInfoDirecto -Html $html
             $temp  = Get-EmaTempActualDirecto -Html $html
             $precH = Get-EmaPrecipHoyDirecto -Html $html
+            if ($null -eq $precH) {
+                # La celda "Agua caida / Hoy" a veces viene vacia o en regeneracion
+                # (ventana matinal del sitio DMC) -> un reintento corto por estacion
+                Start-Sleep -Milliseconds 1200
+                $html2 = Get-DmcHtmlGzip -Url $url -TimeoutSeg $TimeoutSeg -UserAgent $UserAgent
+                $p2 = Get-EmaPrecipHoyDirecto -Html $html2
+                if ($null -ne $p2) {
+                    $html = $html2; $precH = $p2
+                    $info = Get-EmaInfoDirecto -Html $html2
+                    $temp = Get-EmaTempActualDirecto -Html $html2
+                }
+            }
 
             if ($null -eq $info.Lat -or $null -eq $info.Lon) { $fallidas++; continue }
 
@@ -229,7 +271,7 @@ function Get-EstacionesDmcDirecto {
                 [int][math]::Floor($info.Altitud + ($temp / 6.5) * 1000)
             } else { $null }
 
-            $acumuladoHoy = if ($null -ne $precH) { $precH } else { 0.0 }
+            $acumuladoHoy = Get-AcumuladoHonesto -PrecipHoy $precH -PrevEntry $prevEntry -FechaChileHoy $fechaChileHoy
 
             $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
             $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $precH -AhoraEpoch $ahoraEpoch

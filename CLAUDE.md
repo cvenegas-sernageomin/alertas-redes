@@ -47,18 +47,38 @@ mantiene vía vismet, pero **DMC se reemplaza íntegramente por scraping directo
   ~2-5h (ver [[reference-github-actions-cron-poco-confiable]] o sección de abajo) esto es
   bajo tráfico total para el servidor de la DMC.
 
-## RedMeteo excluida del KML (desde 2026-07-17)
+## RedMeteo: directa desde liveupdate.php, NO vismet (desde 2026-07-17)
 
 Durante un temporal real en la zona central se verificó con la API de vismet que **las 66
 estaciones RedMeteo devuelven 0.0 fijo en toda la ventana de 48h** (`by-measure-type/1`;
 en `raw-measure/last` la red ni siquiera aparece), mientras Agromet/INIA/DMC vecinas
-marcaban 50–296 mm/día — mismo patrón del feed roto de DMC/DGA en vismet. Como un 0 falso
-en un sistema de alertas induce decisiones erradas, RedMeteo se excluye del ingest en
-`Actualizar.ps1` (filtro junto al de DMC). **Camino de reintegro:** RedMeteo tiene API
-propia (JSON/CSV, refresco 5 min, `redmeteo.cl/api.html`) que exige solicitud formal por
-correo (`redmeteoaficionadachile@gmail.com`), citar la fuente y servir los datos en espejo
-desde sistema propio (no leer su API en caliente). Cuando otorguen acceso: ingestar como
-fuente directa nueva (patrón `DmcDirecto.ps1`) y quitar el filtro.
+marcaban 50–296 mm/día — mismo patrón del feed roto de DMC/DGA en vismet. RedMeteo se
+excluye del ingest vismet en `Actualizar.ps1` (filtro junto al de DMC) y se reintegra
+desde su **fuente directa**: `https://redmeteo.cl/liveupdate.php`, el JSON que alimenta el
+mapa público de su home (`src/RedMeteoDirecto.ps1` + `redmeteo_estado.json`, mismo patrón
+de tasa-por-diferencia e historia que DMC directo). Detalles del feed y sus campos-trampa
+(`tasalluvia` viene igual a `lluviadiaria`, NO usar) en el encabezado del módulo.
+**Cortesía pendiente:** su política pide solicitar la API formal por correo
+(`redmeteoaficionadachile@gmail.com`) — hay borrador en `docs/borrador-correo-redmeteo.md`
+(sin trackear); enviarla formaliza el uso aunque liveupdate.php sea el feed del mapa
+público y el consumo sea 1 request/ciclo servido en espejo, como ellos piden.
+**Gotcha PS 5.1 vs pwsh:** `$s | ConvertFrom-Json` en 5.1 emite el array JSON como UN solo
+objeto — `Get-RedMeteoLive` lo normaliza con `ForEach-Object` para ambas versiones.
+
+## "Acumulado hoy" honesto: null NUNCA es 0 (desde 2026-07-17)
+
+En la ventana de rollover matinal del sitio DMC (visto 07:20 Chile en pleno temporal) la
+celda "Agua caída / Hoy" vino vacía para TODA la pasada DMC (122 estaciones; la pasada
+INIA/FDF minutos después funcionó a medias) y el código convertía ese null en
+"Acumulado hoy: 0 mm" → 122 falsos ceros y además **cortaba la racha de lluvia continua**
+de los umbrales regionales. Regla implementada en las 3 fuentes directas:
+- Reintento corto por estación cuando el parse de precipitación da null (`DmcDirecto.ps1`
+  y `RedesRegionalesDmc.ps1`).
+- `Get-AcumuladoHonesto` (DmcDirecto.ps1): dato → dato; sin dato pero estado previo del
+  MISMO día Chile → se arrastra el último acumulado conocido; si no → `$null`.
+- `$null` se muestra como **"s/d"** en los popups (`Format-AcumHoy` en AlertasKml.ps1),
+  y `Add-InfoRegional` NO actualiza la racha ni asigna color regional con null (conserva
+  el estado previo tal cual).
 
 ## Umbrales regionales aviso/alerta/alarma (solo precipitacion, desde 2026-07-08)
 
