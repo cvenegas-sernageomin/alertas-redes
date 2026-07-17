@@ -81,6 +81,7 @@ function Get-EstacionesRegionalesDirecto {
     $ok = 0; $fallidas = 0
     $ahoraEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
     $fechaChileHoy = Get-FechaChileDeEpoch $ahoraEpoch
+    $medianocheEpoch = Get-EpochMedianocheChile $fechaChileHoy
 
     foreach ($est in $Estaciones) {
         $codStr = [string]$est.Codigo
@@ -114,6 +115,7 @@ function Get-EstacionesRegionalesDirecto {
             $acumuladoHoy = Get-AcumuladoHonesto -PrecipHoy $precH -PrevEntry $prevEntry -FechaChileHoy $fechaChileHoy
 
             $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
+            if ($null -ne $precH) { $historiaPrev = Add-MedianocheCero -Historia $historiaPrev -MedianocheEpoch $medianocheEpoch }
             $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $precH -AhoraEpoch $ahoraEpoch
             $serie = Get-SerieDesdeHistoria $historiaNueva
 

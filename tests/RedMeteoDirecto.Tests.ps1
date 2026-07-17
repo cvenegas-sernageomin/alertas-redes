@@ -86,9 +86,14 @@ Describe "Get-EstacionesRedMeteoDirecto (primera corrida, sin estado previo)" {
     It "AcumuladoHoy si viene aunque no haya tasa" {
         $r.Redes[0].AcumuladoHoy | Should Be 12.5
     }
-    It "el estado inicial guarda la primera muestra" {
+    It "el estado inicial guarda la primera muestra + el 0 de medianoche sembrado" {
         $r.EstadoNuevo['RMCL0010'].precip | Should Be 12.5
-        $r.EstadoNuevo['RMCL0010'].historia.Count | Should Be 1
+        $r.EstadoNuevo['RMCL0010'].historia.Count | Should Be 2
+    }
+    It "primera corrida con lluvia: YA hay serie graficable (00:00=0 -> ahora=12.5)" {
+        $r.Redes[0].TiemposSerie.Count | Should Be 2
+        $r.Redes[0].ValoresSerie[0] | Should Be 0.0
+        $r.Redes[0].ValoresSerie[1] | Should Be 12.5
     }
 }
 

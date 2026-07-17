@@ -64,6 +64,7 @@ function Get-EstacionesRedMeteoDirecto {
     $estadoNuevo = @{}
     $ok = 0; $descartadas = 0
     $vistos = @{}
+    $medianocheEpoch = Get-EpochMedianocheChile $FechaChile
 
     foreach ($o in $Observaciones) {
         $cod = [string]$o.id_estacion
@@ -96,6 +97,7 @@ function Get-EstacionesRedMeteoDirecto {
         $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
         $historiaNueva = $historiaPrev
         if ($null -ne $lluvia -and $null -ne $ultimoEpoch) {
+            $historiaPrev  = Add-MedianocheCero -Historia $historiaPrev -MedianocheEpoch $medianocheEpoch
             $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $lluvia -AhoraEpoch $AhoraEpoch
         }
         $serie = Get-SerieDesdeHistoria $historiaNueva

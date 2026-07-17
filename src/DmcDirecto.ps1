@@ -117,6 +117,28 @@ function Get-FechaChileDeEpoch {
     return ([System.TimeZoneInfo]::ConvertTimeFromUtc($utcDt, $tzChile)).ToString('yyyy-MM-dd')
 }
 
+# Epoch de la medianoche Chile del dia dado ('yyyy-MM-dd').
+function Get-EpochMedianocheChile {
+    param([string]$FechaChile)
+    $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time')
+    $p = $FechaChile -split '-'
+    $localDt = [datetime]::new([int]$p[0], [int]$p[1], [int]$p[2], 0, 0, 0, [DateTimeKind]::Unspecified)
+    $utcDt = [System.TimeZoneInfo]::ConvertTimeToUtc($localDt, $tzChile)
+    return [int64]([DateTimeOffset]::new($utcDt, [TimeSpan]::Zero)).ToUnixTimeSeconds()
+}
+
+# Siembra el "0 de medianoche" en la historia si aun no hay muestras del dia actual.
+# NO es dato inventado: el acumulado diario se resetea a las 00:00 por definicion, asi que
+# a esa hora el acumulado ERA 0.0. Con esto una estacion que esta registrando lluvia tiene
+# grafico (rampa 00:00 -> ahora) desde su PRIMERA corrida del dia, sin esperar 3 ciclos del
+# cron para juntar 2 deltas. Idempotente: si ya hay una muestra de hoy, no agrega nada.
+function Add-MedianocheCero {
+    param([array]$Historia, [long]$MedianocheEpoch)
+    $tieneHoy = @($Historia | Where-Object { [int64]$_.epoch -ge $MedianocheEpoch }).Count -gt 0
+    if ($tieneHoy) { return ,@($Historia) }
+    return ,@(@($Historia) + @(@{ epoch = $MedianocheEpoch; precip = 0.0 }))
+}
+
 # "Acumulado hoy" HONESTO cuando la fuente no entrego el dato ($PrecipHoy null).
 # Gotcha real (2026-07-17 07:20): en la ventana de rollover matinal del sitio DMC la celda
 # "Hoy" vino vacia para TODA la pasada (122 estaciones) y el codigo viejo lo convertia en
@@ -162,6 +184,12 @@ function Get-SerieDesdeHistoria {
     if ($ordenada.Count -lt 2) { return @{ Tiempos = @(); Valores = @() } }
     $tiempos = [System.Collections.Generic.List[long]]::new()
     $valores = [System.Collections.Generic.List[double]]::new()
+    # Punto inicial: se emite solo si su acumulado es 0 (tipicamente el 0 sembrado de
+    # medianoche, ver Add-MedianocheCero): un 0 alli es real, y permite que el grafico
+    # exista con una sola muestra posterior (2 puntos: 00:00=0 -> ahora=X).
+    if ([double]$ordenada[0].precip -eq 0) {
+        $tiempos.Add([int64]$ordenada[0].epoch); $valores.Add(0.0)
+    }
     for ($i = 1; $i -lt $ordenada.Count; $i++) {
         $delta = [double]$ordenada[$i].precip - [double]$ordenada[$i - 1].precip
         if ($delta -lt 0) { $delta = [double]$ordenada[$i].precip }   # reset de medianoche
@@ -231,6 +259,7 @@ function Get-EstacionesDmcDirecto {
     $ok = 0; $fallidas = 0
     $ahoraEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
     $fechaChileHoy = Get-FechaChileDeEpoch $ahoraEpoch
+    $medianocheEpoch = Get-EpochMedianocheChile $fechaChileHoy
 
     foreach ($cod in $Codigos) {
         $codStr = [string]$cod
@@ -274,6 +303,7 @@ function Get-EstacionesDmcDirecto {
             $acumuladoHoy = Get-AcumuladoHonesto -PrecipHoy $precH -PrevEntry $prevEntry -FechaChileHoy $fechaChileHoy
 
             $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
+            if ($null -ne $precH) { $historiaPrev = Add-MedianocheCero -Historia $historiaPrev -MedianocheEpoch $medianocheEpoch }
             $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $precH -AhoraEpoch $ahoraEpoch
             $serie = Get-SerieDesdeHistoria $historiaNueva
 

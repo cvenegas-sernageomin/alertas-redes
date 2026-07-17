@@ -80,6 +80,21 @@ de los umbrales regionales. Regla implementada en las 3 fuentes directas:
   y `Add-InfoRegional` NO actualiza la racha ni asigna color regional con null (conserva
   el estado previo tal cual).
 
+## Gráfico desde la PRIMERA corrida: el "0 de medianoche" (desde 2026-07-17)
+
+Las fuentes directas (DMC/INIA/FDF/RedMeteo) solo publican el acumulado del día, y el
+gráfico se reconstruye de la mini-historia entre corridas → antes una estación lloviendo
+necesitaba ~3 ciclos del cron (que es irregular, 2-5h) para tener gráfico. Fix:
+`Add-MedianocheCero` (DmcDirecto.ps1) siembra en la historia el punto `00:00 Chile = 0.0`
+si aún no hay muestra del día — **no es dato inventado**: el acumulado diario se resetea a
+medianoche por definición. `Get-SerieDesdeHistoria` emite ese punto inicial cuando su
+acumulado es 0 → con UNA sola muestra posterior ya hay 2 puntos y `Build-GraficosAcumulado`
+genera los charts (rampa 00:00 → ahora, se refina con cada corrida). Idempotente (no
+duplica el 0 si ya hay muestra de hoy). Nota: los JSON de la DMC (RE8011, serie minutaria
+12h de toda la red) existirían para esto pero están **bloqueados sin registro**
+("servicio bloqueado para el usuario") — si algún día se consigue acceso, esa es la serie
+horaria real.
+
 ## Umbrales regionales aviso/alerta/alarma (solo precipitacion, desde 2026-07-08)
 
 Sistema ADICIONAL de alerta verde/amarillo/rojo basado SOLO en precipitacion acumulada
