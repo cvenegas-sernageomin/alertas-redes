@@ -15,15 +15,21 @@ $estadoDmcPath   = "$here\dmc_estado.json"
 $estadoRachaPath = "$here\racha_lluvia.json"
 $estadoRegPath   = "$here\redes_regionales_estado.json"
 
-# vismet.cr2.cl (DGA/Agromet/CEAZA/RedMeteo/UFRO/Davis) -- se excluye DMC de aqui: se
+# vismet.cr2.cl (DGA/Agromet/CEAZA/UFRO/Davis) -- se excluye DMC de aqui: se
 # verifico 2026-07-08 que vismet devuelve 0.0 fijo para TODA la red DMC (y tambien DGA)
 # mientras el portal publico de la DMC muestra lluvia real para las mismas estaciones.
 # DGA sigue viniendo de vismet (no tiene fuente directa sin CAPTCHA, ver DGASAT en memoria);
 # DMC se reemplaza integramente por scraping directo mas abajo.
-Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DGA/Agromet/CEAZA (vismet, sin DMC)..." -ForegroundColor Cyan
+# RedMeteo TAMBIEN se excluye (2026-07-17): vismet devuelve 0.0 fijo para las 66 estaciones
+# de la red en toda la ventana de 48h (verificado con la API real durante un temporal en que
+# Agromet/INIA/DMC vecinas marcaban 50-296 mm/dia) — mismo patron del feed roto de DMC.
+# Un 0 falso en un sistema de alertas es peor que no mostrar la red. Reintegrar cuando
+# RedMeteo otorgue acceso a su API propia (redmeteo.cl/api.html, JSON/CSV cada 5 min,
+# solicitud formal a redmeteoaficionadachile@gmail.com + citar fuente + servir en espejo).
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DGA/Agromet/CEAZA (vismet, sin DMC ni RedMeteo)..." -ForegroundColor Cyan
 $fechaHoy = Get-FechaChile
 try {
-    $redesVismet = @(Get-AllRedes | Where-Object { $_.Red -ne 'DMC' })
+    $redesVismet = @(Get-AllRedes | Where-Object { $_.Red -ne 'DMC' -and $_.Red -ne 'RedMeteo' })
     foreach ($e in $redesVismet) {
         $acum = Get-AcumuladoCalendario $e.TiemposSerie $e.ValoresSerie $fechaHoy
         Add-Member -InputObject $e -NotePropertyName AcumuladoHoy -NotePropertyValue $acum -Force

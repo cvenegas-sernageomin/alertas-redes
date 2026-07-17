@@ -47,6 +47,19 @@ mantiene vía vismet, pero **DMC se reemplaza íntegramente por scraping directo
   ~2-5h (ver [[reference-github-actions-cron-poco-confiable]] o sección de abajo) esto es
   bajo tráfico total para el servidor de la DMC.
 
+## RedMeteo excluida del KML (desde 2026-07-17)
+
+Durante un temporal real en la zona central se verificó con la API de vismet que **las 66
+estaciones RedMeteo devuelven 0.0 fijo en toda la ventana de 48h** (`by-measure-type/1`;
+en `raw-measure/last` la red ni siquiera aparece), mientras Agromet/INIA/DMC vecinas
+marcaban 50–296 mm/día — mismo patrón del feed roto de DMC/DGA en vismet. Como un 0 falso
+en un sistema de alertas induce decisiones erradas, RedMeteo se excluye del ingest en
+`Actualizar.ps1` (filtro junto al de DMC). **Camino de reintegro:** RedMeteo tiene API
+propia (JSON/CSV, refresco 5 min, `redmeteo.cl/api.html`) que exige solicitud formal por
+correo (`redmeteoaficionadachile@gmail.com`), citar la fuente y servir los datos en espejo
+desde sistema propio (no leer su API en caliente). Cuando otorguen acceso: ingestar como
+fuente directa nueva (patrón `DmcDirecto.ps1`) y quitar el filtro.
+
 ## Umbrales regionales aviso/alerta/alarma (solo precipitacion, desde 2026-07-08)
 
 Sistema ADICIONAL de alerta verde/amarillo/rojo basado SOLO en precipitacion acumulada
