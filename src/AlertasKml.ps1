@@ -85,11 +85,18 @@ function Build-AcumuladoSerie([array]$precip) {
 
 function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas, $umbralRojo = $null) {
     if ($tiempos.Count -lt 2) { return '' }
-    # Tomar las ultimas $horas muestras (paso horario)
-    $n     = $tiempos.Count
-    $desde = [math]::Max(0, $n - $horas)
-    $t = @($tiempos[$desde..($n - 1)])
-    $p = @($precip[$desde..($n - 1)])
+    # Ventana por TIEMPO (epoch), no por numero de muestras: las fuentes directas
+    # (DMC/RedMeteo/INIA) traen muestras irregulares (~4-6/dia), asi que "las ultimas 24
+    # muestras" abarcaban toda la ventana de 50h y el titulo "Acumulado 24h" mentia.
+    # Para vismet (muestras horarias) el resultado es el mismo de antes.
+    $tFin = [int64]$tiempos[$tiempos.Count - 1]
+    $desdeEpoch = $tFin - ([long]$horas * 3600)
+    $t = [System.Collections.Generic.List[long]]::new()
+    $p = [System.Collections.Generic.List[object]]::new()
+    for ($i = 0; $i -lt $tiempos.Count; $i++) {
+        if ([int64]$tiempos[$i] -gt $desdeEpoch) { $t.Add([int64]$tiempos[$i]); $p.Add($precip[$i]) }
+    }
+    $t = @($t); $p = @($p)
     if ($t.Count -lt 2) { return '' }
 
     $labels = @($t | ForEach-Object {
@@ -127,7 +134,7 @@ function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas, $umb
         options = @{
             plugins = @{
                 legend = @{ display=$true; position='bottom'; labels=@{ boxWidth=10; font=@{ size=9 } } }
-                title  = @{ display=$true; text="Acumulado ${horas}h: $totalMm mm"; font=@{ size=11 } }
+                title  = @{ display=$true; text="Acumulado ${horas}h: $totalMm mm"; font=@{ size=12; weight='bold' } }
             }
             scales = $escalas
         }
@@ -143,12 +150,23 @@ function Build-GraficosAcumulado([array]$tiempos, [array]$precip, $umbralRojo = 
     $total = 0.0
     foreach ($v in $precip) { if ($null -ne $v) { $total += [double]$v } }
     if ($total -lt 0.1) { return '' }
+    # Totales por ventana de tiempo, para mostrarlos EN NEGRITA en el texto del popup
+    # (visibles al tiro, sin esperar que cargue la imagen del grafico)
+    $tFin = [int64]$tiempos[$tiempos.Count - 1]
+    $t24 = 0.0; $t48 = 0.0
+    for ($i = 0; $i -lt $tiempos.Count; $i++) {
+        if ($null -eq $precip[$i]) { continue }
+        $ep = [int64]$tiempos[$i]
+        if ($ep -gt ($tFin - 24 * 3600)) { $t24 += [double]$precip[$i] }
+        if ($ep -gt ($tFin - 48 * 3600)) { $t48 += [double]$precip[$i] }
+    }
+    $t24 = [math]::Round($t24, 1); $t48 = [math]::Round($t48, 1)
     $img = ''
     $c24 = Build-ChartAcumulado $tiempos $precip 24 $umbralRojo
     $c48 = Build-ChartAcumulado $tiempos $precip 48 $umbralRojo
     # Escapar & -> &amp; para que Google Earth no corte la URL al parsear el HTML del globo
-    if ($c24) { $img += "<br/><b>Ultimas 24 h</b><br/><img src='$($c24 -replace '&','&amp;')' width='330'/>" }
-    if ($c48) { $img += "<br/><b>Ultimas 48 h</b><br/><img src='$($c48 -replace '&','&amp;')' width='330'/>" }
+    if ($c24) { $img += "<br/><b>Ultimas 24 h &mdash; acumulado $t24 mm</b><br/><img src='$($c24 -replace '&','&amp;')' width='330'/>" }
+    if ($c48) { $img += "<br/><b>Ultimas 48 h &mdash; acumulado $t48 mm</b><br/><img src='$($c48 -replace '&','&amp;')' width='330'/>" }
     return $img
 }
 

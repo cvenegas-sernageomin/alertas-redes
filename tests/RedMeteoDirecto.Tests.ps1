@@ -63,13 +63,15 @@ Describe "Get-EstacionesRedMeteoDirecto (sinteticos)" {
     It "el estado nuevo solo guarda estaciones con dato de hoy" {
         @($r.EstadoNuevo.Keys) | Should Be @('RMCL0001')
     }
-    It "la historia acumula la muestra nueva sobre la previa" {
-        $r.EstadoNuevo['RMCL0001'].historia.Count | Should Be 2
+    It "la historia acumula la muestra nueva sobre la previa + el 0 de medianoche sembrado" {
+        $r.EstadoNuevo['RMCL0001'].historia.Count | Should Be 3
     }
-    It "la serie reconstruida trae el delta entre muestras (10-4=6)" {
+    It "la serie parte del 0 de medianoche y trae los deltas (0, 4, 6)" {
         $e1 = $r.Redes | Where-Object Codigo -eq 'RMCL0001'
-        $e1.ValoresSerie.Count | Should Be 1
-        $e1.ValoresSerie[0] | Should Be 6.0
+        $e1.ValoresSerie.Count | Should Be 3
+        $e1.ValoresSerie[0] | Should Be 0.0
+        $e1.ValoresSerie[1] | Should Be 4.0
+        $e1.ValoresSerie[2] | Should Be 6.0
     }
 }
 

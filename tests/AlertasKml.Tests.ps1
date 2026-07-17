@@ -274,3 +274,25 @@ Describe "Build-PronosticoKml" {
         $kml | Should Match '\+24 a 48h'
     }
 }
+
+Describe "Build-ChartAcumulado ventana por tiempo (muestras irregulares)" {
+    # 3 muestras: hace 40h (fuera de 24h), hace 10h y ahora (dentro de 24h)
+    $fin = 1784289600
+    $tiempos = @(($fin - 40*3600), ($fin - 10*3600), $fin)
+    $precip  = @(30.0, 94.0, 16.0)
+    It "el chart de 24h solo incluye las muestras de las ultimas 24 horas" {
+        $url = Build-ChartAcumulado $tiempos $precip 24
+        $url | Should Match 'quickchart\.io'
+        $dec = [uri]::UnescapeDataString($url)
+        $dec | Should Match 'Acumulado 24h: 110 mm'
+    }
+    It "el chart de 48h incluye las 3 muestras" {
+        $dec = [uri]::UnescapeDataString((Build-ChartAcumulado $tiempos $precip 48))
+        $dec | Should Match 'Acumulado 48h: 140 mm'
+    }
+    It "Build-GraficosAcumulado pone los acumulados en negrita en el texto" {
+        $html = Build-GraficosAcumulado $tiempos $precip
+        $html | Should Match '<b>Ultimas 24 h &mdash; acumulado 110 mm</b>'
+        $html | Should Match '<b>Ultimas 48 h &mdash; acumulado 140 mm</b>'
+    }
+}

@@ -127,15 +127,19 @@ function Get-EpochMedianocheChile {
     return [int64]([DateTimeOffset]::new($utcDt, [TimeSpan]::Zero)).ToUnixTimeSeconds()
 }
 
-# Siembra el "0 de medianoche" en la historia si aun no hay muestras del dia actual.
-# NO es dato inventado: el acumulado diario se resetea a las 00:00 por definicion, asi que
-# a esa hora el acumulado ERA 0.0. Con esto una estacion que esta registrando lluvia tiene
-# grafico (rampa 00:00 -> ahora) desde su PRIMERA corrida del dia, sin esperar 3 ciclos del
-# cron para juntar 2 deltas. Idempotente: si ya hay una muestra de hoy, no agrega nada.
+# Siembra el "0 de medianoche" en la historia. NO es dato inventado: el acumulado diario
+# se resetea a las 00:00 por definicion, asi que a esa hora el acumulado ERA 0.0. Esto:
+#  (a) da grafico a una estacion lloviendo desde su PRIMERA corrida (rampa 00:00 -> ahora);
+#  (b) ancla la BASE del dia aunque la historia ya tenga muestras de hoy — sin el 0, una
+#      estacion que partio a mitad del dia con 94 mm ya caidos mostraba en el grafico solo
+#      el delta entre corridas (p.ej. 16 mm) mientras el popup decia 110 mm (bug real
+#      2026-07-17); y una muestra de AYER contra la primera de hoy descontaba el acumulado
+#      de ayer (delta 110-44=66 en vez de 110).
+# Idempotente: si ya existe la muestra de las 00:00 exactas, no agrega nada.
 function Add-MedianocheCero {
     param([array]$Historia, [long]$MedianocheEpoch)
-    $tieneHoy = @($Historia | Where-Object { [int64]$_.epoch -ge $MedianocheEpoch }).Count -gt 0
-    if ($tieneHoy) { return ,@($Historia) }
+    $yaSembrado = @($Historia | Where-Object { [int64]$_.epoch -eq $MedianocheEpoch }).Count -gt 0
+    if ($yaSembrado) { return ,@($Historia) }
     return ,@(@($Historia) + @(@{ epoch = $MedianocheEpoch; precip = 0.0 }))
 }
 

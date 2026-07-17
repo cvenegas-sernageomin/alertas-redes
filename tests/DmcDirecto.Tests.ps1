@@ -269,9 +269,12 @@ Describe "Add-MedianocheCero" {
         $h = Add-MedianocheCero -Historia @(@{ epoch = $mn - 3600; precip = 44.0 }) -MedianocheEpoch $mn
         $h.Count | Should Be 2
     }
-    It "historia ya con muestra de hoy: NO duplica (idempotente)" {
+    It "historia con muestras de hoy pero SIN el 0 de las 00:00: igual lo siembra (ancla la base del dia)" {
+        # bug real 2026-07-17: estacion que partio a mitad del dia con 94mm ya caidos
+        # mostraba solo el delta entre corridas; el 0 de medianoche ancla el acumulado real
         $h = Add-MedianocheCero -Historia @(@{ epoch = $mn + 7200; precip = 5.0 }) -MedianocheEpoch $mn
-        $h.Count | Should Be 1
+        $h.Count | Should Be 2
+        @($h | Where-Object { [int64]$_.epoch -eq $mn })[0].precip | Should Be 0.0
     }
     It "el propio 0 sembrado cuenta como muestra de hoy en la corrida siguiente" {
         $h1 = Add-MedianocheCero -Historia @() -MedianocheEpoch $mn
