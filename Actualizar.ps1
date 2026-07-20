@@ -14,6 +14,7 @@ $kmlSismos       = "$here\red_sismos.kml"
 $estadoDmcPath   = "$here\dmc_estado.json"
 $estadoRachaPath = "$here\racha_lluvia.json"
 $estadoRegPath   = "$here\redes_regionales_estado.json"
+$alertasDiariasPath = "$here\alertas_diarias.json"
 
 # vismet.cr2.cl (DGA/Agromet/CEAZA/RedMeteo/UFRO/Davis) -- se excluye DMC de aqui: se
 # verifico 2026-07-08 que vismet devuelve 0.0 fijo para TODA la red DMC (y tambien DGA)
@@ -149,45 +150,85 @@ try {
     Write-Warning "Error en sismos: $_. Se mantiene el KML anterior."
 }
 
-# --- Notificación Telegram (solo si se configuraron los secrets) ---
+# --- Sistema de consolidacion diaria de alertas (Telegram) ---
 $tgToken  = $env:TELEGRAM_TOKEN
 $tgChatId = $env:TELEGRAM_CHAT_ID
 if ($tgToken -and $tgChatId) {
     try {
         if ($env:PRUEBA -eq 'true') {
             # Modo prueba: enviar un mensaje de ejemplo con estaciones ficticias
-            # para ver el formato (incluye "pueblo grande mas cercano").
             $demo = @(
                 [pscustomobject]@{ Nombre = 'Demo Talca';   Red = 'DGA'; TasaMmH = 12.4; Lat = -35.42; Lon = -71.66 }
                 [pscustomobject]@{ Nombre = 'Demo Chillan';  Red = 'DMC'; TasaMmH = 15.1; Lat = -36.61; Lon = -72.10 }
-                [pscustomobject]@{ Nombre = 'Demo Pucon';    Red = 'DGA'; TasaMmH = 6.2;  Lat = -39.27; Lon = -71.95 }
             )
-            $demoPron = @(
-                [pscustomobject]@{ Nombre = '+12 a 24h'; ColorFinal = 'rojo'; Lat = -40.57; Lon = -73.13;
-                    PrecipEcmwf = 32; PrecipGfs = 28; PrecipIcon = 25; IsoEcmwf = 3200; IsoGfs = 3100; IsoIcon = 3000; NModelos = 3 }
-            )
-            $msg = "🧪 PRUEBA (datos ficticios)`n" + (Build-ResumenAlertas $demo @() $demoPron @())
+            $msg = "🧪 PRUEBA (resumen diario)`n" + (Build-ResumenAlertas-Diario @{
+                Dia = (Get-Date).ToString('yyyy-MM-dd')
+                RegionalizadasRojas = $demo
+                RegionalizadasAmarillas = @()
+                EmasRojas = @()
+                EmasAmarillas = @()
+                VentanasRojas = @()
+                VentanasAmarillas = @()
+                SismosFuertes = @()
+            })
             if (Send-TelegramMensaje $tgToken $tgChatId $msg) {
                 Write-Host "  -> Mensaje de PRUEBA enviado." -ForegroundColor Green
             }
             return
         }
-        $ventanasParaNot = if ($null -ne $allVentanas) { $allVentanas } else { @() }
+
+        # Leer estado diario previo y actualizar con datos actuales
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Actualizando consolidado diario de alertas..." -ForegroundColor Cyan
+        $estadoActual = Read-AlertasDiarias $alertasDiariasPath
+        $ventanasParaConsolidado = if ($null -ne $allVentanas) { $allVentanas } else { @() }
+        $estadoNuevo = Update-EstadoAlertas $estadoActual $redes $emas $ventanasParaConsolidado
+
+        # Registrar sismos M >= 6 en el estado
         $sismosTodos = @(); $sismosTodos += $sismosCsn; $sismosTodos += $sismosUsgs
-        $msg = Build-ResumenAlertas $redes $emas $ventanasParaNot $sismosTodos
-        # Sin alertas: enviar solo un "latido" diario (12:00 UTC = 08:00 Chile) para no saturar cada hora
-        if (-not $msg -and (Get-Date).ToUniversalTime().Hour -eq 12) {
-            $ts  = (Get-Date).ToUniversalTime().ToString('HH:mm UTC')
-            $msg = "OK $ts | Redes: $($redes.Count) | EMAs: $($emas.Count) | Pron: $($ventanasParaNot.Count) | Sismos: $($sismosTodos.Count) | sin alertas activas"
+        $sismosFuertes = @(Get-SismosFuertes $sismosTodos 6.0 90)
+        if ($sismosFuertes.Count -gt 0) {
+            $estadoNuevo.SismosFuertes = $sismosFuertes
         }
-        if ($msg) {
-            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Enviando notificacion Telegram..." -ForegroundColor Cyan
-            if (Send-TelegramMensaje $tgToken $tgChatId $msg) { Write-Host "  -> Mensaje enviado." -ForegroundColor Green }
+
+        # Guardar estado actualizado
+        Save-AlertasDiarias $alertasDiariasPath $estadoNuevo
+
+        # Decidir si enviar:
+        # 1. Siempre: si hay sismos M >= 6 (alerta critica inmediata)
+        # 2. Una vez al dia: si es la hora de envio (20:00 UTC = 16:00 hora Chile) y hay alertas
+        $hayAlertasCriticas = $sismosFuertes.Count -gt 0
+        $esHoraEnvio = Test-EsHoraEnvio
+        $hayAlertasConsolidadas = $estadoNuevo.RegionalizadasRojas.Count -gt 0 -or
+                                   $estadoNuevo.RegionalizadasAmarillas.Count -gt 0 -or
+                                   $estadoNuevo.EmasRojas.Count -gt 0 -or
+                                   $estadoNuevo.EmasAmarillas.Count -gt 0 -or
+                                   $estadoNuevo.VentanasRojas.Count -gt 0 -or
+                                   $estadoNuevo.VentanasAmarillas.Count -gt 0
+
+        if ($hayAlertasCriticas) {
+            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] ALERTA CRITICA: Sismos M≥6 detectados." -ForegroundColor Red
+            $msg = Build-AlertaSismo $sismosFuertes
+            if ($msg -and (Send-TelegramMensaje $tgToken $tgChatId $msg)) {
+                Write-Host "  -> Alerta crítica enviada inmediatamente." -ForegroundColor Green
+            }
+        } elseif ($esHoraEnvio -and $hayAlertasConsolidadas) {
+            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Es hora de envio diario (20:00 UTC). Enviando consolidado..." -ForegroundColor Cyan
+            $msg = Build-ResumenAlertas-Diario $estadoNuevo
+            if ($msg -and (Send-TelegramMensaje $tgToken $tgChatId $msg)) {
+                Write-Host "  -> Resumen diario enviado." -ForegroundColor Green
+                $estadoNuevo.UltimoEnvio = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                Save-AlertasDiarias $alertasDiariasPath $estadoNuevo
+            }
         } else {
-            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Sin alertas; sin latido (no es 12:00 UTC)." -ForegroundColor Gray
+            $proxHora = if ($esHoraEnvio) { "mañana" } else { "20:00 UTC ($([math]::Round((20 - (Get-Date).ToUniversalTime().Hour)) horas) horas)" }
+            if ($hayAlertasConsolidadas) {
+                Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Alertas consolidadas. Proximo envio: $proxHora" -ForegroundColor Yellow
+            } else {
+                Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Sin alertas consolidadas en el dia." -ForegroundColor Gray
+            }
         }
     } catch {
-        Write-Warning "Error en bloque Telegram: $_"
+        Write-Warning "Error en consolidado diario Telegram: $_"
     }
 } else {
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Telegram no configurado (sin secrets)." -ForegroundColor Gray

@@ -271,3 +271,196 @@ function Send-TelegramMensaje([string]$token, [string]$chatId, [string]$texto) {
         return $false
     }
 }
+
+# --- Sistema de consolidacion diaria de alertas ---
+
+function Read-AlertasDiarias([string]$path) {
+    if (-not (Test-Path $path)) { return $null }
+    try {
+        $json = Get-Content $path -Raw | ConvertFrom-Json
+        return $json
+    } catch {
+        return $null
+    }
+}
+
+function Save-AlertasDiarias([string]$path, $estado) {
+    $json = $estado | ConvertTo-Json -Depth 10 -Compress
+    [System.IO.File]::WriteAllText($path, $json, [System.Text.Encoding]::UTF8)
+}
+
+# Actualiza el estado diario con los datos actuales, mantiene maximos del dia
+function Update-EstadoAlertas($estadoAnterior, [array]$redes, [array]$emas, [array]$ventanas) {
+    $hoy = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
+    $ahora = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+
+    # Si es un dia nuevo, resetear el estado
+    if ($null -eq $estadoAnterior -or $estadoAnterior.Dia -ne $hoy) {
+        $estadoAnterior = @{
+            Dia = $hoy
+            EpochCreacion = $ahora
+            MaximosPorId = @{}
+            RegionalizadasRojas = @()
+            RegionalizadasAmarillas = @()
+            EmasRojas = @()
+            EmasAmarillas = @()
+            VentanasRojas = @()
+            VentanasAmarillas = @()
+            SismosFuertes = @()
+            UltimoEnvio = 0
+        }
+    }
+
+    # Actualizar maximos de redes (capa 1)
+    foreach ($e in $redes) {
+        $id = "$($e.Nombre)_$($e.Red)"
+        $color = Get-ColorRedesFinal $e
+        if ($color -eq 'rojo') {
+            if (-not $estadoAnterior.MaximosPorId.ContainsKey($id)) {
+                $estadoAnterior.MaximosPorId[$id] = @{ Nombre = $e.Nombre; Red = $e.Red; Lat = $e.Lat; Lon = $e.Lon; MaxMmH = 0 }
+            }
+            if ([double]$e.TasaMmH -gt $estadoAnterior.MaximosPorId[$id].MaxMmH) {
+                $estadoAnterior.MaximosPorId[$id].MaxMmH = [double]$e.TasaMmH
+            }
+        }
+    }
+
+    # Recolectar maximos rojas/amarillas del dia (sin duplicar)
+    $rojasHoy = @($redes | Where-Object { (Get-ColorRedesFinal $_) -eq 'rojo' })
+    $amarillasHoy = @($redes | Where-Object { (Get-ColorRedesFinal $_) -eq 'amarillo' })
+
+    # EMAs rojas/amarillas
+    $emasRojasHoy = @($emas | Where-Object { (Get-ColorEmas $_.TasaMmH $_.Isoterma) -eq 'rojo' })
+    $emasAmarillasHoy = @($emas | Where-Object { (Get-ColorEmas $_.TasaMmH $_.Isoterma) -eq 'amarillo' })
+
+    # Ventanas pronóstico
+    $ventanasRojasHoy = @($ventanas | Where-Object { $_.ColorFinal -eq 'rojo' })
+    $ventanasAmarillasHoy = @($ventanas | Where-Object { $_.ColorFinal -eq 'amarillo' })
+
+    # Guardar resumen actual para el consolidado
+    $estadoAnterior.RegionalizadasRojas = @($rojasHoy | Select-Object Nombre, Red, TasaMmH, Lat, Lon)
+    $estadoAnterior.RegionalizadasAmarillas = @($amarillasHoy | Select-Object Nombre, Red, TasaMmH, Lat, Lon)
+    $estadoAnterior.EmasRojas = @($emasRojasHoy | Select-Object Nombre, TasaMmH, Isoterma, Altitud, Lat, Lon)
+    $estadoAnterior.EmasAmarillas = @($emasAmarillasHoy | Select-Object Nombre, TasaMmH, Isoterma, Lat, Lon)
+    $estadoAnterior.VentanasRojas = @($ventanasRojasHoy | Select-Object Nombre, Lat, Lon, PrecipEcmwf, PrecipGfs, PrecipIcon, NModelos)
+    $estadoAnterior.VentanasAmarillas = @($ventanasAmarillasHoy | Select-Object Nombre, Lat, Lon, PrecipEcmwf, PrecipGfs, PrecipIcon, NModelos)
+
+    return $estadoAnterior
+}
+
+# Detecta si es hora de enviar el consolidado diario (20:00 UTC = 16:00 Chile)
+function Test-EsHoraEnvio() {
+    $horaUtc = (Get-Date).ToUniversalTime().Hour
+    return $horaUtc -eq 20
+}
+
+# Construye resumen consolidado del dia a partir del estado acumulado
+function Build-ResumenAlertas-Diario($estado) {
+    if ($null -eq $estado -or $estado.RegionalizadasRojas.Count -eq 0 -and
+        $estado.RegionalizadasAmarillas.Count -eq 0 -and
+        $estado.EmasRojas.Count -eq 0 -and
+        $estado.EmasAmarillas.Count -eq 0 -and
+        $estado.VentanasRojas.Count -eq 0 -and
+        $estado.VentanasAmarillas.Count -eq 0 -and
+        $estado.SismosFuertes.Count -eq 0) {
+        return $null
+    }
+
+    $ts = "$($estado.Dia) (resumen del día)"
+    $lineas = @("<b>📋 Resumen diario de alertas — $ts</b>`n")
+
+    # Sismos fuertes
+    if ($estado.SismosFuertes.Count -gt 0) {
+        $lineas += "🌋 <b>Sismo(s) M≥6 registrado(s):</b>"
+        foreach ($s in $estado.SismosFuertes) {
+            $prof = if ($null -ne $s.Prof) { "$($s.Prof) km" } else { 's/d' }
+            $lineas += "  • <b>M $($s.Mag)</b> | prof $prof | $($s.Lat)°, $($s.Lon)°"
+        }
+        $lineas += ''
+    }
+
+    # Redes rojas
+    if ($estado.RegionalizadasRojas.Count -gt 0) {
+        $lineas += "🔴 <b>Redes: $($estado.RegionalizadasRojas.Count) estaciones con precip ≥10 mm/h</b>"
+        foreach ($e in ($estado.RegionalizadasRojas | Sort-Object TasaMmH -Descending)) {
+            $lineas += "  • <b>$($e.Nombre)</b> [$($e.Red)]: máx $([math]::Round($e.TasaMmH, 1)) mm/h"
+        }
+    }
+
+    # Redes amarillas
+    if ($estado.RegionalizadasAmarillas.Count -gt 0) {
+        $lineas += "🟡 <b>Redes: $($estado.RegionalizadasAmarillas.Count) estaciones con precip ≥5 mm/h</b>"
+        $top = $estado.RegionalizadasAmarillas | Sort-Object TasaMmH -Descending | Select-Object -First 5
+        foreach ($e in $top) {
+            $lineas += "  • $($e.Nombre) [$($e.Red)]: máx $([math]::Round($e.TasaMmH, 1)) mm/h"
+        }
+        if ($estado.RegionalizadasAmarillas.Count -gt 5) {
+            $lineas += "  … y $($estado.RegionalizadasAmarillas.Count - 5) más"
+        }
+    }
+
+    # EMAs rojas
+    if ($estado.EmasRojas.Count -gt 0) {
+        $lineas += "🔴 <b>EMAs: $($estado.EmasRojas.Count) estaciones — precip alta + isoterma elevada</b>"
+        foreach ($e in ($estado.EmasRojas | Sort-Object TasaMmH -Descending)) {
+            $isoStr = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 's/d' }
+            $lineas += "  • <b>$($e.Nombre)</b>: máx $([math]::Round($e.TasaMmH, 1)) mm/h | iso $isoStr | alt $($e.Altitud) m"
+        }
+    }
+
+    # EMAs amarillas
+    if ($estado.EmasAmarillas.Count -gt 0) {
+        $lineas += "🟡 <b>EMAs: $($estado.EmasAmarillas.Count) estaciones — alerta moderada</b>"
+        $top = $estado.EmasAmarillas | Sort-Object TasaMmH -Descending | Select-Object -First 3
+        foreach ($e in $top) {
+            $isoStr = if ($null -ne $e.Isoterma) { "$($e.Isoterma) m" } else { 's/d' }
+            $lineas += "  • $($e.Nombre): máx $([math]::Round($e.TasaMmH, 1)) mm/h | iso $isoStr"
+        }
+        if ($estado.EmasAmarillas.Count -gt 3) {
+            $lineas += "  … y $($estado.EmasAmarillas.Count - 3) más"
+        }
+    }
+
+    # Pronóstico rojo
+    if ($estado.VentanasRojas.Count -gt 0) {
+        $lineas += "🔴 <b>Pronóstico: $($estado.VentanasRojas.Count) celdas alerta roja</b>"
+        $top = $estado.VentanasRojas | Sort-Object {
+            [math]::Max([double]$_.PrecipEcmwf, [math]::Max([double]$_.PrecipGfs, [double]$_.PrecipIcon))
+        } -Descending | Select-Object -First 3
+        foreach ($v in $top) {
+            $pMax = [math]::Max([double]$v.PrecipEcmwf, [math]::Max([double]$v.PrecipGfs, [double]$v.PrecipIcon))
+            $lineas += "  • $($v.Lat)°S $($v.Lon)°W [$($v.Nombre)]: máx $([math]::Round($pMax, 1)) mm"
+        }
+        if ($estado.VentanasRojas.Count -gt 3) {
+            $lineas += "  … y $($estado.VentanasRojas.Count - 3) celdas más"
+        }
+    }
+
+    # Pronóstico amarillo
+    if ($estado.VentanasAmarillas.Count -gt 0) {
+        $lineas += "🟡 <b>Pronóstico: $($estado.VentanasAmarillas.Count) celdas amarillo</b>"
+        $top = $estado.VentanasAmarillas | Sort-Object {
+            [math]::Max([double]$_.PrecipEcmwf, [math]::Max([double]$_.PrecipGfs, [double]$_.PrecipIcon))
+        } -Descending | Select-Object -First 2
+        foreach ($v in $top) {
+            $pMax = [math]::Max([double]$v.PrecipEcmwf, [math]::Max([double]$v.PrecipGfs, [double]$v.PrecipIcon))
+            $lineas += "  • $($v.Lat)°S $($v.Lon)°W [$($v.Nombre)]: máx $([math]::Round($pMax, 1)) mm"
+        }
+    }
+
+    return $lineas -join "`n"
+}
+
+# Alerta critica inmediata para sismos M >= 6
+function Build-AlertaSismo([array]$sismosFuertes) {
+    if ($null -eq $sismosFuertes -or $sismosFuertes.Count -eq 0) { return $null }
+
+    $ts = (Get-Date).ToUniversalTime().ToString('HH:mm UTC')
+    $lineas = @("<b>🌋 ALERTA CRITICA: Sismo(s) M≥6 detectado(s) — $ts</b>`n")
+    foreach ($s in $sismosFuertes) {
+        $prof = if ($null -ne $s.Prof) { "$($s.Prof) km" } else { 's/d' }
+        $lugar = if ($s.Lugar) { " — $($s.Lugar)" } else { '' }
+        $lineas += "  <b>M $($s.Mag)</b> | prof $prof | $($s.Lat)°, $($s.Lon)°$lugar [$($s.Fuente)] $($s.Fecha)"
+    }
+    return $lineas -join "`n"
+}
