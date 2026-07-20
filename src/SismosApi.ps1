@@ -66,6 +66,9 @@ function Get-SismosUSGS {
     try {
         $resp = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 60
         [array]$feats = ($resp.Content | ConvertFrom-Json).features
+        # Fecha en hora de Chile (el runner corre en UTC; CSN ya viene en hora local -> consistencia)
+        try   { $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time') }
+        catch { $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('America/Santiago') }
         return $feats | ForEach-Object {
             $p = $_.properties; $c = $_.geometry.coordinates
             $epochMs = [long]$p.time
@@ -73,7 +76,7 @@ function Get-SismosUSGS {
                 Lat    = [double]$c[1]; Lon  = [double]$c[0]
                 Prof   = if ($null -ne $c[2]) { [int]$c[2] } else { $null }
                 Mag    = [double]$p.mag
-                Fecha  = [DateTimeOffset]::FromUnixTimeMilliseconds($epochMs).ToLocalTime().ToString('yyyy-MM-dd HH:mm:ss')
+                Fecha  = [System.TimeZoneInfo]::ConvertTime([DateTimeOffset]::FromUnixTimeMilliseconds($epochMs), $tzChile).ToString('yyyy-MM-dd HH:mm:ss')
                 FechaUtc = [DateTimeOffset]::FromUnixTimeMilliseconds($epochMs).UtcDateTime
                 Lugar  = $p.place; Url = $p.url; Fuente = 'USGS'
             }

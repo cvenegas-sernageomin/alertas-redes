@@ -82,16 +82,17 @@ Describe "Get-SerieDesdeHistoria" {
         $s = Get-SerieDesdeHistoria @(@{ epoch=1000; precip=0.0 })
         $s.Tiempos.Count | Should Be 0
     }
-    It "calcula el delta entre muestras consecutivas" {
+    It "calcula el delta entre muestras consecutivas (con punto inicial 0 real)" {
         $h = @(
             @{ epoch=1000; precip=0.0 }
             @{ epoch=4600; precip=2.0 }
             @{ epoch=8200; precip=5.0 }
         )
         $s = Get-SerieDesdeHistoria $h
-        $s.Tiempos.Count | Should Be 2
-        $s.Valores[0] | Should Be 2.0
-        $s.Valores[1] | Should Be 3.0
+        $s.Tiempos.Count | Should Be 3
+        $s.Valores[0] | Should Be 0.0
+        $s.Valores[1] | Should Be 2.0
+        $s.Valores[2] | Should Be 3.0
     }
     It "ordena la historia por epoch antes de calcular (por si llega desordenada)" {
         $h = @(
@@ -100,8 +101,18 @@ Describe "Get-SerieDesdeHistoria" {
             @{ epoch=4600; precip=2.0 }
         )
         $s = Get-SerieDesdeHistoria $h
+        $s.Valores[0] | Should Be 0.0
+        $s.Valores[1] | Should Be 2.0
+        $s.Valores[2] | Should Be 3.0
+    }
+    It "si la primera muestra NO es 0, no se emite punto inicial (delta desconocido)" {
+        $h = @(
+            @{ epoch=1000; precip=4.0 }
+            @{ epoch=4600; precip=6.0 }
+        )
+        $s = Get-SerieDesdeHistoria $h
+        $s.Tiempos.Count | Should Be 1
         $s.Valores[0] | Should Be 2.0
-        $s.Valores[1] | Should Be 3.0
     }
     It "maneja el reset de medianoche (delta negativo -> usa el acumulado actual)" {
         $h = @(
@@ -187,11 +198,12 @@ Describe "Get-EstacionesDmcDirecto (contra fixture, sin red)" {
         $r.Redes[0].AcumuladoHoy | Should Be 0.7
         $r.Emas[0].AcumuladoHoy  | Should Be 0.7
     }
-    It "primera corrida: sin historia previa, todavia no hay serie (1 sola muestra)" {
-        $r.Redes[0].TiemposSerie.Count | Should Be 0
+    It "primera corrida: la serie ya tiene el punto del 0 de medianoche sembrado" {
+        # fixture con dato viejo (jul-08) + 0 de hoy 00:00 -> 1 punto (reset a 0)
+        $r.Redes[0].TiemposSerie.Count | Should Be 1
     }
-    It "EstadoNuevo guarda la historia con la muestra de esta corrida" {
-        $r.EstadoNuevo['390015'].historia.Count | Should Be 1
+    It "EstadoNuevo guarda la historia con la muestra + el 0 de medianoche" {
+        $r.EstadoNuevo['390015'].historia.Count | Should Be 2
     }
 
     # Segunda corrida con estado previo (incluye historia de la 1ra) -> calcula tasa Y serie
@@ -201,12 +213,72 @@ Describe "Get-EstacionesDmcDirecto (contra fixture, sin red)" {
     It "segunda corrida: calcula tasa mm/h contra el estado previo" {
         $r2.Redes[0].TasaMmH | Should Be 0.7
     }
-    It "segunda corrida: la serie ya tiene 1 punto (delta entre las 2 muestras)" {
+    It "segunda corrida: la muestra previa (dias mas vieja que la ventana de 50h) se poda; queda el reset a 0 de hoy" {
+        # fixture del 8-jul: la muestra previa sintetica queda fuera de la ventana de 50h ->
+        # historia = [0 de medianoche de HOY, muestra vieja re-agregada]; la serie solo trae
+        # el reset a 0 de hoy (0.7 - 0.7 del delta viejo ya no es calculable)
         $r2.Redes[0].TiemposSerie.Count | Should Be 1
-        $r2.Redes[0].ValoresSerie[0] | Should Be 0.7
-        $r2.Emas[0].ValoresPrecip[0] | Should Be 0.7
+        $r2.Redes[0].ValoresSerie[0] | Should Be 0.0
     }
-    It "EstadoNuevo acumula la historia (2 muestras)" {
+    It "EstadoNuevo guarda historia con el 0 de medianoche + la muestra (la previa podada por vieja)" {
         $r2.EstadoNuevo['390015'].historia.Count | Should Be 2
+    }
+}
+
+Describe "Get-AcumuladoHonesto" {
+    # 12:00 UTC del 17-jul = 08:00 Chile del 17 (invierno UTC-4)
+    $epochHoy  = 1784289600
+    $epochAyer = 1784257200   # 23:00 Chile del 16
+    It "con dato de la fuente, lo devuelve tal cual" {
+        Get-AcumuladoHonesto -PrecipHoy 12.5 -PrevEntry $null -FechaChileHoy '2026-07-17' | Should Be 12.5
+    }
+    It "sin dato pero con estado previo DEL MISMO dia Chile: arrastra el ultimo acumulado" {
+        $prev = @{ precip = 7.0; epoch = $epochHoy }
+        Get-AcumuladoHonesto -PrecipHoy $null -PrevEntry $prev -FechaChileHoy '2026-07-17' | Should Be 7.0
+    }
+    It "sin dato y estado previo de AYER: null (s/d), no un 0 falso ni el total de ayer" {
+        $prev = @{ precip = 44.0; epoch = $epochAyer }
+        Get-AcumuladoHonesto -PrecipHoy $null -PrevEntry $prev -FechaChileHoy '2026-07-17' | Should Be $null
+    }
+    It "sin dato y sin estado previo: null" {
+        Get-AcumuladoHonesto -PrecipHoy $null -PrevEntry $null -FechaChileHoy '2026-07-17' | Should Be $null
+    }
+    It "un 0.0 real de la fuente SI es 0 (s/p), no null" {
+        Get-AcumuladoHonesto -PrecipHoy 0.0 -PrevEntry $null -FechaChileHoy '2026-07-17' | Should Be 0.0
+    }
+}
+
+Describe "Get-EpochMedianocheChile" {
+    It "medianoche Chile del 17-jul (invierno UTC-4) es 04:00 UTC" {
+        Get-EpochMedianocheChile '2026-07-17' | Should Be 1784260800
+    }
+    It "medianoche Chile del 15-ene (verano UTC-3) es 03:00 UTC" {
+        Get-EpochMedianocheChile '2026-01-15' | Should Be ([DateTimeOffset]::Parse('2026-01-15T03:00:00Z').ToUnixTimeSeconds())
+    }
+}
+
+Describe "Add-MedianocheCero" {
+    $mn = 1784260800   # 00:00 del 17-jul Chile
+    It "historia vacia: agrega el 0 de medianoche" {
+        $h = Add-MedianocheCero -Historia @() -MedianocheEpoch $mn
+        $h.Count | Should Be 1
+        $h[0].precip | Should Be 0.0
+        $h[0].epoch | Should Be $mn
+    }
+    It "historia solo con muestras de ayer: agrega el 0" {
+        $h = Add-MedianocheCero -Historia @(@{ epoch = $mn - 3600; precip = 44.0 }) -MedianocheEpoch $mn
+        $h.Count | Should Be 2
+    }
+    It "historia con muestras de hoy pero SIN el 0 de las 00:00: igual lo siembra (ancla la base del dia)" {
+        # bug real 2026-07-17: estacion que partio a mitad del dia con 94mm ya caidos
+        # mostraba solo el delta entre corridas; el 0 de medianoche ancla el acumulado real
+        $h = Add-MedianocheCero -Historia @(@{ epoch = $mn + 7200; precip = 5.0 }) -MedianocheEpoch $mn
+        $h.Count | Should Be 2
+        @($h | Where-Object { [int64]$_.epoch -eq $mn })[0].precip | Should Be 0.0
+    }
+    It "el propio 0 sembrado cuenta como muestra de hoy en la corrida siguiente" {
+        $h1 = Add-MedianocheCero -Historia @() -MedianocheEpoch $mn
+        $h2 = Add-MedianocheCero -Historia $h1 -MedianocheEpoch $mn
+        $h2.Count | Should Be 1
     }
 }

@@ -1,4 +1,16 @@
-﻿# Una estacion se considera INACTIVA si su ultimo dato real tiene mas de $umbralHoras.
+﻿# Epoch -> hora de Chile continental para MOSTRAR al usuario. El runner de GitHub Actions
+# corre en UTC, asi que .ToLocalTime() alli devuelve UTC y las horas del KML salian corridas
+# (+4 h en invierno). Toda hora visible en popups/graficos debe pasar por aqui.
+$script:TzChile = $null
+function ConvertTo-HoraChile([long]$epoch) {
+    if ($null -eq $script:TzChile) {
+        try   { $script:TzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time') }
+        catch { $script:TzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('America/Santiago') }
+    }
+    return [System.TimeZoneInfo]::ConvertTime([DateTimeOffset]::FromUnixTimeSeconds($epoch), $script:TzChile)
+}
+
+# Una estacion se considera INACTIVA si su ultimo dato real tiene mas de $umbralHoras.
 # UltimoDatoEpoch es null si la estacion nunca reporto un valor en la ventana consultada.
 function Test-EstacionInactiva($ultimoDatoEpoch, [double]$umbralHoras = 3.0) {
     if ($null -eq $ultimoDatoEpoch) { return $true }
@@ -10,7 +22,7 @@ function Build-ChartUrl([array]$tiempos, [array]$precip, [array]$temp = @(), [ar
     if ($tiempos.Count -lt 2) { return '' }
 
     $labels = @($tiempos | ForEach-Object {
-        [DateTimeOffset]::FromUnixTimeSeconds([long]$_).ToLocalTime().ToString('HH:mm')
+        (ConvertTo-HoraChile ([long]$_)).ToString('HH:mm')
     })
 
     $ds = [System.Collections.Generic.List[hashtable]]::new()
@@ -73,15 +85,22 @@ function Build-AcumuladoSerie([array]$precip) {
 
 function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas, $umbralRojo = $null) {
     if ($tiempos.Count -lt 2) { return '' }
-    # Tomar las ultimas $horas muestras (paso horario)
-    $n     = $tiempos.Count
-    $desde = [math]::Max(0, $n - $horas)
-    $t = @($tiempos[$desde..($n - 1)])
-    $p = @($precip[$desde..($n - 1)])
+    # Ventana por TIEMPO (epoch), no por numero de muestras: las fuentes directas
+    # (DMC/RedMeteo/INIA) traen muestras irregulares (~4-6/dia), asi que "las ultimas 24
+    # muestras" abarcaban toda la ventana de 50h y el titulo "Acumulado 24h" mentia.
+    # Para vismet (muestras horarias) el resultado es el mismo de antes.
+    $tFin = [int64]$tiempos[$tiempos.Count - 1]
+    $desdeEpoch = $tFin - ([long]$horas * 3600)
+    $t = [System.Collections.Generic.List[long]]::new()
+    $p = [System.Collections.Generic.List[object]]::new()
+    for ($i = 0; $i -lt $tiempos.Count; $i++) {
+        if ([int64]$tiempos[$i] -gt $desdeEpoch) { $t.Add([int64]$tiempos[$i]); $p.Add($precip[$i]) }
+    }
+    $t = @($t); $p = @($p)
     if ($t.Count -lt 2) { return '' }
 
     $labels = @($t | ForEach-Object {
-        [DateTimeOffset]::FromUnixTimeSeconds([long]$_).ToLocalTime().ToString('dd HH:mm')
+        (ConvertTo-HoraChile ([long]$_)).ToString('dd HH:mm')
     })
     $acum    = Build-AcumuladoSerie $p
     $totalMm = if ($acum.Count -gt 0) { $acum[-1] } else { 0 }
@@ -115,7 +134,7 @@ function Build-ChartAcumulado([array]$tiempos, [array]$precip, [int]$horas, $umb
         options = @{
             plugins = @{
                 legend = @{ display=$true; position='bottom'; labels=@{ boxWidth=10; font=@{ size=9 } } }
-                title  = @{ display=$true; text="Acumulado ${horas}h: $totalMm mm"; font=@{ size=11 } }
+                title  = @{ display=$true; text="Acumulado ${horas}h: $totalMm mm"; font=@{ size=12; weight='bold' } }
             }
             scales = $escalas
         }
@@ -131,12 +150,23 @@ function Build-GraficosAcumulado([array]$tiempos, [array]$precip, $umbralRojo = 
     $total = 0.0
     foreach ($v in $precip) { if ($null -ne $v) { $total += [double]$v } }
     if ($total -lt 0.1) { return '' }
+    # Totales por ventana de tiempo, para mostrarlos EN NEGRITA en el texto del popup
+    # (visibles al tiro, sin esperar que cargue la imagen del grafico)
+    $tFin = [int64]$tiempos[$tiempos.Count - 1]
+    $t24 = 0.0; $t48 = 0.0
+    for ($i = 0; $i -lt $tiempos.Count; $i++) {
+        if ($null -eq $precip[$i]) { continue }
+        $ep = [int64]$tiempos[$i]
+        if ($ep -gt ($tFin - 24 * 3600)) { $t24 += [double]$precip[$i] }
+        if ($ep -gt ($tFin - 48 * 3600)) { $t48 += [double]$precip[$i] }
+    }
+    $t24 = [math]::Round($t24, 1); $t48 = [math]::Round($t48, 1)
     $img = ''
     $c24 = Build-ChartAcumulado $tiempos $precip 24 $umbralRojo
     $c48 = Build-ChartAcumulado $tiempos $precip 48 $umbralRojo
     # Escapar & -> &amp; para que Google Earth no corte la URL al parsear el HTML del globo
-    if ($c24) { $img += "<br/><b>Ultimas 24 h</b><br/><img src='$($c24 -replace '&','&amp;')' width='330'/>" }
-    if ($c48) { $img += "<br/><b>Ultimas 48 h</b><br/><img src='$($c48 -replace '&','&amp;')' width='330'/>" }
+    if ($c24) { $img += "<br/><b>Ultimas 24 h &mdash; acumulado $t24 mm</b><br/><img src='$($c24 -replace '&','&amp;')' width='330'/>" }
+    if ($c48) { $img += "<br/><b>Ultimas 48 h &mdash; acumulado $t48 mm</b><br/><img src='$($c48 -replace '&','&amp;')' width='330'/>" }
     return $img
 }
 
@@ -164,7 +194,14 @@ function Get-ColorEmas([double]$mmH, $iso) {
 }
 
 function Format-Epoch([long]$epoch) {
-    [DateTimeOffset]::FromUnixTimeSeconds($epoch).ToLocalTime().ToString('HH:mm dd-MMM-yyyy')
+    (ConvertTo-HoraChile $epoch).ToString('HH:mm dd-MMM-yyyy') + ' hora Chile'
+}
+
+# Acumulado del dia para popup: null = la fuente no entrego el dato -> "s/d", NUNCA "0 mm"
+# (un 0 falso en pleno temporal induce decisiones erradas; gotcha DMC 2026-07-17).
+function Format-AcumHoy($mm) {
+    if ($null -ne $mm) { return "$mm mm" }
+    return 's/d'
 }
 
 function Build-Styles {
@@ -220,7 +257,7 @@ function Build-PlacemarkRedes($e) {
     if ($tieneRegion -and $e.UmbralesRegion) {
         $u = $e.UmbralesRegion
         $regionInfo = "<br/>Region: $($e.Region) | Dia de lluvia continua: $($e.DiaRacha)" +
-                      "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm " +
+                      "<br/>Acumulado hoy: $(Format-AcumHoy $e.AcumuladoHoy) " +
                       "(aviso&ge;$($u.aviso) / alerta&ge;$($u.alerta) / alarma&ge;$($u.alarma) mm)"
         $leyenda = "<hr/><small><b>Umbral regional (solo precipitacion, dia $($e.DiaRacha)):</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                    "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;$($u.aviso) mm/dia&nbsp;</small></td>" +
@@ -228,7 +265,7 @@ function Build-PlacemarkRedes($e) {
                    "<td bgcolor='#ff0000'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;$($u.alerta) (alerta/alarma)</small></td>" +
                    "<td bgcolor='#888888'>&nbsp;&nbsp;</td><td><small>&nbsp;inactiva (&gt;3h sin dato)</small></td></tr></table>"
     } else {
-        $regionInfo = if ($tieneAcumulado) { "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm" } else { '' }
+        $regionInfo = if ($tieneAcumulado) { "<br/>Acumulado hoy: $(Format-AcumHoy $e.AcumuladoHoy)" } else { '' }
         $leyenda = "<hr/><small><b>Umbrales mm/h:</b></small><table cellspacing='1' cellpadding='1'><tr>" +
                    "<td bgcolor='#00cc00'>&nbsp;&nbsp;</td><td><small>&nbsp;&lt;5&nbsp;</small></td>" +
                    "<td bgcolor='#cc9900'>&nbsp;&nbsp;</td><td><small>&nbsp;&ge;5&nbsp;</small></td>" +
@@ -266,7 +303,7 @@ function Build-PlacemarkEmas($e) {
     # Igual que en Build-PlacemarkRedes: "Precip: X mm/h" es una tasa estimada entre
     # corridas del cron y casi siempre da 0 aunque haya llovido - se muestra tambien el
     # acumulado del dia (no cambia el color/alerta EMA, que sigue igual, solo lo hace visible).
-    $acumInfo = if ($e.PSObject.Properties['AcumuladoHoy']) { "<br/>Acumulado hoy: $($e.AcumuladoHoy) mm" } else { '' }
+    $acumInfo = if ($e.PSObject.Properties['AcumuladoHoy']) { "<br/>Acumulado hoy: $(Format-AcumHoy $e.AcumuladoHoy)" } else { '' }
     $desc = "<![CDATA[<b>$($e.Nombre)</b>$fuente<br/>Precip: $($e.TasaMmH) mm/h$acumInfo<br/>Temp: $tempStr<br/>Isoterma 0C: $isoStr<br/>Altitud: $($e.Altitud) m<br/>Dato: $hora$aviso$chartImg<br/><br/>$leyenda]]>"
     return @"
     <Placemark>

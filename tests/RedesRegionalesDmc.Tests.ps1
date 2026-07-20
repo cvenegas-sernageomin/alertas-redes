@@ -39,8 +39,8 @@ Describe "Get-EstacionesRegionalesDirecto (fixture real, sin red)" {
     It "marca la fuente confirmada con el propietario" {
         $r.Redes[0].OrgConfirmada | Should Be 'INIA directo'
     }
-    It "sin dato de precipitacion valido (esta estacion mostraba '.' hoy): AcumuladoHoy=0" {
-        $r.Redes[0].AcumuladoHoy | Should Be 0.0
+    It "sin dato de precipitacion valido (esta estacion mostraba '.' hoy): AcumuladoHoy null (s/d, no 0 falso)" {
+        $r.Redes[0].AcumuladoHoy | Should Be $null
     }
 }
 

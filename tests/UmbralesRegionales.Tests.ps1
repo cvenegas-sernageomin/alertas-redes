@@ -135,3 +135,23 @@ Describe "Add-InfoRegional" {
         $nuevoEstado.ContainsKey('B') | Should Be $true
     }
 }
+
+Describe "Add-InfoRegional sin dato de acumulado (null, no 0 falso)" {
+    It "conserva la racha previa, deja AcumuladoHoy null y sin color regional" {
+        $est = [pscustomobject]@{ Lat = -33.45; Codigo = 'X1'; AcumuladoHoy = $null }
+        $prev = @{ 'X1' = @{ fecha = '2026-07-16'; acumuladoDia = 40.0; racha = 2 } }
+        $nuevo = Add-InfoRegional -Estaciones @($est) -EstadoPrev $prev -FechaHoy '2026-07-17'
+        $est.AcumuladoHoy | Should Be $null
+        $est.DiaRacha | Should Be 2
+        $est.ColorPrecipRegional | Should Be $null
+        $nuevo['X1'].racha | Should Be 2
+        $nuevo['X1'].acumuladoDia | Should Be 40.0
+    }
+    It "sin dato y sin estado previo: racha 0, sin color, sin entrada nueva de estado" {
+        $est = [pscustomobject]@{ Lat = -33.45; Codigo = 'X2'; AcumuladoHoy = $null }
+        $nuevo = Add-InfoRegional -Estaciones @($est) -EstadoPrev @{} -FechaHoy '2026-07-17'
+        $est.DiaRacha | Should Be 0
+        $est.ColorPrecipRegional | Should Be $null
+        $nuevo.ContainsKey('X2') | Should Be $false
+    }
+}

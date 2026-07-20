@@ -107,6 +107,61 @@ function ConvertTo-EpochChile {
     } catch { return $null }
 }
 
+# Fecha calendario Chile (yyyy-MM-dd) de un epoch. Compartida por DMC directo, redes
+# regionales y RedMeteo directo (todas las fuentes con "acumulado del dia" que se resetea
+# a medianoche Chile).
+function Get-FechaChileDeEpoch {
+    param([long]$Epoch)
+    $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time')
+    $utcDt = [DateTimeOffset]::FromUnixTimeSeconds($Epoch).UtcDateTime
+    return ([System.TimeZoneInfo]::ConvertTimeFromUtc($utcDt, $tzChile)).ToString('yyyy-MM-dd')
+}
+
+# Epoch de la medianoche Chile del dia dado ('yyyy-MM-dd').
+function Get-EpochMedianocheChile {
+    param([string]$FechaChile)
+    $tzChile = [System.TimeZoneInfo]::FindSystemTimeZoneById('Pacific SA Standard Time')
+    $p = $FechaChile -split '-'
+    $localDt = [datetime]::new([int]$p[0], [int]$p[1], [int]$p[2], 0, 0, 0, [DateTimeKind]::Unspecified)
+    $utcDt = [System.TimeZoneInfo]::ConvertTimeToUtc($localDt, $tzChile)
+    return [int64]([DateTimeOffset]::new($utcDt, [TimeSpan]::Zero)).ToUnixTimeSeconds()
+}
+
+# Siembra el "0 de medianoche" en la historia. NO es dato inventado: el acumulado diario
+# se resetea a las 00:00 por definicion, asi que a esa hora el acumulado ERA 0.0. Esto:
+#  (a) da grafico a una estacion lloviendo desde su PRIMERA corrida (rampa 00:00 -> ahora);
+#  (b) ancla la BASE del dia aunque la historia ya tenga muestras de hoy — sin el 0, una
+#      estacion que partio a mitad del dia con 94 mm ya caidos mostraba en el grafico solo
+#      el delta entre corridas (p.ej. 16 mm) mientras el popup decia 110 mm (bug real
+#      2026-07-17); y una muestra de AYER contra la primera de hoy descontaba el acumulado
+#      de ayer (delta 110-44=66 en vez de 110).
+# Idempotente: si ya existe la muestra de las 00:00 exactas, no agrega nada.
+function Add-MedianocheCero {
+    param([array]$Historia, [long]$MedianocheEpoch)
+    $yaSembrado = @($Historia | Where-Object { [int64]$_.epoch -eq $MedianocheEpoch }).Count -gt 0
+    if ($yaSembrado) { return ,@($Historia) }
+    return ,@(@($Historia) + @(@{ epoch = $MedianocheEpoch; precip = 0.0 }))
+}
+
+# "Acumulado hoy" HONESTO cuando la fuente no entrego el dato ($PrecipHoy null).
+# Gotcha real (2026-07-17 07:20): en la ventana de rollover matinal del sitio DMC la celda
+# "Hoy" vino vacia para TODA la pasada (122 estaciones) y el codigo viejo lo convertia en
+# "Acumulado hoy: 0 mm" -> 122 falsos ceros EN PLENO TEMPORAL (ademas cortaba la racha de
+# lluvia continua de los umbrales regionales). Regla: null NO es 0.
+#  1) si hay dato -> el dato;
+#  2) si no, y el estado previo es DEL MISMO dia Chile -> se arrastra el ultimo acumulado
+#     conocido del dia (cota inferior real);
+#  3) si no -> $null (el KML lo muestra "s/d" y no se toca la racha).
+function Get-AcumuladoHonesto {
+    param($PrecipHoy, $PrevEntry, [string]$FechaChileHoy)
+    if ($null -ne $PrecipHoy) { return [double]$PrecipHoy }
+    if ($PrevEntry -and $null -ne $PrevEntry.precip -and
+        (Get-FechaChileDeEpoch ([int64]$PrevEntry.epoch)) -eq $FechaChileHoy) {
+        return [double]$PrevEntry.precip
+    }
+    return $null
+}
+
 # La DMC solo publica el acumulado del dia (se resetea a medianoche), no una serie horaria.
 # La tasa mm/h se estima diferenciando contra la corrida anterior (EstadoPrev), igual que
 # en emas-kmz. Mejora sobre el original: si hay reset de medianoche (delta negativo), se
@@ -133,6 +188,12 @@ function Get-SerieDesdeHistoria {
     if ($ordenada.Count -lt 2) { return @{ Tiempos = @(); Valores = @() } }
     $tiempos = [System.Collections.Generic.List[long]]::new()
     $valores = [System.Collections.Generic.List[double]]::new()
+    # Punto inicial: se emite solo si su acumulado es 0 (tipicamente el 0 sembrado de
+    # medianoche, ver Add-MedianocheCero): un 0 alli es real, y permite que el grafico
+    # exista con una sola muestra posterior (2 puntos: 00:00=0 -> ahora=X).
+    if ([double]$ordenada[0].precip -eq 0) {
+        $tiempos.Add([int64]$ordenada[0].epoch); $valores.Add(0.0)
+    }
     for ($i = 1; $i -lt $ordenada.Count; $i++) {
         $delta = [double]$ordenada[$i].precip - [double]$ordenada[$i - 1].precip
         if ($delta -lt 0) { $delta = [double]$ordenada[$i].precip }   # reset de medianoche
@@ -201,6 +262,8 @@ function Get-EstacionesDmcDirecto {
     $estadoNuevo = @{}
     $ok = 0; $fallidas = 0
     $ahoraEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $fechaChileHoy = Get-FechaChileDeEpoch $ahoraEpoch
+    $medianocheEpoch = Get-EpochMedianocheChile $fechaChileHoy
 
     foreach ($cod in $Codigos) {
         $codStr = [string]$cod
@@ -211,6 +274,18 @@ function Get-EstacionesDmcDirecto {
             $info  = Get-EmaInfoDirecto -Html $html
             $temp  = Get-EmaTempActualDirecto -Html $html
             $precH = Get-EmaPrecipHoyDirecto -Html $html
+            if ($null -eq $precH) {
+                # La celda "Agua caida / Hoy" a veces viene vacia o en regeneracion
+                # (ventana matinal del sitio DMC) -> un reintento corto por estacion
+                Start-Sleep -Milliseconds 1200
+                $html2 = Get-DmcHtmlGzip -Url $url -TimeoutSeg $TimeoutSeg -UserAgent $UserAgent
+                $p2 = Get-EmaPrecipHoyDirecto -Html $html2
+                if ($null -ne $p2) {
+                    $html = $html2; $precH = $p2
+                    $info = Get-EmaInfoDirecto -Html $html2
+                    $temp = Get-EmaTempActualDirecto -Html $html2
+                }
+            }
 
             if ($null -eq $info.Lat -or $null -eq $info.Lon) { $fallidas++; continue }
 
@@ -229,9 +304,10 @@ function Get-EstacionesDmcDirecto {
                 [int][math]::Floor($info.Altitud + ($temp / 6.5) * 1000)
             } else { $null }
 
-            $acumuladoHoy = if ($null -ne $precH) { $precH } else { 0.0 }
+            $acumuladoHoy = Get-AcumuladoHonesto -PrecipHoy $precH -PrevEntry $prevEntry -FechaChileHoy $fechaChileHoy
 
             $historiaPrev  = if ($prevEntry -and $prevEntry.historia) { $prevEntry.historia } else { @() }
+            if ($null -ne $precH) { $historiaPrev = Add-MedianocheCero -Historia $historiaPrev -MedianocheEpoch $medianocheEpoch }
             $historiaNueva = Add-MuestraHistoria -Historia $historiaPrev -Epoch $ultimoEpoch -Precip $precH -AhoraEpoch $ahoraEpoch
             $serie = Get-SerieDesdeHistoria $historiaNueva
 

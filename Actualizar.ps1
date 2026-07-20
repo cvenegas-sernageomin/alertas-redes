@@ -2,29 +2,36 @@
 . "$here\src\RedesApi.ps1"
 . "$here\src\DmcDirecto.ps1"
 . "$here\src\RedesRegionalesDmc.ps1"
+. "$here\src\RedMeteoDirecto.ps1"
 . "$here\src\UmbralesRegionales.ps1"
 . "$here\src\AlertasKml.ps1"
 . "$here\src\PronosticoApi.ps1"
 . "$here\src\SismosApi.ps1"
 . "$here\src\Notificaciones.ps1"
 
-$kmlPath         = "$here\red_alertas.kml"
-$kmlPronostico   = "$here\red_pronostico.kml"
-$kmlSismos       = "$here\red_sismos.kml"
-$estadoDmcPath   = "$here\dmc_estado.json"
-$estadoRachaPath = "$here\racha_lluvia.json"
-$estadoRegPath   = "$here\redes_regionales_estado.json"
+$kmlPath            = "$here\red_alertas.kml"
+$kmlPronostico      = "$here\red_pronostico.kml"
+$kmlSismos          = "$here\red_sismos.kml"
+$estadoDmcPath      = "$here\dmc_estado.json"
+$estadoRachaPath    = "$here\racha_lluvia.json"
+$estadoRegPath      = "$here\redes_regionales_estado.json"
+$estadoRedMeteoPath = "$here\redmeteo_estado.json"
 $alertasDiariasPath = "$here\alertas_diarias.json"
 
-# vismet.cr2.cl (DGA/Agromet/CEAZA/RedMeteo/UFRO/Davis) -- se excluye DMC de aqui: se
+# vismet.cr2.cl (DGA/Agromet/CEAZA/UFRO/Davis) -- se excluye DMC de aqui: se
 # verifico 2026-07-08 que vismet devuelve 0.0 fijo para TODA la red DMC (y tambien DGA)
 # mientras el portal publico de la DMC muestra lluvia real para las mismas estaciones.
 # DGA sigue viniendo de vismet (no tiene fuente directa sin CAPTCHA, ver DGASAT en memoria);
 # DMC se reemplaza integramente por scraping directo mas abajo.
-Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DGA/Agromet/CEAZA (vismet, sin DMC)..." -ForegroundColor Cyan
+# RedMeteo TAMBIEN se excluye de vismet (2026-07-17): vismet devuelve 0.0 fijo para las 66
+# estaciones de la red en toda la ventana de 48h (verificado con la API real durante un
+# temporal en que Agromet/INIA/DMC vecinas marcaban 50-296 mm/dia) — mismo patron del feed
+# roto de DMC. La red se reintegra mas abajo desde su fuente DIRECTA (liveupdate.php, ver
+# RedMeteoDirecto.ps1 y la seccion RedMeteo del CLAUDE.md).
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando DGA/Agromet/CEAZA (vismet, sin DMC ni RedMeteo)..." -ForegroundColor Cyan
 $fechaHoy = Get-FechaChile
 try {
-    $redesVismet = @(Get-AllRedes | Where-Object { $_.Red -ne 'DMC' })
+    $redesVismet = @(Get-AllRedes | Where-Object { $_.Red -ne 'DMC' -and $_.Red -ne 'RedMeteo' })
     foreach ($e in $redesVismet) {
         $acum = Get-AcumuladoCalendario $e.TiemposSerie $e.ValoresSerie $fechaHoy
         Add-Member -InputObject $e -NotePropertyName AcumuladoHoy -NotePropertyValue $acum -Force
@@ -63,7 +70,23 @@ try {
     Write-Warning "Error en redes regionales (INIA/FDF/ESO/INACH): $_"
 }
 
-$redes = @($redesVismet) + @($redesDmc) + @($redesRegionales)
+# RedMeteo directo (redmeteo.cl/liveupdate.php, el JSON del mapa publico de su home):
+# 1 solo request (~75 KB) por ciclo; los datos se sirven en espejo desde nuestro KML,
+# como pide su politica de uso; atribucion visible como Red: RedMeteo en el visor.
+Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Consultando RedMeteo directo (redmeteo.cl)..." -ForegroundColor Cyan
+$redesRedMeteo = @()
+try {
+    $obsRm         = Get-RedMeteoLive
+    $estadoPrevRm  = Read-EstadoDmc $estadoRedMeteoPath
+    $resultRm      = Get-EstacionesRedMeteoDirecto -Observaciones $obsRm -EstadoPrev $estadoPrevRm -FechaChile $fechaHoy
+    Save-EstadoDmc $estadoRedMeteoPath $resultRm.EstadoNuevo
+    $redesRedMeteo = $resultRm.Redes
+    Write-Host "  -> $($resultRm.Ok) estaciones RedMeteo ok, $($resultRm.Descartadas) descartadas" -ForegroundColor Gray
+} catch {
+    Write-Warning "Error en RedMeteo directo (no bloqueante): $_"
+}
+
+$redes = @($redesVismet) + @($redesDmc) + @($redesRegionales) + @($redesRedMeteo)
 
 # --- Umbrales regionales aviso/alerta/alarma (solo precipitacion, RM a Los Lagos) ---
 # Reemplaza el color de Capa 1 (Get-ColorRedes 5/10 mm/h) para estaciones dentro de esas
