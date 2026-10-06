@@ -1,0 +1,32 @@
+{
+  "upload_type": "software",
+  "title": "Alertas Redes Chile: visor de alertas por precipitación, pronóstico y sismos",
+  "description": "<p>Visor y procesos automáticos que cruzan redes de estaciones meteorológicas, pronósticos y sismicidad para alertas de aluviones en Chile.</p><p>Publicado en https://cvenegas-sernageomin.github.io/alertas-redes/</p><p>La licencia CC BY-NC 4.0 cubre el trabajo original de los autores. No cubre el material de terceros:</p><ul><li>Los datos de estaciones, pronósticos y sismos provienen de sus instituciones de origen (DMC, DGA, CSN y otras) y conservan sus condiciones de uso.</li><li>Las librerías de terceros incluidas (por ejemplo en vendor/) conservan sus propias licencias.</li></ul>",
+  "creators": [
+    {
+      "name": "Servicio Nacional de Geología y Minería (SERNAGEOMIN)"
+    },
+    {
+      "name": "Venegas Benavides, Carlos",
+      "affiliation": "Servicio Nacional de Geología y Minería (SERNAGEOMIN)"
+    }
+  ],
+  "license": "cc-by-nc-4.0",
+  "access_right": "open",
+  "language": "spa",
+  "keywords": [
+    "alertas",
+    "aluviones",
+    "precipitación",
+    "sismos",
+    "Chile",
+    "SERNAGEOMIN"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://cvenegas-sernageomin.github.io/alertas-redes/",
+      "relation": "isDocumentedBy",
+      "resource_type": "other"
+    }
+  ]
+}
