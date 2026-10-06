@@ -1,5 +1,7 @@
 # Alertas Redes Chile: visor de alertas por precipitación, pronóstico y sismos
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23196776.svg)](https://doi.org/10.5281/zenodo.23196776)
+
 Visor y procesos automáticos que cruzan redes de estaciones meteorológicas, pronósticos y sismicidad para alertas de aluviones en Chile.
 
 **Publicado:** https://cvenegas-sernageomin.github.io/alertas-redes/
@@ -14,4 +16,4 @@ Los datos de estaciones, pronósticos y sismos provienen de sus instituciones de
 
 Cita sugerida:
 
-> SERNAGEOMIN / Venegas Benavides, C. (2026). Alertas Redes Chile: visor de alertas por precipitación, pronóstico y sismos [aplicación web]. https://cvenegas-sernageomin.github.io/alertas-redes/
+> SERNAGEOMIN / Venegas Benavides, C. (2026). Alertas Redes Chile: visor de alertas por precipitación, pronóstico y sismos [aplicación web]. https://cvenegas-sernageomin.github.io/alertas-redes/ · DOI: https://doi.org/10.5281/zenodo.23196776

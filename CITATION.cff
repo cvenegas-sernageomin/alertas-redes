@@ -8,6 +8,7 @@ authors:
     given-names: "Carlos"
     affiliation: "Servicio Nacional de Geología y Minería (SERNAGEOMIN)"
 date-released: 2026-10-06
+doi: 10.5281/zenodo.23196776
 license: CC-BY-NC-4.0
 url: "https://cvenegas-sernageomin.github.io/alertas-redes/"
 repository-code: "https://github.com/cvenegas-sernageomin/alertas-redes"
