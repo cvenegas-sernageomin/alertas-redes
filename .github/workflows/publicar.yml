@@ -39,6 +39,20 @@ jobs:
           }
           exit 0
 
+      # Un error de sintaxis impide correr TODO el script y, como "Generar KMLs" termina con
+      # exit 0, se republicaba el KML viejo como si fuera nuevo (paso jul-oct 2026). Esto lo
+      # deja en rojo y sin publicar.
+      - name: Validar sintaxis de los scripts
+        shell: pwsh
+        run: |
+          $malos = 0
+          Get-ChildItem -Recurse -Include *.ps1,*.psm1 | ForEach-Object {
+            $err = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$err)
+            foreach ($e in $err) { Write-Host "::error file=$($_.Name),line=$($e.Extent.StartLineNumber)::$($e.Message)"; $malos++ }
+          }
+          if ($malos) { exit 1 }
+
       - name: Generar KMLs
         shell: pwsh
         env:

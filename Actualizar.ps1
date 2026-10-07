@@ -243,7 +243,7 @@ if ($tgToken -and $tgChatId) {
                 Save-AlertasDiarias $alertasDiariasPath $estadoNuevo
             }
         } else {
-            $proxHora = if ($esHoraEnvio) { "mañana" } else { "20:00 UTC ($([math]::Round((20 - (Get-Date).ToUniversalTime().Hour)) horas) horas)" }
+            $proxHora = if ($esHoraEnvio) { "mañana" } else { "20:00 UTC (en $((20 - (Get-Date).ToUniversalTime().Hour + 24) % 24) horas)" }
             if ($hayAlertasConsolidadas) {
                 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Alertas consolidadas. Proximo envio: $proxHora" -ForegroundColor Yellow
             } else {
