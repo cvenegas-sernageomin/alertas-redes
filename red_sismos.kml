@@ -1,0 +1,778 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Sismos Chile - 2026-11-07T08:48:50Z</name>
+  <Folder>
+    <name>CSN - Superficiales (&lt;30 km) (1 ev.)</name>
+    <open>0</open>
+    <Placemark>
+      <name>M 2.6 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.6 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 14:13:43</td></tr><tr><td><b>Magnitud</b></td><td>2.6</td></tr><tr><td><b>Profundidad</b></td><td>12 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-33.64, -71.98</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391157.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.98,-33.64,0</coordinates></Point>
+    </Placemark>
+  </Folder>
+  <Folder>
+    <name>CSN - Subduccion (&gt;=30 km) (14 ev.)</name>
+    <open>0</open>
+    <Placemark>
+      <name>M 2.5 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.5 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-07 05:23:55</td></tr><tr><td><b>Magnitud</b></td><td>2.5</td></tr><tr><td><b>Profundidad</b></td><td>69 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-30.93, -71.48</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391277.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.48,-30.93,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-07 04:42:53</td></tr><tr><td><b>Magnitud</b></td><td>3</td></tr><tr><td><b>Profundidad</b></td><td>179 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.06, -67.98</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391272.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.98,-21.06,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 2.7 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.7 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-07 04:41:59</td></tr><tr><td><b>Magnitud</b></td><td>2.7</td></tr><tr><td><b>Profundidad</b></td><td>118 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.6, -68.69</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391271.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.69,-21.6,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 2.9 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.9 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-07 01:44:38</td></tr><tr><td><b>Magnitud</b></td><td>2.9</td></tr><tr><td><b>Profundidad</b></td><td>74 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-19.39, -69.62</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391242.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.62,-19.39,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 2.6 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.6 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-07 00:54:49</td></tr><tr><td><b>Magnitud</b></td><td>2.6</td></tr><tr><td><b>Profundidad</b></td><td>197 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-22.42, -67.7</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391237.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.7,-22.42,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 2.5 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.5 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-07 00:30:00</td></tr><tr><td><b>Magnitud</b></td><td>2.5</td></tr><tr><td><b>Profundidad</b></td><td>31 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-28.77, -71.31</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391230.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.31,-28.77,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3.2 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3.2 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 22:54:32</td></tr><tr><td><b>Magnitud</b></td><td>3.2</td></tr><tr><td><b>Profundidad</b></td><td>33 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.14, -70.32</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391215.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-70.32,-21.14,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 21:31:06</td></tr><tr><td><b>Magnitud</b></td><td>3</td></tr><tr><td><b>Profundidad</b></td><td>211 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-22.17, -67.66</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391204.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.66,-22.17,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3.2 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3.2 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 21:05:31</td></tr><tr><td><b>Magnitud</b></td><td>3.2</td></tr><tr><td><b>Profundidad</b></td><td>128 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.11, -68.82</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391203.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.82,-21.11,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3.5 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3.5 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 20:05:00</td></tr><tr><td><b>Magnitud</b></td><td>3.5</td></tr><tr><td><b>Profundidad</b></td><td>86 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-20.09, -69.41</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391195.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.41,-20.09,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 2.5 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.5 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 18:43:21</td></tr><tr><td><b>Magnitud</b></td><td>2.5</td></tr><tr><td><b>Profundidad</b></td><td>136 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.12, -68.57</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391188.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.57,-21.12,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3.6 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3.6 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 18:03:26</td></tr><tr><td><b>Magnitud</b></td><td>3.6</td></tr><tr><td><b>Profundidad</b></td><td>108 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-22.57, -68.74</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391185.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.74,-22.57,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 2.8 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 2.8 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 16:38:54</td></tr><tr><td><b>Magnitud</b></td><td>2.8</td></tr><tr><td><b>Profundidad</b></td><td>102 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.81, -68.71</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391178.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.71,-21.81,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 3.4 CSN</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3.4 &mdash; CSN</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 16:01:09</td></tr><tr><td><b>Magnitud</b></td><td>3.4</td></tr><tr><td><b>Profundidad</b></td><td>226 km</td></tr><tr><td><b>Lat, Lon</b></td><td>-23.72, -67.04</td></tr><tr><td><b>Fuente</b></td><td><a href='https://www.sismologia.cl/sismicidad/informes/2026/11/391174.html'>CSN</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.04,-23.72,0</coordinates></Point>
+    </Placemark>
+  </Folder>
+  <Folder>
+    <name>USGS - Superficiales (&lt;30 km) (5 ev.)</name>
+    <open>0</open>
+    <Placemark>
+      <name>M 3.6 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00ffbf</color><scale>0.5</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 3.6 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-06 00:09:34</td></tr><tr><td><b>Magnitud</b></td><td>3.6</td></tr><tr><td><b>Profundidad</b></td><td>22 km</td></tr><tr><td><b>Lugar</b></td><td>51 km WSW of Puerto, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-20.364, -70.6225</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000twet'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-70.6225,-20.364,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-25 21:55:58</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>22 km</td></tr><tr><td><b>Lugar</b></td><td>40 km W of Valparaíso, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-33.0707, -72.0629</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4x2'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-72.0629,-33.0707,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-17 14:24:06</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>10 km</td></tr><tr><td><b>Lugar</b></td><td>50 km E of Antofagasta de la Sierra, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-26.0912, -66.9017</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u311'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-66.9017,-26.0912,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.6 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.6 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-13 21:36:45</td></tr><tr><td><b>Magnitud</b></td><td>4.6</td></tr><tr><td><b>Profundidad</b></td><td>10 km</td></tr><tr><td><b>Lugar</b></td><td>94 km NNW of Coquimbo, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-29.2305, -71.849</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u26f'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.849,-29.2305,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.7 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.7 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-13 21:30:47</td></tr><tr><td><b>Magnitud</b></td><td>4.7</td></tr><tr><td><b>Profundidad</b></td><td>22 km</td></tr><tr><td><b>Lugar</b></td><td>94 km NNW of Coquimbo, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-29.2005, -71.8077</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u26c'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.8077,-29.2005,0</coordinates></Point>
+    </Placemark>
+  </Folder>
+  <Folder>
+    <name>USGS - Subduccion (&gt;=30 km) (43 ev.)</name>
+    <open>0</open>
+    <Placemark>
+      <name>M 4.1 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.1 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-03 11:23:00</td></tr><tr><td><b>Magnitud</b></td><td>4.1</td></tr><tr><td><b>Profundidad</b></td><td>119 km</td></tr><tr><td><b>Lugar</b></td><td>57 km SW of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.6404, -68.5835</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tv5q'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.5835,-21.6404,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-02 22:41:27</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>107 km</td></tr><tr><td><b>Lugar</b></td><td>25 km NNE of Camiña, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-19.1084, -69.307</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tv27'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.307,-19.1084,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-02 16:01:12</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>124 km</td></tr><tr><td><b>Lugar</b></td><td>52 km W of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.1656, -68.7573</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tuyn'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.7573,-21.1656,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-01 20:18:05</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>244 km</td></tr><tr><td><b>Lugar</b></td><td>86 km WNW of Abra Pampa, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-22.5661, -66.523</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tus5'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-66.523,-22.5661,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.1 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.1 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-01 15:42:03</td></tr><tr><td><b>Magnitud</b></td><td>4.1</td></tr><tr><td><b>Profundidad</b></td><td>117 km</td></tr><tr><td><b>Lugar</b></td><td>70 km W of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.1449, -68.9287</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tuqw'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.9287,-21.1449,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.8 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.8 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-11-01 02:31:54</td></tr><tr><td><b>Magnitud</b></td><td>4.8</td></tr><tr><td><b>Profundidad</b></td><td>202 km</td></tr><tr><td><b>Lugar</b></td><td>71 km NNW of San Antonio de los Cobres, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-23.6386, -66.6315</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tumy'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-66.6315,-23.6386,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-31 22:24:52</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>120 km</td></tr><tr><td><b>Lugar</b></td><td>55 km SSW of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.698, -68.435</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tuly'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.435,-21.698,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.1 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.1 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-30 17:54:16</td></tr><tr><td><b>Magnitud</b></td><td>4.1</td></tr><tr><td><b>Profundidad</b></td><td>85 km</td></tr><tr><td><b>Lugar</b></td><td>73 km SSW of Calama, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-23.1065, -69.0806</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000tuep'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.0806,-23.1065,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.1 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.1 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-28 14:38:43</td></tr><tr><td><b>Magnitud</b></td><td>4.1</td></tr><tr><td><b>Profundidad</b></td><td>32 km</td></tr><tr><td><b>Lugar</b></td><td>52 km WSW of Carahue, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-38.8719, -73.7251</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttsn'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-73.7251,-38.8719,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-28 09:52:12</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>50 km</td></tr><tr><td><b>Lugar</b></td><td>29 km SSW of Melipilla, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-33.9445, -71.3172</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttny'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.3172,-33.9445,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-27 20:23:57</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>120 km</td></tr><tr><td><b>Lugar</b></td><td>25 km SSE of Calingasta, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-31.5445, -69.3165</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttkf'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.3165,-31.5445,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.6 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.6 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-27 08:41:22</td></tr><tr><td><b>Magnitud</b></td><td>4.6</td></tr><tr><td><b>Profundidad</b></td><td>206 km</td></tr><tr><td><b>Lugar</b></td><td>100 km W of El Aguilar, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-23.1819, -66.6616</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttfs'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-66.6616,-23.1819,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-27 08:19:39</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>113 km</td></tr><tr><td><b>Lugar</b></td><td>51 km S of Calingasta, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-31.7949, -69.5043</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttfm'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.5043,-31.7949,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.6 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.6 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-26 17:52:11</td></tr><tr><td><b>Magnitud</b></td><td>4.6</td></tr><tr><td><b>Profundidad</b></td><td>48 km</td></tr><tr><td><b>Lugar</b></td><td>20 km NNW of La Ligua, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-32.2811, -71.3014</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttc8'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.3014,-32.2811,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.7 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.7 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-26 17:20:25</td></tr><tr><td><b>Magnitud</b></td><td>4.7</td></tr><tr><td><b>Profundidad</b></td><td>61 km</td></tr><tr><td><b>Lugar</b></td><td>7 km SE of Coquimbo, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-30.0025, -71.2801</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttbz'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.2801,-30.0025,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.9 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.9 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-26 16:36:16</td></tr><tr><td><b>Magnitud</b></td><td>4.9</td></tr><tr><td><b>Profundidad</b></td><td>120 km</td></tr><tr><td><b>Lugar</b></td><td>100 km E of La Tirana, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-20.3438, -68.6903</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us7000ttbh'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.6903,-20.3438,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-26 02:26:03</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>108 km</td></tr><tr><td><b>Lugar</b></td><td>9 km ESE of Caucete, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-31.6742, -68.1852</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4y6'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.1852,-31.6742,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-25 10:23:15</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>136 km</td></tr><tr><td><b>Lugar</b></td><td>40 km ESE of San Pedro de Atacama, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-23.0909, -67.8582</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4ua'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.8582,-23.0909,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-24 14:14:30</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>124 km</td></tr><tr><td><b>Lugar</b></td><td>74 km W of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.3025, -68.9699</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4na'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.9699,-21.3025,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-23 00:59:34</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>50 km</td></tr><tr><td><b>Lugar</b></td><td>46 km NNW of La Serena, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-29.5191, -71.4318</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u49p'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.4318,-29.5191,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-22 23:45:41</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>236 km</td></tr><tr><td><b>Lugar</b></td><td>58 km SW of Atocha, Bolivia</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.3469, -66.5795</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u49c'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-66.5795,-21.3469,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-22 21:09:35</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>182 km</td></tr><tr><td><b>Lugar</b></td><td>103 km W of San Antonio de los Cobres, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-24.2853, -67.3367</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u48i'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.3367,-24.2853,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-22 18:37:56</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>140 km</td></tr><tr><td><b>Lugar</b></td><td>55 km S of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.722, -68.3296</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u47n'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.3296,-21.722,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-21 22:08:03</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>103 km</td></tr><tr><td><b>Lugar</b></td><td>30 km NW of Albardón, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-31.2167, -68.7255</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3zu'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.7255,-31.2167,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-21 10:13:55</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>127 km</td></tr><tr><td><b>Lugar</b></td><td>57 km SSW of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.6789, -68.5238</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3u2'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.5238,-21.6789,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-19 04:33:35</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>170 km</td></tr><tr><td><b>Lugar</b></td><td>79 km W of San Antonio de los Cobres, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-24.2627, -67.1004</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3b9'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.1004,-24.2627,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.6 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.6 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-17 13:52:45</td></tr><tr><td><b>Magnitud</b></td><td>4.6</td></tr><tr><td><b>Profundidad</b></td><td>189 km</td></tr><tr><td><b>Lugar</b></td><td>88 km SSW of Uyuni, Bolivia</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.1752, -67.2144</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u30x'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.2144,-21.1752,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-17 01:28:17</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>35 km</td></tr><tr><td><b>Lugar</b></td><td>55 km SSW of Quilca, Peru</td></tr><tr><td><b>Lat, Lon</b></td><td>-17.1607, -72.6722</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u2xt'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-72.6722,-17.1607,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-16 18:47:00</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>171 km</td></tr><tr><td><b>Lugar</b></td><td>89 km W of San Antonio de los Cobres, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-24.1856, -67.2021</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u2wc'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.2021,-24.1856,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-15 17:25:20</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>69 km</td></tr><tr><td><b>Lugar</b></td><td>14 km SE of Huara, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-20.1006, -69.6822</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u2kw'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-69.6822,-20.1006,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-15 10:29:49</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>121 km</td></tr><tr><td><b>Lugar</b></td><td>169 km W of San Antonio de los Cobres, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-24.4961, -67.9631</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u2hs'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.9631,-24.4961,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.2 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.2 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-14 11:42:04</td></tr><tr><td><b>Magnitud</b></td><td>4.2</td></tr><tr><td><b>Profundidad</b></td><td>42 km</td></tr><tr><td><b>Lugar</b></td><td>64 km S of Vallenar, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-29.1478, -70.8865</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u2a6'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-70.8865,-29.1478,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.9 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.9 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-14 00:11:09</td></tr><tr><td><b>Magnitud</b></td><td>4.9</td></tr><tr><td><b>Profundidad</b></td><td>48 km</td></tr><tr><td><b>Lugar</b></td><td>14 km WSW of La Tirana, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-20.3468, -70.2461</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u272'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-70.2461,-20.3468,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-13 20:26:52</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>124 km</td></tr><tr><td><b>Lugar</b></td><td>70 km NNE of Calama, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.8365, -68.7527</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u265'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.7527,-21.8365,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-13 09:38:05</td></tr><tr><td><b>Magnitud</b></td><td>4</td></tr><tr><td><b>Profundidad</b></td><td>34 km</td></tr><tr><td><b>Lugar</b></td><td>37 km SSW of Taltal, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-25.6923, -70.6917</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u219'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-70.6917,-25.6923,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.5 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.5 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-13 00:04:10</td></tr><tr><td><b>Magnitud</b></td><td>4.5</td></tr><tr><td><b>Profundidad</b></td><td>121 km</td></tr><tr><td><b>Lugar</b></td><td>38 km SW of Arauco, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-28.808, -67.0879</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u1y6'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-67.0879,-28.808,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.1 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.1 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-12 22:44:26</td></tr><tr><td><b>Magnitud</b></td><td>4.1</td></tr><tr><td><b>Profundidad</b></td><td>32 km</td></tr><tr><td><b>Lugar</b></td><td>42 km NNW of Tomé, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-36.2479, -73.0964</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u1xk'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-73.0964,-36.2479,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-12 15:17:18</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>35 km</td></tr><tr><td><b>Lugar</b></td><td>23 km SW of San Antonio, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-33.7418, -71.7939</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u1uq'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.7939,-33.7418,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-12 07:29:00</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>109 km</td></tr><tr><td><b>Lugar</b></td><td>29 km ESE of Puente Alto, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-33.6952, -70.2734</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u1r8'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-70.2734,-33.6952,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-11 18:33:08</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>212 km</td></tr><tr><td><b>Lugar</b></td><td>70 km WNW of San Antonio de los Cobres, Argentina</td></tr><tr><td><b>Lat, Lon</b></td><td>-23.9894, -66.9683</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u1mi'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-66.9683,-23.9894,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.3 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.3 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-09 07:38:10</td></tr><tr><td><b>Magnitud</b></td><td>4.3</td></tr><tr><td><b>Profundidad</b></td><td>39 km</td></tr><tr><td><b>Lugar</b></td><td>30 km W of Illapel, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-31.6323, -71.4955</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u154'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-71.4955,-31.6323,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 5.1 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff0080ff</color><scale>1</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 5.1 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-09 07:22:15</td></tr><tr><td><b>Magnitud</b></td><td>5.1</td></tr><tr><td><b>Profundidad</b></td><td>124 km</td></tr><tr><td><b>Lugar</b></td><td>74 km SSW of Colchane, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-19.9298, -68.7957</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u153'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.7957,-19.9298,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>M 4.4 USGS</name>
+      <Style>
+        <IconStyle>
+          <color>ff00d7ff</color><scale>0.7</scale>
+          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href></Icon>
+        </IconStyle>
+        <LabelStyle><scale>0</scale></LabelStyle>
+      </Style>
+      <description><![CDATA[<b>M 4.4 &mdash; USGS</b><br/><table cellpadding='2'><tr><td><b>Fecha</b></td><td>2026-10-09 03:41:44</td></tr><tr><td><b>Magnitud</b></td><td>4.4</td></tr><tr><td><b>Profundidad</b></td><td>123 km</td></tr><tr><td><b>Lugar</b></td><td>55 km W of Ollagüe, Chile</td></tr><tr><td><b>Lat, Lon</b></td><td>-21.2511, -68.7854</td></tr><tr><td><b>Fuente</b></td><td><a href='https://earthquake.usgs.gov/earthquakes/eventpage/us6000u144'>USGS</a></td></tr></table><hr/><b>Leyenda por magnitud:</b><table cellspacing='2' cellpadding='2'><tr><td bgcolor='#cc0000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M &ge; 7</td></tr><tr><td bgcolor='#ff3300' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 6.0 &ndash; 6.9</td></tr><tr><td bgcolor='#ff8000' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 5.0 &ndash; 5.9</td></tr><tr><td bgcolor='#ffd700' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 4.0 &ndash; 4.9</td></tr><tr><td bgcolor='#80ff40' width='14'>&nbsp;&nbsp;</td><td>&nbsp;M 3.0 &ndash; 3.9</td></tr></table>]]></description>
+      <Point><coordinates>-68.7854,-21.2511,0</coordinates></Point>
+    </Placemark>
+  </Folder>
+</Document>
+</kml>
