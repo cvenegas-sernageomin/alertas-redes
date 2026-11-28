@@ -1,0 +1,5584 @@
+{
+  "RMCL0004": {
+    "historia": [
+      {
+        "epoch": 1795736340,
+        "precip": 0.1
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795764000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828860,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860120,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888980,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888980,
+    "precip": 0.0
+  },
+  "RMCL0005": {
+    "historia": [
+      {
+        "epoch": 1795736040,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860120,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0006": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0007": {
+    "historia": [
+      {
+        "epoch": 1795736160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860540,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889400,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889400,
+    "precip": 0.0
+  },
+  "RMCL0008": {
+    "historia": [
+      {
+        "epoch": 1795736327,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763904,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802278,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828705,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860506,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889270,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889270,
+    "precip": 0.0
+  },
+  "RMCL0009": {
+    "historia": [
+      {
+        "epoch": 1795736280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763640,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802580,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795829100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860120,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795875300,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795875300,
+    "precip": 0.0
+  },
+  "RMCL0010": {
+    "historia": [
+      {
+        "epoch": 1795736340,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763580,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795809660,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860540,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0011": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860480,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889280,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889280,
+    "precip": 0.0
+  },
+  "RMCL0012": {
+    "historia": [
+      {
+        "epoch": 1795736400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828980,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860060,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889160,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889160,
+    "precip": 0.0
+  },
+  "RMCL0013": {
+    "historia": [
+      {
+        "epoch": 1795736280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802340,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888860,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888860,
+    "precip": 0.0
+  },
+  "RMCL0018": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802580,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860240,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889340,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889340,
+    "precip": 0.0
+  },
+  "RMCL0020": {
+    "historia": [
+      {
+        "epoch": 1795736280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763580,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888860,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888860,
+    "precip": 0.0
+  },
+  "RMCL0021": {
+    "historia": [
+      {
+        "epoch": 1795736160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828560,
+        "precip": 1.4
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889160,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889160,
+    "precip": 0.0
+  },
+  "RMCL0022": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0023": {
+    "historia": [
+      {
+        "epoch": 1794000360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794015420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794020400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794040620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794065820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794081420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794094020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794106800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794114420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794138960,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794157440,
+        "precip": 0.5
+      }
+    ],
+    "epoch": 1794157440,
+    "precip": 0.5
+  },
+  "RMCL0026": {
+    "historia": [
+      {
+        "epoch": 1795736280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860480,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889280,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889280,
+    "precip": 0.0
+  },
+  "RMCL0027": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0028": {
+    "historia": [
+      {
+        "epoch": 1795736160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828740,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889400,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889400,
+    "precip": 0.0
+  },
+  "RMCL0029": {
+    "historia": [
+      {
+        "epoch": 1795736322,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763872,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802323,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828703,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889291,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889291,
+    "precip": 0.0
+  },
+  "RMCL0030": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802580,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860180,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889280,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889280,
+    "precip": 0.0
+  },
+  "RMCL0031": {
+    "historia": [
+      {
+        "epoch": 1795736400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763640,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802640,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828560,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860120,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889160,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889160,
+    "precip": 0.0
+  },
+  "RMCL0032": {
+    "historia": [
+      {
+        "epoch": 1795736340,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795829100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860240,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888920,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888920,
+    "precip": 0.0
+  },
+  "RMCL0033": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0034": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0035": {
+    "historia": [
+      {
+        "epoch": 1792026900,
+        "precip": 3.3
+      },
+      {
+        "epoch": 1792033200,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792048560,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792070160,
+        "precip": 0.3
+      },
+      {
+        "epoch": 1792087500,
+        "precip": 0.3
+      },
+      {
+        "epoch": 1792101300,
+        "precip": 0.3
+      },
+      {
+        "epoch": 1792109700,
+        "precip": 0.3
+      },
+      {
+        "epoch": 1792119600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792129500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792148700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792163700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792173000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792173000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1792173000,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1792173000,
+    "precip": 0.0
+  },
+  "RMCL0036": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0037": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0039": {
+    "historia": [
+      {
+        "epoch": 1795735920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828980,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0040": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0044": {
+    "historia": [
+      {
+        "epoch": 1795736400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795764000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889400,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889400,
+    "precip": 0.0
+  },
+  "RMCL0045": {
+    "historia": [
+      {
+        "epoch": 1795735980,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860240,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0047": {
+    "historia": [
+      {
+        "epoch": 1795736160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795883220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795883220,
+    "precip": 0.0
+  },
+  "RMCL0048": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0049": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0050": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0051": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0052": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0053": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0054": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0056": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0057": {
+    "historia": [
+      {
+        "epoch": 1795735920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860120,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888920,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888920,
+    "precip": 0.0
+  },
+  "RMCL0058": {
+    "historia": [
+      {
+        "epoch": 1795735920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763580,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802640,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795829100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889160,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889160,
+    "precip": 0.0
+  },
+  "RMCL0059": {
+    "historia": [
+      {
+        "epoch": 1795736297,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763897,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802297,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828697,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860497,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889296,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889296,
+    "precip": 0.0
+  },
+  "RMCL0060": {
+    "historia": [
+      {
+        "epoch": 1795736160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802160,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828560,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889160,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889160,
+    "precip": 0.0
+  },
+  "RMCL0062": {
+    "historia": [
+      {
+        "epoch": 1795736298,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763898,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802298,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828699,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860498,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889297,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889297,
+    "precip": 0.0
+  },
+  "RMCL0071": {
+    "historia": [
+      {
+        "epoch": 1795736304,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763903,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802303,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828707,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860503,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889301,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889301,
+    "precip": 0.0
+  },
+  "RMCL0073": {
+    "historia": [
+      {
+        "epoch": 1795057200,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795065503,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795065503,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795065503,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795065503,
+    "precip": 0.0
+  },
+  "RMCL0082": {
+    "historia": [
+      {
+        "epoch": 1795736309,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763908,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802308,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828717,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860509,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889308,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889308,
+    "precip": 0.0
+  },
+  "RMCL0084": {
+    "historia": [
+      {
+        "epoch": 1795727910,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763909,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795784310,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795784310,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860510,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795875510,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795875510,
+    "precip": 0.0
+  },
+  "RMCL0086": {
+    "historia": [
+      {
+        "epoch": 1795736310,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763910,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802311,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828720,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860511,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889310,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889310,
+    "precip": 0.0
+  },
+  "RMCL0088": {
+    "historia": [
+      {
+        "epoch": 1794970800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795044513,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795044513,
+    "precip": 0.0
+  },
+  "RMCL0089": {
+    "historia": [
+      {
+        "epoch": 1795736312,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763911,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802312,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828722,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860512,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889311,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889311,
+    "precip": 0.0
+  },
+  "RMCL0091": {
+    "historia": [
+      {
+        "epoch": 1795736313,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763912,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802314,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828724,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860513,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889312,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889312,
+    "precip": 0.0
+  },
+  "RMCL0092": {
+    "historia": [
+      {
+        "epoch": 1795736313,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763913,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802314,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828724,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860514,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889313,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889313,
+    "precip": 0.0
+  },
+  "RMCL0093": {
+    "historia": [
+      {
+        "epoch": 1795736314,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763914,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802315,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828725,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860514,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889314,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889314,
+    "precip": 0.0
+  },
+  "RMCL0095": {
+    "historia": [
+      {
+        "epoch": 1795736315,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763915,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802316,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828727,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860515,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889315,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889315,
+    "precip": 0.0
+  },
+  "RMCL0097": {
+    "historia": [
+      {
+        "epoch": 1784386758,
+        "precip": 13.0
+      },
+      {
+        "epoch": 1784390358,
+        "precip": 13.0
+      },
+      {
+        "epoch": 1784394561,
+        "precip": 13.0
+      },
+      {
+        "epoch": 1784401765,
+        "precip": 15.0
+      },
+      {
+        "epoch": 1784407759,
+        "precip": 15.3
+      },
+      {
+        "epoch": 1784411960,
+        "precip": 15.3
+      },
+      {
+        "epoch": 1784415562,
+        "precip": 15.3
+      },
+      {
+        "epoch": 1784419161,
+        "precip": 15.3
+      },
+      {
+        "epoch": 1784429367,
+        "precip": 15.3
+      },
+      {
+        "epoch": 1784433600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784441362,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784449762,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784457561,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784462961,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784468989,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784473163,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784477366,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784481560,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784488159,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784494161,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784498361,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784501965,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784505563,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784519958,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784520000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784530758,
+        "precip": 11.9
+      },
+      {
+        "epoch": 1784542759,
+        "precip": 23.1
+      },
+      {
+        "epoch": 1784553559,
+        "precip": 36.6
+      },
+      {
+        "epoch": 1784563159,
+        "precip": 38.1
+      }
+    ],
+    "epoch": 1784563159,
+    "precip": 38.1
+  },
+  "RMCL0098": {
+    "historia": [
+      {
+        "epoch": 1784386759,
+        "precip": 12.7
+      },
+      {
+        "epoch": 1784390359,
+        "precip": 12.7
+      },
+      {
+        "epoch": 1784394561,
+        "precip": 12.7
+      },
+      {
+        "epoch": 1784401766,
+        "precip": 13.5
+      },
+      {
+        "epoch": 1784407759,
+        "precip": 13.7
+      },
+      {
+        "epoch": 1784411962,
+        "precip": 13.7
+      },
+      {
+        "epoch": 1784415563,
+        "precip": 13.7
+      },
+      {
+        "epoch": 1784419161,
+        "precip": 13.7
+      },
+      {
+        "epoch": 1784429368,
+        "precip": 13.7
+      },
+      {
+        "epoch": 1784433600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784441362,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784449763,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784457562,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784462961,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784468989,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784473164,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784477367,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784481561,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784488159,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784494162,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784498361,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784501966,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784505563,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784519959,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784520000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784530758,
+        "precip": 7.1
+      },
+      {
+        "epoch": 1784542759,
+        "precip": 14.2
+      },
+      {
+        "epoch": 1784553559,
+        "precip": 23.6
+      },
+      {
+        "epoch": 1784563159,
+        "precip": 23.9
+      }
+    ],
+    "epoch": 1784563159,
+    "precip": 23.9
+  },
+  "RMCL0099": {
+    "historia": [
+      {
+        "epoch": 1795736318,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763917,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802317,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828730,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860518,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889316,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889316,
+    "precip": 0.0
+  },
+  "RMCL0100": {
+    "historia": [
+      {
+        "epoch": 1791415717,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791428400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791436121,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791461326,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791484730,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791502721,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791514800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791522531,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791547127,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791569321,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1791587347,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1791587347,
+    "precip": 0.0
+  },
+  "RMCL0101": {
+    "historia": [
+      {
+        "epoch": 1795736319,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802318,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828732,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860519,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889318,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889318,
+    "precip": 0.0
+  },
+  "RMCL0102": {
+    "historia": [
+      {
+        "epoch": 1793406520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793415600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793429926,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793453323,
+        "precip": 0.5
+      },
+      {
+        "epoch": 1793470721,
+        "precip": 0.5
+      },
+      {
+        "epoch": 1793485127,
+        "precip": 0.5
+      },
+      {
+        "epoch": 1793498323,
+        "precip": 0.5
+      },
+      {
+        "epoch": 1793502000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793524132,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793548121,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793549927,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793549927,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1793549927,
+    "precip": 0.0
+  },
+  "RMCL0104": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828740,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888920,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888920,
+    "precip": 0.0
+  },
+  "RMCL0109": {
+    "historia": [
+      {
+        "epoch": 1795736319,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802319,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828733,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889318,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889318,
+    "precip": 0.0
+  },
+  "RMCL0110": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 5.1
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0111": {
+    "historia": [
+      {
+        "epoch": 1795736320,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802320,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828734,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889319,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889319,
+    "precip": 0.0
+  },
+  "RMCL0112": {
+    "historia": [
+      {
+        "epoch": 1784386620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784390220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784394360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784401620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784407620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784411820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784415420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784419020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784429220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784433600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784441220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784449620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784457420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784462820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784468820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784473020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784477220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784481420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784488020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784494020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784498220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784501820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784505420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784519820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784520000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784530620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784542620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784553420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1784563020,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1784563020,
+    "precip": 0.0
+  },
+  "RMCL0114": {
+    "historia": [
+      {
+        "epoch": 1795736270,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763871,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802260,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828660,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860477,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889277,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889277,
+    "precip": 0.0
+  },
+  "RMCL0115": {
+    "historia": [
+      {
+        "epoch": 1795736259,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763877,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802274,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828654,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860459,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889275,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889275,
+    "precip": 0.0
+  },
+  "RMCL0116": {
+    "historia": [
+      {
+        "epoch": 1795736273,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763874,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802265,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860474,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889270,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889270,
+    "precip": 0.0
+  },
+  "RMCL0117": {
+    "historia": [
+      {
+        "epoch": 1795735965,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763565,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795801965,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828366,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860166,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888966,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888966,
+    "precip": 0.0
+  },
+  "RMCL0118": {
+    "historia": [
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802266,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828667,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860472,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889273,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889273,
+    "precip": 0.0
+  },
+  "RMCL0119": {
+    "historia": [
+      {
+        "epoch": 1795306680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795316400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795334882,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795363683,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795384083,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795400283,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795402800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795435685,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795476485,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795476485,
+    "precip": 0.0
+  },
+  "RMCL0120": {
+    "historia": [
+      {
+        "epoch": 1795736277,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763879,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860466,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889267,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889267,
+    "precip": 0.0
+  },
+  "RMCL0121": {
+    "historia": [
+      {
+        "epoch": 1793934000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793951858,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793980059,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794000459,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794015461,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794020400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794040661,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794046811,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794046811,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1794046811,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1794046811,
+    "precip": 0.0
+  },
+  "RMCL0122": {
+    "historia": [
+      {
+        "epoch": 1795736262,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763862,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802264,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828665,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860466,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889263,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889263,
+    "precip": 0.0
+  },
+  "RMCL0123": {
+    "historia": [
+      {
+        "epoch": 1795736270,
+        "precip": 0.2
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763871,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802270,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828652,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860453,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889253,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889253,
+    "precip": 0.0
+  },
+  "RMCL0124": {
+    "historia": [
+      {
+        "epoch": 1795735712,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763912,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802316,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828716,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860516,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889317,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889317,
+    "precip": 0.0
+  },
+  "RMCL0125": {
+    "historia": [
+      {
+        "epoch": 1795736387,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763866,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802267,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828666,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860467,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889267,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889267,
+    "precip": 0.0
+  },
+  "RMCL0127": {
+    "historia": [
+      {
+        "epoch": 1795736390,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763872,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802283,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828683,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860454,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889256,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889256,
+    "precip": 0.0
+  },
+  "RMCL0128": {
+    "historia": [
+      {
+        "epoch": 1795736411,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763861,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802261,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828691,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860461,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889262,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889262,
+    "precip": 0.0
+  },
+  "RMCL0129": {
+    "historia": [
+      {
+        "epoch": 1795736413,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763864,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802263,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828662,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860463,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889262,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889262,
+    "precip": 0.0
+  },
+  "RMCL0130": {
+    "historia": [
+      {
+        "epoch": 1795230000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795234080,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795264080,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795291080,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795306680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795316400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795334880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795348560,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795382820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795388640,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795388640,
+    "precip": 0.0
+  },
+  "RMCL0131": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0133": {
+    "historia": [
+      {
+        "epoch": 1795736393,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795762130,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802276,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795823072,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795857586,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889260,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889260,
+    "precip": 0.0
+  },
+  "RMCL0134": {
+    "historia": [
+      {
+        "epoch": 1795736413,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763864,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802265,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828664,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795841894,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889273,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889273,
+    "precip": 0.0
+  },
+  "RMCL0135": {
+    "historia": [
+      {
+        "epoch": 1795736403,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763854,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802264,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828663,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860464,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888875,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888875,
+    "precip": 0.0
+  },
+  "RMCL0136": {
+    "historia": [
+      {
+        "epoch": 1795736402,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802281,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828681,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860482,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889281,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889281,
+    "precip": 0.0
+  },
+  "RMCL0137": {
+    "historia": [
+      {
+        "epoch": 1795736407,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763856,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802268,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828664,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860465,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889267,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889267,
+    "precip": 0.0
+  },
+  "RMCL0138": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0140": {
+    "historia": [
+      {
+        "epoch": 1795736394,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763874,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802275,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828674,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860476,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889275,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889275,
+    "precip": 0.0
+  },
+  "RMCL0141": {
+    "historia": [
+      {
+        "epoch": 1795736388,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763869,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802269,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828669,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860470,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889270,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889270,
+    "precip": 0.0
+  },
+  "RMCL0142": {
+    "historia": [
+      {
+        "epoch": 1795736408,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763858,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802258,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828687,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860458,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889258,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889258,
+    "precip": 0.0
+  },
+  "RMCL0143": {
+    "historia": [
+      {
+        "epoch": 1795736407,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763858,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802279,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828679,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860484,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889253,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889253,
+    "precip": 0.0
+  },
+  "RMCL0144": {
+    "historia": [
+      {
+        "epoch": 1795736396,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763876,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802277,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828677,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860477,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889279,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889279,
+    "precip": 0.0
+  },
+  "RMCL0145": {
+    "historia": [
+      {
+        "epoch": 1795736407,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763858,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802265,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828665,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860466,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889266,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889266,
+    "precip": 0.0
+  },
+  "RMCL0147": {
+    "historia": [
+      {
+        "epoch": 1795736407,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763863,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802266,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795821916,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860474,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889277,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889277,
+    "precip": 0.0
+  },
+  "RMCL0148": {
+    "historia": [
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763877,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795784314,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795784314,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889278,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889278,
+    "precip": 0.0
+  },
+  "RMCL0149": {
+    "historia": [
+      {
+        "epoch": 1795736405,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763857,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802257,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828687,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860474,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889275,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889275,
+    "precip": 0.0
+  },
+  "RMCL0150": {
+    "historia": [
+      {
+        "epoch": 1795735668,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763868,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802268,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828668,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860469,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889269,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889269,
+    "precip": 0.0
+  },
+  "RMCL0151": {
+    "historia": [
+      {
+        "epoch": 1795732775,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763874,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802275,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828675,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860462,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889277,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889277,
+    "precip": 0.0
+  },
+  "RMCL0152": {
+    "historia": [
+      {
+        "epoch": 1795736406,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763885,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802260,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828675,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860476,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889275,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889275,
+    "precip": 0.0
+  },
+  "RMCL0153": {
+    "historia": [
+      {
+        "epoch": 1795736390,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763871,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802271,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828671,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860472,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889273,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889273,
+    "precip": 0.0
+  },
+  "RMCL0154": {
+    "historia": [
+      {
+        "epoch": 1795736415,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802281,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828681,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795856436,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889276,
+        "precip": 1.2
+      }
+    ],
+    "epoch": 1795889276,
+    "precip": 1.2
+  },
+  "RMCL0155": {
+    "historia": [
+      {
+        "epoch": 1795736417,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763863,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802263,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828693,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860465,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889269,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889269,
+    "precip": 0.0
+  },
+  "RMCL0156": {
+    "historia": [
+      {
+        "epoch": 1795736392,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763873,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795783554,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795783554,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889266,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889266,
+    "precip": 0.0
+  },
+  "RMCL0157": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 410.6
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0158": {
+    "historia": [
+      {
+        "epoch": 1795736413,
+        "precip": 0.4
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763863,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802264,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828693,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860465,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889264,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889264,
+    "precip": 0.0
+  },
+  "RMCL0159": {
+    "historia": [
+      {
+        "epoch": 1795736420,
+        "precip": 14.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763870,
+        "precip": 0.2
+      },
+      {
+        "epoch": 1795802269,
+        "precip": 8.0
+      },
+      {
+        "epoch": 1795828668,
+        "precip": 8.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860468,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889267,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889267,
+    "precip": 0.0
+  },
+  "RMCL0160": {
+    "historia": [
+      {
+        "epoch": 1795736412,
+        "precip": 0.4
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763861,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802261,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828690,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889275,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889275,
+    "precip": 0.0
+  },
+  "RMCL0161": {
+    "historia": [
+      {
+        "epoch": 1795736311,
+        "precip": 5.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763776,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802186,
+        "precip": 4.8
+      },
+      {
+        "epoch": 1795828597,
+        "precip": 5.2
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795859744,
+        "precip": 0.2
+      },
+      {
+        "epoch": 1795889132,
+        "precip": 0.2
+      }
+    ],
+    "epoch": 1795889132,
+    "precip": 0.2
+  },
+  "RMCL0162": {
+    "historia": [
+      {
+        "epoch": 1795736280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802340,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828740,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860540,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889400,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889400,
+    "precip": 0.0
+  },
+  "RMCL0165": {
+    "historia": [
+      {
+        "epoch": 1795736160,
+        "precip": 6.4
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0166": {
+    "historia": [
+      {
+        "epoch": 1795736320,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763920,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802320,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828735,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889319,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889319,
+    "precip": 0.0
+  },
+  "RMCL0167": {
+    "historia": [
+      {
+        "epoch": 1795736400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802520,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828980,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860240,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889040,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889040,
+    "precip": 0.0
+  },
+  "RMCL0168": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0169": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795805100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0170": {
+    "historia": [
+      {
+        "epoch": 1795306620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795316400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795334820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795363620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795384020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795400220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795402800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795435620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795476420,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795476420,
+    "precip": 0.0
+  },
+  "RMCL0172": {
+    "historia": [
+      {
+        "epoch": 1793847600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793849820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793880420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793881020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793934000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793951820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793968620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793968620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793968620,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1793968620,
+    "precip": 0.0
+  },
+  "RMCL0173": {
+    "historia": [
+      {
+        "epoch": 1793847600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793849760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793880360,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793880960,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793934000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793951760,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793968620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793968620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793968620,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1793968620,
+    "precip": 0.0
+  },
+  "RMCL0174": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860480,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0177": {
+    "historia": [
+      {
+        "epoch": 1795736397,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763878,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802279,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828680,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860480,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889281,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889281,
+    "precip": 0.0
+  },
+  "RMCL0179": {
+    "historia": [
+      {
+        "epoch": 1795736394,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763877,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795792797,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828669,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860471,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795879040,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795879040,
+    "precip": 0.0
+  },
+  "RMCL0180": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795827300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0182": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0183": {
+    "historia": [
+      {
+        "epoch": 1795306500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795316400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795334700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795363500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795383900,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795400100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795402800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795435500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795476300,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795476300,
+    "precip": 0.0
+  },
+  "RMCL0184": {
+    "historia": [
+      {
+        "epoch": 1795736100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889100,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889100,
+    "precip": 0.0
+  },
+  "RMCL0185": {
+    "historia": [
+      {
+        "epoch": 1795735800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763700,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795801500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828500,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795888800,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795888800,
+    "precip": 0.0
+  },
+  "RMCL0186": {
+    "historia": [
+      {
+        "epoch": 1795736321,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763921,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802321,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828735,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860521,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889320,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889320,
+    "precip": 0.0
+  },
+  "RMCL0187": {
+    "historia": [
+      {
+        "epoch": 1795736321,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763921,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802321,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828736,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860521,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889320,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889320,
+    "precip": 0.0
+  },
+  "RMCL0188": {
+    "historia": [
+      {
+        "epoch": 1795662000,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795669620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795704420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795736280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795790880,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795790880,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795790880,
+    "precip": 0.0
+  },
+  "RMCL0190": {
+    "historia": [
+      {
+        "epoch": 1795736040,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802640,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795829100,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860300,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889160,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889160,
+    "precip": 0.0
+  },
+  "RMCL0191": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0193": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  },
+  "RMCL0194": {
+    "historia": [
+      {
+        "epoch": 1795736299,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763921,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802305,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828702,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860468,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889301,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889301,
+    "precip": 0.0
+  },
+  "RMCL0195": {
+    "historia": [
+      {
+        "epoch": 1795735860,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802460,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860600,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889400,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889400,
+    "precip": 0.0
+  },
+  "RMCL0196": {
+    "historia": [
+      {
+        "epoch": 1795736322,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763922,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802322,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828737,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860522,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889321,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889321,
+    "precip": 0.0
+  },
+  "RMCL0197": {
+    "historia": [
+      {
+        "epoch": 1793131020,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793144220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793156400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793162220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793185620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793210280,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793226420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793240220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793242800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793267220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1793292420,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1793292420,
+    "precip": 0.0
+  },
+  "RMCL0198": {
+    "historia": [
+      {
+        "epoch": 1795736220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795748400,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795763820,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795802220,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795828620,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795834800,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795860420,
+        "precip": 0.0
+      },
+      {
+        "epoch": 1795889220,
+        "precip": 0.0
+      }
+    ],
+    "epoch": 1795889220,
+    "precip": 0.0
+  }
+}
